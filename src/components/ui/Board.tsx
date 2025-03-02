@@ -12,7 +12,7 @@ const Board = ({ title = "Default Title", className, height }: IProps) => {
       <div className="text-3xl underline underline-offset-[15px]">{title}</div>
 
       <div
-        className={`${className} scrollbar snap-y snap-mandatory overflow-auto scroll-smooth rounded-b-sm shadow-[inset_0_-20px_20px_-20px_rgba(0,0,0,0.4)]`}
+        className={`${className} scrollbar snap-y snap-mandatory overflow-auto scroll-smooth rounded-b-sm p-1 shadow-[inset_0_-20px_20px_-20px_rgba(0,0,0,0.4)]`}
       >
         <ul className="list-none space-y-10">
           <li className="flex items-center gap-2">

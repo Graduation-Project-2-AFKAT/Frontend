@@ -1,4 +1,4 @@
-import Form from "../form/Form";
+import Form from "../../components/form/Form";
 
 const Login = () => {
   return <Form label="LOGIN" redirect="/register" />;

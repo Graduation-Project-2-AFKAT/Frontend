@@ -19,15 +19,21 @@ const Form = ({ label, redirect }: IProps) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="border-primary relative mt-10 flex h-[500px] w-[350px] flex-col items-center rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
+      className="group border-primary relative mt-10 flex h-[525px] w-[350px] flex-col items-center rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
     >
-      <div className="flex flex-1 items-center text-4xl">LOGO</div>
+      <div className="mb-4 flex flex-1 flex-col">
+        <img
+          src="../../public/images/AFK.svg"
+          alt="AFK Buttons Logo"
+          className="mt-10 h-24 w-auto duration-300 group-focus-within:mt-8 group-focus-within:h-27"
+        />
+      </div>
 
-      <div className="flex w-full flex-1 flex-col items-center justify-center space-y-6 duration-500">
+      <div className="flex w-full flex-1 flex-col items-center justify-center space-y-4 duration-500">
         {useLocation().pathname === "/register" && (
-          <div className="flex flex-col space-y-1">
+          <div className="mt-5 flex flex-col space-y-1">
             <Input
-              label="username"
+              placeholder="username"
               register={register}
               rules={{
                 required: {
@@ -41,7 +47,7 @@ const Form = ({ label, redirect }: IProps) => {
         )}
         <div className="flex flex-col space-y-1">
           <Input
-            label="email"
+            placeholder="email"
             register={register}
             rules={{
               required: {
@@ -55,7 +61,7 @@ const Form = ({ label, redirect }: IProps) => {
 
         <div className="flex flex-col space-y-1">
           <Input
-            label="password"
+            placeholder="password"
             register={register}
             rules={{
               required: {

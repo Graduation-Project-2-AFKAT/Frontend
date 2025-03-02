@@ -1,5 +1,7 @@
-import Sidebar from "../ui/Sidebar";
-import Board from "../ui/Board";
+import Input from "../components/form/Input";
+import Post from "../components/Post";
+import Sidebar from "../components/Sidebar";
+import Board from "../components/ui/Board";
 
 const Home = () => {
   return (
@@ -17,18 +19,24 @@ const Home = () => {
 
       <main className="no-scrollbar mt-6 flex flex-col space-y-10">
         <div className="border-primary flex h-24 items-center justify-between rounded-lg border-2 px-8">
-          <div className="mr-6 aspect-square h-12 w-12 rounded-full bg-amber-50"></div>
-          <div className="flex h-12 w-full items-center rounded-lg border-1 border-gray-500 px-4 text-gray-500">
-            What's on your mind?
-          </div>
+          <i className="fa-solid fa-circle-user mr-6 text-4xl"></i>
+
+          {/* <input
+            placeholder="What's on your mind?"
+            className="w-full rounded-lg border border-gray-500 px-4 py-2"
+          /> */}
+          <Input
+            placeholder="What's on your mind?"
+            className="w-full border-gray-500"
+          />
         </div>
 
         <ul className="h-80 space-y-6">
-          <li className="border-primary h-full rounded-lg border-2">post 1</li>
-          <li className="border-primary h-full rounded-lg border-2">post 2</li>
-          <li className="border-primary h-full rounded-lg border-2">post 3</li>
-          <li className="border-primary h-full rounded-lg border-2">post 4</li>
-          <li className="border-primary h-full rounded-lg border-2">post 5</li>
+          <Post username="user1" />
+          <Post username="user2" />
+          <Post username="user3" />
+          <Post username="user4" />
+          <Post username="user5" />
           <li className="invisible h-8"></li>
         </ul>
 
