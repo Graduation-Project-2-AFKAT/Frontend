@@ -13,7 +13,7 @@ const Input = ({
   register,
   rules,
   errorMsg,
-  className,
+  className = "",
 }: InputProps) => (
   <>
     <input

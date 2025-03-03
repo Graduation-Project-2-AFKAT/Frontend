@@ -1,6 +1,6 @@
 const Sidebar = () => {
   return (
-    <div className="border-r-primary group fixed top-0 -left-72 z-1 flex h-screen w-96 flex-col items-end justify-between border-r-2 bg-[#121015] p-10 px-4 pt-28 duration-300 ease-in hover:translate-x-40">
+    <div className="border-r-primary group fixed top-0 -left-72 z-1 hidden h-screen w-96 flex-col items-end justify-between border-r-2 bg-[#121015] p-10 px-4 pt-28 duration-300 ease-in hover:translate-x-40 md:flex">
       <div className="border-primary hover:shadow-primary/25 relative -top-4 space-y-6 rounded-lg border-2 p-3 text-xl duration-300 ease-in group-hover:-translate-x-1 group-hover:pr-40 hover:shadow-lg">
         <div className="hover:text-primary group relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#292929] duration-150 hover:cursor-pointer">
           <i className="fa-solid fa-house"></i>

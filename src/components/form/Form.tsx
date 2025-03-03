@@ -19,7 +19,7 @@ const Form = ({ label, redirect }: IProps) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="group border-primary relative mt-10 flex h-[525px] w-[350px] flex-col items-center rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
+      className="group border-primary relative mx-10 mt-10 flex h-[525px] w-[min(100%,350px)] flex-col items-center rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
     >
       <div className="mb-4 flex flex-1 flex-col">
         <img

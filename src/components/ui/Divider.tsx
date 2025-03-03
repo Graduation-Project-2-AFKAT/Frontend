@@ -2,7 +2,7 @@ interface IProps {
   className?: string;
 }
 
-const Divider = ({ className }: IProps) => {
+const Divider = ({ className = "" }: IProps) => {
   return <span className={`${className} h-full w-px bg-amber-50`}></span>;
 };
 

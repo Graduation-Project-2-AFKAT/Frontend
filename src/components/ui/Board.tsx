@@ -4,7 +4,7 @@ interface IProps {
   height?: string;
 }
 
-const Board = ({ title = "Default Title", className, height }: IProps) => {
+const Board = ({ title = "Default Title", className = "", height }: IProps) => {
   return (
     <aside
       className={`${height} border-primary sticky top-6 flex flex-col space-y-14 rounded-lg border-2 p-8`}
