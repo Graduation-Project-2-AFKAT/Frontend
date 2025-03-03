@@ -1,23 +1,21 @@
 import Input from "../components/form/Input";
 import Post from "../components/Post";
-import Sidebar from "../components/Sidebar";
 import Board from "../components/ui/Board";
 
 const Home = () => {
   return (
-    <div
+    <main
       className="grid w-full gap-10 overflow-y-auto pb-15"
       style={{
         gridTemplateColumns: "1.1fr 3fr 6fr 3fr",
       }}
     >
-      <Sidebar />
       <div></div>
 
       {/* <div></div> */}
       <Board title="Suggestion" height="h-[550px]" />
 
-      <main className="no-scrollbar mt-6 flex flex-col space-y-10">
+      <section className="no-scrollbar mt-6 flex flex-col space-y-10">
         <div className="border-primary flex h-24 items-center justify-between rounded-lg border-2 px-8">
           <i className="fa-solid fa-circle-user mr-6 text-4xl"></i>
 
@@ -41,10 +39,10 @@ const Home = () => {
         </ul>
 
         {/* <div className="absolute bottom-10 h-10 w-135 shadow-[inset_0_-20px_20px_-20px_rgba(0,0,0,0.5)]"></div> */}
-      </main>
+      </section>
 
       <Board title="Leaderboard" className="h-[240px]" height="h-[400px]" />
-    </div>
+    </main>
   );
 };
 

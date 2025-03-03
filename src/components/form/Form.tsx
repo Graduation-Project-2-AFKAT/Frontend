@@ -14,7 +14,19 @@ const Form = ({ label, redirect }: IProps) => {
     handleSubmit,
     formState: { errors },
   } = useForm<IInputs>();
-  const onSubmit: SubmitHandler<IInputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IInputs> = (data) => {
+    fetch("https://i3ammar.pythonanywhere.com/accounts/login", {
+      //TODO change the server URL
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
+  };
 
   return (
     <form
@@ -30,7 +42,7 @@ const Form = ({ label, redirect }: IProps) => {
       </div>
 
       <div className="flex w-full flex-1 flex-col items-center justify-center space-y-4 duration-500">
-        {useLocation().pathname === "/register" && (
+        {/* {useLocation().pathname === "/register" && (
           <div className="mt-5 flex flex-col space-y-1">
             <Input
               placeholder="username"
@@ -44,10 +56,11 @@ const Form = ({ label, redirect }: IProps) => {
               errorMsg={errors.username?.message}
             />
           </div>
-        )}
+        )} */}
         <div className="flex flex-col space-y-1">
           <Input
             placeholder="email"
+            type="email"
             register={register}
             rules={{
               required: {
@@ -62,16 +75,17 @@ const Form = ({ label, redirect }: IProps) => {
         <div className="flex flex-col space-y-1">
           <Input
             placeholder="password"
+            type="password"
             register={register}
             rules={{
               required: {
                 value: true,
                 message: "Password is required",
               },
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters",
-              },
+              // minLength: {
+              //   value: 6,
+              //   message: "Password must be at least 6 characters",
+              // },
             }}
             errorMsg={errors.password?.message}
           />

@@ -1,15 +1,24 @@
 import Divider from "./ui/Divider";
 import { useLocation } from "react-router";
 
-const Navbar = () => {
+interface IProps {
+  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+  showHeaders: boolean;
+  setShowHeaders: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Navbar = ({ setShowSidebar, showHeaders, setShowHeaders }: IProps) => {
   const location = useLocation();
   const authorized =
     location.pathname !== "/login" && location.pathname !== "/register";
 
   return (
-    <nav className="relative z-50 flex h-18 w-screen items-center justify-between gap-5 border-b-2 bg-[#121015] px-8 md:px-10">
-      <div className="flex items-center gap-6 border md:gap-0">
-        <i className="fa-solid fa-bars md:before:hidden"></i>
+    <nav className="relative z-50 flex h-18 w-screen items-center justify-between gap-5 border-b-2 bg-[#121015] px-8 lg:px-10">
+      <div className="flex items-center gap-6 border lg:gap-0">
+        <i
+          className="fa-solid fa-bars lg:before:hidden"
+          onClick={() => setShowSidebar((prev) => !prev)}
+        ></i>
 
         <a href="/" className="flex h-10 w-auto cursor-pointer gap-4">
           <img
@@ -21,20 +30,50 @@ const Navbar = () => {
           <img
             src="../../public/images/logoOutlined.svg"
             alt="AFKAT Logo"
-            className="hidden md:inline"
+            className="hidden lg:inline"
           />
         </a>
       </div>
 
       {authorized && (
-        <div className="hidden grow gap-5 border px-20 md:flex lg:px-4">
+        <div className="hidden grow items-center gap-5 border px-10 md:flex lg:px-4">
           <ul className="hidden items-center gap-4 lg:flex">
             <li className="cursor-pointer hover:text-gray-300">Discover</li>
             <li className="cursor-pointer hover:text-gray-300">Store</li>
             <li className="cursor-pointer hover:text-gray-300">Learn</li>
           </ul>
 
-          <div className="grow rounded-md bg-[#2A2731] py-2 pl-3 text-sm text-gray-500">
+          {/* mini navbar */}
+          <div className="md:block lg:hidden">
+            <i
+              className="fa-solid fa-ellipsis-vertical cursor-pointer"
+              onClick={() => setShowHeaders(!showHeaders)}
+            />
+            {showHeaders && (
+              <>
+                <div className="absolute top-full left-40 z-10 mt-2 w-48 rounded-md bg-[#3B3842] py-2 shadow-lg before:absolute before:-top-full before:bottom-full before:left-6 before:-z-1 before:border-r-10 before:border-b-15 before:border-l-10 before:border-[#3B3842] before:border-r-transparent before:border-l-transparent">
+                  <ul className="text-sm">
+                    <li className="cursor-pointer px-4 py-2 hover:bg-[#1f1c24]">
+                      Discover
+                    </li>
+                    <li className="cursor-pointer px-4 py-2 hover:bg-[#1f1c24]">
+                      Store
+                    </li>
+                    <li className="cursor-pointer px-4 py-2 hover:bg-[#1f1c24]">
+                      Learn
+                    </li>
+                  </ul>
+                </div>
+
+                <div
+                  className="fixed inset-0 z-5 bg-red-400/10" //TODO replace bg-red-400/10 with bg-transparent
+                  onClick={() => setShowHeaders(false)}
+                />
+              </>
+            )}
+          </div>
+
+          <div className="mx-8 grow rounded-md bg-[#2A2731] py-2 pl-3 text-sm text-gray-500 lg:mx-4">
             <i className="fa-solid fa-magnifying-glass mr-2"></i>
             Search
           </div>
