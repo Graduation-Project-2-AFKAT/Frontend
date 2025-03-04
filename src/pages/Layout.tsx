@@ -24,9 +24,9 @@ const RootLayout = () => {
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
       )}
       {/* //TODO Refactor responsive outlet */}
-      <div className="flex justify-center">
+      {/* <div className="flex justify-center">
         <Outlet />
-      </div>
+      </div> */}
     </div>
   );
 };

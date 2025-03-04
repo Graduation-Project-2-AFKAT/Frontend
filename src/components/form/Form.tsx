@@ -1,7 +1,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import Input from "./Input";
 import { IInputs } from "../../interfaces";
-import { useLocation } from "react-router";
 
 interface IProps {
   label: string;

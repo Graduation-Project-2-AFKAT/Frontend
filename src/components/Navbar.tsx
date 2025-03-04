@@ -13,34 +13,45 @@ const Navbar = ({ setShowSidebar, showHeaders, setShowHeaders }: IProps) => {
     location.pathname !== "/login" && location.pathname !== "/register";
 
   return (
-    <nav className="relative z-50 flex h-18 w-screen items-center justify-between gap-5 border-b-2 bg-[#121015] px-8 lg:px-10">
-      <div className="flex items-center gap-6 border lg:gap-0">
-        <i
-          className="fa-solid fa-bars lg:before:hidden"
-          onClick={() => setShowSidebar((prev) => !prev)}
-        ></i>
+    //TODO make underline white/100 when selected
+    <nav className="relative z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015] px-8">
+      <div className="relative">
+        <div className="flex items-center gap-6 border before:absolute before:-bottom-4 before:left-0 before:h-0 before:w-full before:bg-white before:duration-100 hover:before:h-0.5 lg:gap-0">
+          <i
+            className="fa-solid fa-bars lg:before:hidden"
+            onClick={() => setShowSidebar((prev) => !prev)}
+          ></i>
 
-        <a href="/" className="flex h-10 w-auto cursor-pointer gap-4">
-          <img
-            src="../../public/images/AFK.svg"
-            alt="AFK Buttons Logo"
-            className=""
-          />
+          <a href="/" className="flex h-10 w-auto cursor-pointer gap-4">
+            <img
+              src="../../public/images/AFK.svg"
+              alt="AFK Buttons Logo"
+              className=""
+            />
 
-          <img
-            src="../../public/images/logoOutlined.svg"
-            alt="AFKAT Logo"
-            className="hidden lg:inline"
-          />
-        </a>
+            <img
+              src="../../public/images/logoOutlined.svg"
+              alt="AFKAT Logo"
+              className="hidden lg:inline"
+            />
+          </a>
+        </div>
       </div>
 
       {authorized && (
-        <div className="hidden grow items-center gap-5 border px-10 md:flex lg:px-4">
+        <div className="hidden grow items-center gap-5 border-2 px-0 md:flex lg:mx-10">
           <ul className="hidden items-center gap-4 lg:flex">
-            <li className="cursor-pointer hover:text-gray-300">Discover</li>
-            <li className="cursor-pointer hover:text-gray-300">Store</li>
-            <li className="cursor-pointer hover:text-gray-300">Learn</li>
+            <li className="relative cursor-pointer before:absolute before:-bottom-6 before:left-0 before:h-0 before:w-full before:bg-white before:duration-100 hover:text-gray-300 hover:before:h-0.5">
+              Discover
+            </li>
+
+            <li className="relative cursor-pointer before:absolute before:-bottom-6 before:left-0 before:h-0 before:w-full before:bg-white before:duration-100 hover:text-gray-300 hover:before:h-0.5">
+              Store
+            </li>
+
+            <li className="relative cursor-pointer before:absolute before:-bottom-6 before:left-0 before:h-0 before:w-full before:bg-white before:duration-100 hover:text-gray-300 hover:before:h-0.5">
+              Learn
+            </li>
           </ul>
 
           {/* mini navbar */}
@@ -73,17 +84,17 @@ const Navbar = ({ setShowSidebar, showHeaders, setShowHeaders }: IProps) => {
             )}
           </div>
 
-          <div className="mx-8 grow rounded-md bg-[#2A2731] py-2 pl-3 text-sm text-gray-500 lg:mx-4">
-            <i className="fa-solid fa-magnifying-glass mr-2"></i>
+          <div className="mx-0 grow rounded-md bg-[#2A2731] py-2 pl-3 text-sm text-gray-500">
+            <i className="fa-solid fa-magnifying-glass mr-4"></i>
             Search
           </div>
         </div>
       )}
 
-      <div className="border">
+      <div className="border px-5">
         {authorized ? (
           <div className="flex items-center">
-            <ul className="hidden items-center gap-5 lg:flex">
+            <ul className="hidden items-center gap-2 lg:flex">
               <li>
                 <a
                   href="/login"
@@ -93,12 +104,12 @@ const Navbar = ({ setShowSidebar, showHeaders, setShowHeaders }: IProps) => {
                 </a>
               </li>
 
-              <li>
-                <i className="fa-solid fa-bell text-xl"></i>
+              <li className="relative">
+                <i className="fa-solid fa-bell w-10 text-center text-xl after:absolute after:-bottom-6 after:left-0 after:h-0 after:w-full after:bg-white after:duration-100 hover:after:h-0.5"></i>
               </li>
 
               <li>
-                <i className="fa-solid fa-circle-user text-3xl"></i>
+                <i className="fa-solid fa-circle-user relative w-10 text-center text-3xl after:absolute after:-bottom-5.5 after:left-0 after:h-0 after:w-full after:bg-white after:duration-100 hover:after:h-0.5"></i>
               </li>
             </ul>
 
