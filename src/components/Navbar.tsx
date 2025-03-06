@@ -2,24 +2,36 @@ import Divider from "./ui/Divider";
 import { useLocation } from "react-router";
 
 interface IProps {
+  showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
-  showHeaders: boolean;
-  setShowHeaders: React.Dispatch<React.SetStateAction<boolean>>;
+  showMiniNav: boolean;
+  setShowMiniNav: React.Dispatch<React.SetStateAction<boolean>>;
+  setExpandSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Navbar = ({ setShowSidebar, showHeaders, setShowHeaders }: IProps) => {
+const Navbar = ({
+  setShowSidebar,
+  showMiniNav,
+  setShowMiniNav,
+  setExpandSidebar,
+}: IProps) => {
   const location = useLocation();
   const authorized =
     location.pathname !== "/login" && location.pathname !== "/register";
+
+  const handleMenuClick = () => {
+    setShowSidebar((prev) => !prev);
+    setExpandSidebar((prev) => !prev);
+  };
 
   return (
     //TODO make underline white/100 when selected
     <nav className="relative z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015] px-8">
       <div className="relative">
-        <div className="flex items-center gap-6 border before:absolute before:-bottom-4 before:left-0 before:h-0 before:w-full before:bg-white before:duration-100 hover:before:h-0.5 lg:gap-0">
+        <div className="underlineNav flex items-center gap-6 border lg:gap-0">
           <i
             className="fa-solid fa-bars lg:before:hidden"
-            onClick={() => setShowSidebar((prev) => !prev)}
+            onClick={handleMenuClick}
           ></i>
 
           <a href="/" className="flex h-10 w-auto cursor-pointer gap-4">
@@ -41,15 +53,15 @@ const Navbar = ({ setShowSidebar, showHeaders, setShowHeaders }: IProps) => {
       {authorized && (
         <div className="hidden grow items-center gap-5 border-2 px-0 md:flex lg:mx-10">
           <ul className="hidden items-center gap-4 lg:flex">
-            <li className="relative cursor-pointer before:absolute before:-bottom-6 before:left-0 before:h-0 before:w-full before:bg-white before:duration-100 hover:text-gray-300 hover:before:h-0.5">
+            <li className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300">
               Discover
             </li>
 
-            <li className="relative cursor-pointer before:absolute before:-bottom-6 before:left-0 before:h-0 before:w-full before:bg-white before:duration-100 hover:text-gray-300 hover:before:h-0.5">
+            <li className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300">
               Store
             </li>
 
-            <li className="relative cursor-pointer before:absolute before:-bottom-6 before:left-0 before:h-0 before:w-full before:bg-white before:duration-100 hover:text-gray-300 hover:before:h-0.5">
+            <li className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300">
               Learn
             </li>
           </ul>
@@ -58,11 +70,11 @@ const Navbar = ({ setShowSidebar, showHeaders, setShowHeaders }: IProps) => {
           <div className="md:block lg:hidden">
             <i
               className="fa-solid fa-ellipsis-vertical cursor-pointer"
-              onClick={() => setShowHeaders(!showHeaders)}
+              onClick={() => setShowMiniNav(!showMiniNav)}
             />
-            {showHeaders && (
+            {showMiniNav && (
               <>
-                <div className="absolute top-full left-40 z-10 mt-2 w-48 rounded-md bg-[#3B3842] py-2 shadow-lg before:absolute before:-top-full before:bottom-full before:left-6 before:-z-1 before:border-r-10 before:border-b-15 before:border-l-10 before:border-[#3B3842] before:border-r-transparent before:border-l-transparent">
+                <div className="absolute top-full left-30.5 z-10 mt-2 w-48 rounded-md bg-[#3B3842] py-2 shadow-lg before:absolute before:-top-full before:bottom-full before:left-6 before:-z-1 before:border-r-10 before:border-b-15 before:border-l-10 before:border-[#3B3842] before:border-r-transparent before:border-l-transparent">
                   <ul className="text-sm">
                     <li className="cursor-pointer px-4 py-2 hover:bg-[#1f1c24]">
                       Discover
@@ -78,7 +90,7 @@ const Navbar = ({ setShowSidebar, showHeaders, setShowHeaders }: IProps) => {
 
                 <div
                   className="fixed inset-0 z-5 bg-red-400/10" //TODO replace bg-red-400/10 with bg-transparent
-                  onClick={() => setShowHeaders(false)}
+                  onClick={() => setShowMiniNav(false)}
                 />
               </>
             )}
@@ -105,11 +117,11 @@ const Navbar = ({ setShowSidebar, showHeaders, setShowHeaders }: IProps) => {
               </li>
 
               <li className="relative">
-                <i className="fa-solid fa-bell w-10 text-center text-xl after:absolute after:-bottom-6 after:left-0 after:h-0 after:w-full after:bg-white after:duration-100 hover:after:h-0.5"></i>
+                <i className="fa-solid fa-bell underlineNav w-10 text-center text-xl after:-bottom-6.5"></i>
               </li>
 
               <li>
-                <i className="fa-solid fa-circle-user relative w-10 text-center text-3xl after:absolute after:-bottom-5.5 after:left-0 after:h-0 after:w-full after:bg-white after:duration-100 hover:after:h-0.5"></i>
+                <i className="fa-solid fa-circle-user underlineNav relative w-10 text-center text-3xl after:-bottom-5.5"></i>
               </li>
             </ul>
 
@@ -131,50 +143,6 @@ const Navbar = ({ setShowSidebar, showHeaders, setShowHeaders }: IProps) => {
           </div>
         )}
       </div>
-
-      {/*         
-        {authorized ? (
-          <div>
-            <div className="">
-              <ul className="hidden items-center gap-5 md:flex">
-                <li>
-                  <a
-                    href="/login"
-                    className="rounded-lg border-2 p-2 text-sm text-nowrap"
-                  >
-                    Become a member
-                  </a>
-                </li>
-
-                <li>
-                  <i className="fa-solid fa-bell text-xl"></i>
-                </li>
-
-                <li>
-                  <i className="fa-solid fa-circle-user mr-6 text-3xl"></i>
-                </li>
-              </ul>
-
-              <ul className="md:hidden">xs</ul>
-            </div>
-          </div>
-        ) : (
-          <div className="px- 0 flex flex-1 justify-end text-sm">
-            <ul className="flex space-x-4">
-              <li>
-                <a href="/login" className="rounded-lg border-2 px-3 py-1">
-                  Login
-                </a>
-              </li>
-              <Divider />
-              <li>
-                <a href="/register">Register</a>
-              </li>
-            </ul>
-          </div>
-        )}
-      </div> 
-      */}
     </nav>
   );
 };

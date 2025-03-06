@@ -19,6 +19,55 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
+
+  .underlineNav {
+    position: relative;
+
+    &:after {
+      content: "";
+      position: absolute;
+      bottom: -16px;
+      left: 0;
+      height: 0;
+      width: 100%;
+      background-color: white;
+      transition-duration: 100ms;
+    }
+
+    &:hover:after {
+      height: 2px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .tooltips {
+      position: relative;
+
+      &:before {
+        position: absolute;
+        left: 125%;
+        border: 1px solid #aaa;
+        border-radius: 0.25rem;
+        background-color: #292929;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        letter-spacing: 0.05em;
+        opacity: 0;
+        transition-duration: 150ms;
+        font-weight: lighter;
+      }
+
+      &:hover:before {
+        opacity: 1;
+      }
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .tooltips:before {
+      display: none;
+    }
+  }
 }
 
 @theme {
@@ -52,9 +101,9 @@ a {
   /* color: var(--color-primary); */
 }
 
-a:hover {
+/* a:hover {
   opacity: 0.75;
-}
+} */
 
 body {
   min-width: 320px;

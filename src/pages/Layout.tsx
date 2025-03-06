@@ -8,20 +8,26 @@ const RootLayout = () => {
   const authorized =
     location.pathname !== "/login" && location.pathname !== "/register";
 
-  const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 768);
-  const [showHeaders, setShowHeaders] = useState(
-    window.innerWidth >= 768 && window.innerWidth < 1024,
-  );
+  const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 1024);
+  const [expandSidebar, setExpandSidebar] = useState(false);
+  const [showMiniNav, setShowMiniNav] = useState(false);
 
   return (
     <div className="w-screen">
       <Navbar
+        showSidebar={showSidebar}
         setShowSidebar={setShowSidebar}
-        setShowHeaders={setShowHeaders}
-        showHeaders={showHeaders}
+        showMiniNav={showMiniNav}
+        setShowMiniNav={setShowMiniNav}
+        setExpandSidebar={setExpandSidebar}
       />
       {authorized && (
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+        <Sidebar
+          showSidebar={showSidebar}
+          setShowSidebar={setShowSidebar}
+          expandSidebar={expandSidebar}
+          setExpandSidebar={setExpandSidebar}
+        />
       )}
       {/* //TODO Refactor responsive outlet */}
       {/* <div className="flex justify-center">
