@@ -26,11 +26,11 @@ const Navbar = ({
 
   return (
     //TODO make underline white/100 when selected
-    <nav className="relative z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015] px-8">
+    <nav className="fixed z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015] px-8">
       <div className="relative">
-        <div className="underlineNav flex items-center gap-6 border lg:gap-0">
+        <div className="underlineNav flex items-center gap-6 border md:gap-0">
           <i
-            className="fa-solid fa-bars lg:before:hidden"
+            className="fa-solid fa-bars md:before:hidden"
             onClick={handleMenuClick}
           ></i>
 
@@ -51,7 +51,7 @@ const Navbar = ({
       </div>
 
       {authorized && (
-        <div className="hidden grow items-center gap-5 border-2 px-0 md:flex lg:mx-10">
+        <div className="hidden grow items-center gap-5 border-2 px-0 md:mx-8 md:flex">
           <ul className="hidden items-center gap-4 lg:flex">
             <li className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300">
               Discover

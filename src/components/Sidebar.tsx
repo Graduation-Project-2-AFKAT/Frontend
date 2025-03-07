@@ -68,7 +68,7 @@ const Sidebar = ({
         });
       }
 
-      if (window.innerWidth <= 1023) {
+      if (window.innerWidth <= 767) {
         setShowSidebar(false);
       }
       return;
@@ -95,6 +95,7 @@ const Sidebar = ({
       <div
         className={`${expandSidebar ? "fixed" : "hidden"} inset-0 z-5 bg-black/50 duration-300`}
         onClick={() => {
+          //TODO create a function to handle this
           if (expandSidebar) {
             setExpandSidebar(false);
 
@@ -106,7 +107,7 @@ const Sidebar = ({
             });
           }
 
-          if (window.innerWidth <= 1023) {
+          if (window.innerWidth <= 767) {
             setExpandSidebar(false);
             setShowSidebar(false);
           }
@@ -114,16 +115,16 @@ const Sidebar = ({
       />
 
       <div
-        className={`absolute ${expandSidebar ? "lg:left-20" : "lg:-left-59.5"} ${showSidebar ? "left-20" : "-left-80"} border-r-primary top-0 z-5 h-full w-80 border-r-2 bg-[#2A2731] py-15 pt-30 pl-10 backdrop-blur-[2px] duration-300`}
+        className={`absolute ${expandSidebar ? "md:left-20" : "md:-left-59.5"} ${showSidebar ? "left-20" : "-left-80"} border-r-primary top-0 z-5 h-full w-80 border-r-2 bg-[#2A2731] py-15 pt-30 pl-10 backdrop-blur-[2px] duration-300`}
       >
         <h1>Hi {selectedTab}</h1>
       </div>
 
       <aside
-        className={`group fixed top-0 ${showSidebar ? "-left-0" : "-left-22"} z-10 flex h-screen flex-col items-center justify-between bg-[#121015] px-0 py-20 text-2xl duration-300 lg:pb-8`}
+        className={`group fixed top-0 ${showSidebar ? "-left-0" : "-left-22"} z-10 flex h-screen flex-col items-center justify-between bg-[#121015] px-0 py-20 text-2xl duration-300 md:pb-8`}
       >
         <div
-          className={`lg:space-y- relative space-y-5 rounded-lg p-4 whitespace-nowrap duration-300 ease-in`}
+          className={`md:space-y- relative space-y-5 rounded-lg p-4 whitespace-nowrap duration-300 ease-in`}
         >
           <div
             className="group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:content-['Home']"

@@ -5,7 +5,7 @@ interface IProps {
 const Post = ({ username }: IProps) => {
   return (
     <li
-      className="border-primary grid h-full rounded-lg border-2"
+      className="outline-primary grid aspect-square bg-[#2A2731] shadow-md drop-shadow-md duration-50 md:rounded-lg lg:hover:outline-2 lg:hover:outline-dashed"
       style={{
         gridTemplate: "1fr 1fr 1fr / 1fr 1fr 1fr",
       }}

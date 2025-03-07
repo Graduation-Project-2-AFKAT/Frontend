@@ -1,72 +1,28 @@
 interface IProps {
   title: string;
   className?: string;
-  height?: string;
+  itemsCount?: number;
 }
 
-const Board = ({ title = "Default Title", className = "", height }: IProps) => {
+const Board = ({
+  title = "Default Title",
+  className = "",
+  itemsCount = 4,
+}: IProps) => {
   return (
     <aside
-      className={`${height} border-primary sticky top-6 flex flex-col space-y-14 rounded-lg border-2 p-8`}
+      className={`${className} sticky top-0 hidden flex-col space-y-14 rounded-lg bg-[#2A2731] p-8 pb-10 shadow-md drop-shadow-md lg:flex`}
     >
       <div className="text-3xl underline underline-offset-[15px]">{title}</div>
 
-      <div
-        className={`${className} scrollbar snap-y snap-mandatory overflow-auto scroll-smooth rounded-b-sm p-1 shadow-[inset_0_-20px_20px_-20px_rgba(0,0,0,0.4)]`}
-      >
+      <div className={`px-4`}>
         <ul className="list-none space-y-10">
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 1
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 2
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 3
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 4
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 5
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 5
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 5
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 5
-          </li>{" "}
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 5
-          </li>{" "}
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 5
-          </li>{" "}
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 5
-          </li>{" "}
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 5
-          </li>{" "}
-          <li className="flex items-center gap-2">
-            <span className="h-16 w-16 snap-start bg-white"></span>
-            item 5
-          </li>
+          {Array.from({ length: itemsCount }).map((_, index) => (
+            <li key={index} className="flex items-center gap-2">
+              <span className="h-16 w-16 bg-white"></span>
+              item {index + 1}
+            </li>
+          ))}
         </ul>
       </div>
     </aside>

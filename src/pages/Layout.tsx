@@ -8,12 +8,12 @@ const RootLayout = () => {
   const authorized =
     location.pathname !== "/login" && location.pathname !== "/register";
 
-  const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 1024);
+  const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 768);
   const [expandSidebar, setExpandSidebar] = useState(false);
   const [showMiniNav, setShowMiniNav] = useState(false);
 
   return (
-    <div className="w-screen">
+    <div>
       <Navbar
         showSidebar={showSidebar}
         setShowSidebar={setShowSidebar}
@@ -21,6 +21,7 @@ const RootLayout = () => {
         setShowMiniNav={setShowMiniNav}
         setExpandSidebar={setExpandSidebar}
       />
+
       {authorized && (
         <Sidebar
           showSidebar={showSidebar}
@@ -29,10 +30,11 @@ const RootLayout = () => {
           setExpandSidebar={setExpandSidebar}
         />
       )}
+
       {/* //TODO Refactor responsive outlet */}
-      {/* <div className="flex justify-center">
+      <div className="flex h-screen justify-center pt-18">
         <Outlet />
-      </div> */}
+      </div>
     </div>
   );
 };
