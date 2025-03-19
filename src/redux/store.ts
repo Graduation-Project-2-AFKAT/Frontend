@@ -1,8 +1,21 @@
 import { configureStore } from "@reduxjs/toolkit";
-import userReducer from "./modules/users";
+import rootReducer from "./modules";
+// import { setAuthToken } from "../utils";
 
-export default configureStore({
-  reducer: {
-    user: userReducer,
-  },
+const store = configureStore({
+  reducer: rootReducer,
 });
+
+// let currentState = store.getState();
+
+// store.subscribe(() => {
+//   const previousState = currentState;
+//   currentState = store.getState();
+
+//   if (previousState.users.token !== currentState.users.token) {
+//     const token = currentState.users.token;
+//     setAuthToken(token);
+//   }
+// });
+
+export default store;

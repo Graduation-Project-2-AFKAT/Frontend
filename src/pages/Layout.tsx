@@ -32,7 +32,7 @@ const RootLayout = () => {
       )}
 
       {/* //TODO Refactor responsive outlet */}
-      <div className="flex h-screen justify-center pt-18">
+      <div className="flex h-screen justify-center pt-18 md:ml-20">
         <Outlet />
       </div>
     </div>

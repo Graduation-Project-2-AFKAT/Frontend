@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
-import { api } from "../../utils/index.ts";
+import { api, setAuthToken } from "../../utils/index.ts";
+import { showAlert } from "./Alerts.ts";
 
 export const loadUser = createAsyncThunk("user/load", async (id) => {
   const res = await api.get(`http://localhost:3000/users/10`);
@@ -22,6 +23,7 @@ export const userRegister = createAsyncThunk(
 
       return res.data;
     } catch (error: any) {
+      dispatch(showAlert({ msg: error.response.data, type: "error" }));
       return rejectWithValue(error.response.data); //TODO: errors should be in Error redux module
     }
   },
@@ -29,16 +31,22 @@ export const userRegister = createAsyncThunk(
 
 export const userLogin = createAsyncThunk(
   "user/login",
-  async (userData, { dispatch }) => {
-    const res = await api.post("http://localhost:3000/users/login", userData);
+  async (userData, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await api.post("http://localhost:3000/users/login", userData);
 
-    await dispatch(loadUser());
+      await dispatch(loadUser());
 
-    return res.data;
+      return res.data;
+    } catch (error: any) {
+      dispatch(showAlert({ msg: error.response.data, type: "error" }));
+      return rejectWithValue(error.response.data); //TODO: errors should be in Error redux module
+    }
   },
 );
 
-const handleLogout = (state: typeof initialState) => {
+const resetAuthState = (state: typeof initialState) => {
+  setAuthToken();
   state.user = null;
   state.isAuth = false;
   state.loading = false;
@@ -62,18 +70,9 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    logout: handleLogout,
+    logout: resetAuthState,
   },
   extraReducers: (builder) => {
-    // builder.addCase(userRegister.rejected, (state, action) => {
-    //   handleLogout(state);
-    // });
-
-    // builder.addCase(userLogin.rejected, (state, action) => {
-    //   console.log(action.payload);
-    //   handleLogout(state);
-    // });
-
     builder.addCase(loadUser.fulfilled, (state, action) => {
       state.isAuth = true;
       state.loading = false;
@@ -83,10 +82,11 @@ export const userSlice = createSlice({
     builder.addMatcher(
       isAnyOf(userLogin.fulfilled, userRegister.fulfilled),
       (state, action) => {
-        state.token = {
-          access: action.payload.access,
-          refresh: action.payload.refresh,
-        };
+        setAuthToken(action.payload.token);
+        // state.token = {
+        //   access: action.payload.token.access,
+        //   refresh: action.payload.token.refresh,
+        // };
         state.isAuth = true;
         state.loading = false;
       },
@@ -95,13 +95,7 @@ export const userSlice = createSlice({
     builder.addMatcher(
       isAnyOf(userLogin.rejected, userRegister.rejected, loadUser.rejected),
       (state) => {
-        state.token = {
-          access: null,
-          refresh: null,
-        };
-        state.isAuth = false;
-        state.loading = false;
-        state.user = null;
+        resetAuthState(state);
       },
     );
 

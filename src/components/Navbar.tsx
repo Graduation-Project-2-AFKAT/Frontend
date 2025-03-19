@@ -1,5 +1,7 @@
+import { useState } from "react";
 import Divider from "./ui/Divider";
-import { useLocation } from "react-router";
+import { NavLink, useLocation } from "react-router";
+import { LogOut } from "lucide-react";
 
 interface IProps {
   showSidebar: boolean;
@@ -19,6 +21,8 @@ const Navbar = ({
   const authorized =
     location.pathname !== "/login" && location.pathname !== "/register";
 
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
   const handleMenuClick = () => {
     setShowSidebar((prev) => !prev);
     setExpandSidebar((prev) => !prev);
@@ -27,14 +31,28 @@ const Navbar = ({
   return (
     //TODO make underline white/100 when selected
     <nav className="fixed z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015] px-8">
+      <div // Click outside any opened menu to close it
+        className={`${showMiniNav || showUserMenu ? "fixed" : "hidden"} inset-0 z-5 bg-red-400/20`} //TODO replace bg-red-400/10 with bg-transparent
+        onClick={() => {
+          if (showMiniNav) {
+            setShowMiniNav(false);
+          } else if (showUserMenu) {
+            setShowUserMenu(false);
+          }
+        }}
+      />
+
       <div className="relative">
-        <div className="underlineNav flex items-center gap-6 border md:gap-0">
+        <div className="flex items-center gap-6 border md:gap-0">
           <i
             className="fa-solid fa-bars md:before:hidden"
             onClick={handleMenuClick}
           ></i>
 
-          <a href="/" className="flex h-10 w-auto cursor-pointer gap-4">
+          <NavLink
+            to="/"
+            className="underlineNav flex h-10 w-auto cursor-pointer gap-4 after:-left-full after:scale-x-325"
+          >
             <img
               src="../../public/images/AFK.svg"
               alt="AFK Buttons Logo"
@@ -46,7 +64,7 @@ const Navbar = ({
               alt="AFKAT Logo"
               className="hidden lg:inline"
             />
-          </a>
+          </NavLink>
         </div>
       </div>
 
@@ -87,11 +105,6 @@ const Navbar = ({
                     </li>
                   </ul>
                 </div>
-
-                <div
-                  className="fixed inset-0 z-5 bg-red-400/10" //TODO replace bg-red-400/10 with bg-transparent
-                  onClick={() => setShowMiniNav(false)}
-                />
               </>
             )}
           </div>
@@ -108,12 +121,12 @@ const Navbar = ({
           <div className="flex items-center">
             <ul className="hidden items-center gap-2 lg:flex">
               <li>
-                <a
-                  href="/login"
+                <NavLink
+                  to="/login"
                   className="rounded-lg border-2 p-2 text-sm text-nowrap"
                 >
                   Become a member
-                </a>
+                </NavLink>
               </li>
 
               <li className="relative">
@@ -121,23 +134,97 @@ const Navbar = ({
               </li>
 
               <li>
-                <i className="fa-solid fa-circle-user underlineNav relative w-10 text-center text-3xl after:-bottom-5.5"></i>
+                <i
+                  className="fa-solid fa-circle-user underlineNav relative w-10 text-center text-3xl after:-bottom-5.5"
+                  onClick={() => {
+                    return setShowUserMenu((prev) => !prev);
+                  }}
+                ></i>
               </li>
             </ul>
 
-            <i className="fa-solid fa-circle-user hidden text-3xl lg:before:hidden"></i>
+            <i
+              className="fa-solid fa-circle-user hidden pr-1 text-3xl lg:pr-0 lg:before:hidden"
+              onClick={() => {
+                return setShowUserMenu((prev) => !prev);
+              }}
+            ></i>
+
+            {/* user menu */}
+            <div
+              className={`${showUserMenu ? "opacity-100" : "pointer-events-none opacity-0 duration-200"} absolute top-22 right-10 z-5 aspect-auto w-60 rounded-lg border border-white/50 bg-black opacity-0 drop-shadow-2xl before:absolute before:-top-4.5 before:right-6 before:h-0 before:w-0 before:border-8 before:border-b-10 before:border-transparent before:border-b-white/50`}
+            >
+              <div className="px-4 pt-4">
+                <p className="text-xl font-bold">Username</p>
+                <small className="font-medium">@username</small>
+
+                <hr className="mt-4 border-white/50" />
+              </div>
+
+              <div>
+                <NavLink
+                  to="/profile"
+                  className="block px-4 py-2.5 hover:bg-white/10"
+                  onClick={() => setShowUserMenu(false)}
+                >
+                  Profile
+                </NavLink>
+                <NavLink
+                  to="/settings"
+                  className="block px-4 py-2.5 hover:bg-white/10"
+                  onClick={() => setShowUserMenu(false)}
+                >
+                  Games
+                </NavLink>
+                <NavLink
+                  to="/settings"
+                  className="block px-4 py-2.5 hover:bg-white/10"
+                  onClick={() => setShowUserMenu(false)}
+                >
+                  Settings
+                </NavLink>
+                <div className="flex items-center justify-between px-4 py-2.5 hover:bg-white/10">
+                  Dark Theme <small className="text-gray-500">on</small>
+                </div>
+
+                <div className="px-4">
+                  <small className="bg-primary my-3 flex h-9 w-full items-center justify-center rounded-md font-medium tracking-wider">
+                    Invite a friend
+                  </small>
+
+                  <hr className="mt-0 border-white/50" />
+                </div>
+
+                <NavLink
+                  to="/logout"
+                  className="flex px-3 py-4 hover:bg-white/10"
+                  onClick={() => setShowUserMenu(false)}
+                >
+                  <LogOut className="mr-2 scale-[-0.7] text-red-400" />
+                  Logout
+                </NavLink>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="flex flex-1 justify-end text-sm">
             <ul className="flex items-center space-x-4 text-sm">
               <li>
-                <a href="/login" className="rounded-lg border-2 px-3 py-1">
+                <NavLink
+                  to="/login"
+                  className={`underlineNav rounded-lg border-2 px-3 py-1 duration-150 after:-bottom-5.5`}
+                >
                   Login
-                </a>
+                </NavLink>
               </li>
               <Divider className="py-2.5" />
               <li>
-                <a href="/register">Register</a>
+                <NavLink
+                  to="/register"
+                  className={`underlineNav duration-150 after:-bottom-6.5`}
+                >
+                  Register
+                </NavLink>
               </li>
             </ul>
           </div>

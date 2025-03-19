@@ -6,14 +6,15 @@ const Home = () => {
   return (
     <main className="grid w-full overflow-y-auto border pt-10 lg:gap-10 lg:px-10 lg:pl-20">
       {/*//! You think this is a useless line right ? ...Comment it and see how important it is ;) */}
-      <div className="hidden lg:block"></div>
+      {/* //* Nah, you can comment it now c: */}
+      {/* <div className="hidden lg:block"></div> */}
 
       <Board
         title="Suggestion"
         className="h-fit border lg:order-1 xl:order-0"
       />
 
-      <section className="space-y-6 scroll-smooth border md:mx-auto md:w-[75%] md:pl-21 lg:w-full lg:px-0">
+      <section className="space-y-6 scroll-smooth border md:mx-auto md:w-[75%] lg:w-full lg:px-0">
         <div className="lg:border-primary flex h-25 items-center justify-between bg-[#2A2731] px-8 shadow-md drop-shadow-md md:rounded-lg">
           <i className="fa-solid fa-circle-user mr-6 text-4xl"></i>
           {/* <input
