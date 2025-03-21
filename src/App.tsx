@@ -8,6 +8,7 @@ import ErrorHandler from "./components/errors/ErrorHanbdler";
 import PageNotFound from "./pages/PageNotFound";
 import "./App.css";
 import Profile from "./pages/Profile";
+import { ToastContainer, ToastPosition } from "react-toastify";
 
 const userData = {
   email: "joe@joe.com",
@@ -16,8 +17,21 @@ const userData = {
 };
 
 function App() {
+  const options = {
+    theme: "dark",
+    autoClose: 2500,
+    position: "bottom-right" as ToastPosition,
+    newestOnTop: false,
+    closeOnClick: true,
+    pauseonfocusLoss: true,
+    draggable: true,
+    pauseOnHover: true,
+    hideProgressBar: false,
+  };
+
   return (
     <div>
+      <ToastContainer {...options} style={{ marginRight: "2rem" }} />
       <Routes>
         <Route
           path="/"
