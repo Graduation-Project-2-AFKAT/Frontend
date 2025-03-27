@@ -76,12 +76,27 @@
 
   .grid {
     grid-template-rows: 1fr;
+
+    @media (min-width: 768px) {
+      &.grid-games {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
     @media (min-width: 1024px) {
       grid-template-columns: 2fr 1fr;
+
+      &.grid-games {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
     }
 
     @media (min-width: 1280px) {
       grid-template-columns: 1fr 2fr 1fr;
+
+      &.grid-games {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
     }
   }
 }

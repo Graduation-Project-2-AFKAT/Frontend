@@ -17,7 +17,7 @@ const GameJams = () => {
 
       <div className="flex flex-col space-y-10 py-10 text-center font-bold lg:px-10">
         <span className="text-3xl">Browse Games</span>
-        <ul className="flex items-center justify-between gap-x-10">
+        <ul className="flex flex-wrap items-center justify-center gap-10 px-5">
           {/* //TODO make selected "text-primary" */}
           <li className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer">
             Action
@@ -49,7 +49,7 @@ const GameJams = () => {
         </ul>
       </div>
 
-      <section className="col-span-2 space-y-6 scroll-smooth md:mx-auto md:w-[75%] lg:w-full lg:px-10">
+      <section className="col-span-2 space-y-6 scroll-smooth md:mx-auto md:w-[85%] lg:w-full lg:px-10">
         <div className="lg:border-primary*-* flex flex-col space-y-10 border shadow-md drop-shadow-md md:rounded-lg">
           {/* <Carousel
             arrows={true}
@@ -113,10 +113,12 @@ const GameJams = () => {
         />
 
         <ul
-          className="mb-25 grid space-y-6"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-          }}
+          className="grid-games mb-25 grid space-y-6 px-10 md:px-0"
+          style={
+            {
+              // gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+            }
+          }
         >
           <GameCard username="user1" />
           <GameCard username="user2" />
