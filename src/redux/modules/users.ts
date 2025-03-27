@@ -1,11 +1,16 @@
 import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
 import { api, setAuthToken } from "../../utils/index.ts";
 import { showAlert } from "./Alerts.ts";
+import { AxiosError } from "axios";
+import { createRandomUser } from "../../Mocks/fakeUsers.ts";
 
-export const loadUser = createAsyncThunk("user/load", async (id) => {
-  const res = await api.get(`http://localhost:3000/users/10`);
+const userData = createRandomUser();
+console.log(userData);
 
-  return res.data;
+export const loadUser = createAsyncThunk("user/load", async () => {
+  // const res = await api.get(`http://localhost:3000/users/10`);
+
+  return userData;
 });
 
 export const userRegister = createAsyncThunk(
@@ -13,18 +18,22 @@ export const userRegister = createAsyncThunk(
   async (userData, { dispatch, rejectWithValue }) => {
     //https://ec62-2a01-9700-4200-4700-33de-9eba-4faa-1df2.ngrok-free.app/dra/reg/
     try {
-      const res = await api.post(
-        "http://localhost:3000/users/register",
-        userData,
-      );
+      // const res = await api.post(
+      //   "http://localhost:3000/users/register",
+      //   userData,
+      // );
 
       // After successful registration, load the user data
       await dispatch(loadUser());
+      await dispatch(
+        showAlert({ msg: "Registration successful", type: "success" }),
+      );
 
-      return res.data;
-    } catch (error: any) {
-      dispatch(showAlert({ msg: error.response.data, type: "error" }));
-      return rejectWithValue(error.response.data); //TODO: errors should be in Error redux module
+      return userData;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data); //TODO: errors should be in Error redux module
     }
   },
 );
@@ -38,9 +47,10 @@ export const userLogin = createAsyncThunk(
       await dispatch(loadUser());
 
       return res.data;
-    } catch (error: any) {
-      dispatch(showAlert({ msg: error.response.data, type: "error" }));
-      return rejectWithValue(error.response.data); //TODO: errors should be in Error redux module
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data); //TODO: errors should be in Error redux module
     }
   },
 );
@@ -58,16 +68,21 @@ const resetAuthState = (state: typeof initialState) => {
 
 const initialState = {
   token: {
-    access: null,
-    refresh: null,
+    access: null as string | null,
+    refresh: null as string | null,
   }, //localStorage.getItem("token")
-  user: null,
+  user: null as {
+    username: string;
+    email: string;
+    avatar: string;
+    token: { access: string; refresh: string };
+  } | null,
   isAuth: false,
   loading: false,
 };
 
 export const userSlice = createSlice({
-  name: "user",
+  name: "users",
   initialState,
   reducers: {
     logout: resetAuthState,
@@ -81,8 +96,13 @@ export const userSlice = createSlice({
 
     builder.addMatcher(
       isAnyOf(userLogin.fulfilled, userRegister.fulfilled),
-      (state, action) => {
-        setAuthToken(action.payload.token);
+      (state) => {
+        setAuthToken(userData.token);
+        state.token = {
+          access: userData.token.access,
+          refresh: userData.token.refresh,
+        };
+        // setAuthToken(action.payload.token);
         // state.token = {
         //   access: action.payload.token.access,
         //   refresh: action.payload.token.refresh,

@@ -6,6 +6,11 @@ import getValidationSchema from "./validationSchema";
 import useYupValidationResolver from "./userYupValidationResolver";
 import { useSelector, useDispatch } from "react-redux";
 import { userLogin, userRegister } from "../../redux/modules/users";
+import { IUser } from "../../interfaces";
+
+interface RootState {
+  users: IUser;
+}
 
 interface IProps {
   label: string;
@@ -15,10 +20,9 @@ interface IProps {
 const Form = ({ label, redirect }: IProps) => {
   const location = useLocation();
 
-  // const user = useSelector(
-  //   (state: { username: string; email: string; password: string }) => state,
-  // );
+  const user = useSelector((state: RootState) => state.users);
   const dispatch = useDispatch();
+
   const resolver = useYupValidationResolver(
     getValidationSchema(location.pathname),
   );

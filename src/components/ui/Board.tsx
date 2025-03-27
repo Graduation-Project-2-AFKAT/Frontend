@@ -11,7 +11,7 @@ const Board = ({
 }: IProps) => {
   return (
     <aside
-      className={`${className} sticky top-0 hidden flex-col space-y-14 rounded-lg bg-[#2A2731] p-8 pb-10 shadow-md drop-shadow-md lg:flex`}
+      className={`sticky top-0 hidden flex-col space-y-14 rounded-lg bg-[#2A2731] p-8 pb-10 shadow-md drop-shadow-md lg:flex ${className}`}
     >
       <div className="text-3xl underline underline-offset-[15px]">{title}</div>
 

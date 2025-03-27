@@ -53,11 +53,7 @@ const Navbar = ({
             to="/"
             className="underlineNav flex h-10 w-auto cursor-pointer gap-4 after:-left-full after:scale-x-325"
           >
-            <img
-              src="../../public/images/AFK.svg"
-              alt="AFK Buttons Logo"
-              className=""
-            />
+            <img src="/images/AFK.svg" alt="AFK Buttons Logo" className="" />
 
             <img
               src="../../public/images/logoOutlined.svg"
@@ -109,9 +105,13 @@ const Navbar = ({
             )}
           </div>
 
-          <div className="mx-0 grow rounded-md bg-[#2A2731] py-2 pl-3 text-sm text-gray-500">
+          <div className="mx-0 flex grow items-center rounded-md bg-[#2A2731] py-2 pl-3 text-sm">
             <i className="fa-solid fa-magnifying-glass mr-4"></i>
-            Search
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-full outline-0"
+            />
           </div>
         </div>
       )}
@@ -130,12 +130,12 @@ const Navbar = ({
               </li>
 
               <li className="relative">
-                <i className="fa-solid fa-bell underlineNav w-10 text-center text-xl after:-bottom-6.5"></i>
+                <i className="fa-solid fa-bell underlineNav w-10 cursor-pointer text-center text-xl after:-bottom-6.5"></i>
               </li>
 
               <li>
                 <i
-                  className="fa-solid fa-circle-user underlineNav relative w-10 text-center text-3xl after:-bottom-5.5"
+                  className="fa-solid fa-circle-user underlineNav relative w-10 cursor-pointer text-center text-3xl after:-bottom-5.5"
                   onClick={() => {
                     return setShowUserMenu((prev) => !prev);
                   }}
@@ -144,7 +144,7 @@ const Navbar = ({
             </ul>
 
             <i
-              className="fa-solid fa-circle-user hidden pr-1 text-3xl lg:pr-0 lg:before:hidden"
+              className="fa-solid fa-circle-user hidden cursor-pointer pr-1 text-3xl lg:pr-0 lg:before:hidden"
               onClick={() => {
                 return setShowUserMenu((prev) => !prev);
               }}

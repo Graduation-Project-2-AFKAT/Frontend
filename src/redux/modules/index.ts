@@ -3,6 +3,6 @@ import alertReducer from "./Alerts";
 import userReducer from "./users";
 
 export default combineReducers({
-  alert: alertReducer,
-  user: userReducer,
+  alerts: alertReducer,
+  users: userReducer,
 });

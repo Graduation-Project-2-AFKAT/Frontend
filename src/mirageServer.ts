@@ -1,9 +1,14 @@
 import { createServer, Model } from "miragejs";
 
+interface User {
+  name: string;
+  email: string;
+}
+
 export function makeServer() {
   const server = createServer({
     models: {
-      user: Model,
+      user: Model.extend<User>({}),
     },
 
     seeds(server) {

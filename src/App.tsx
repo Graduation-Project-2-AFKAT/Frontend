@@ -6,8 +6,9 @@ import Register from "./pages/auth/Register";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import ErrorHandler from "./components/errors/ErrorHanbdler";
 import PageNotFound from "./pages/PageNotFound";
-import "./App.css";
 import Profile from "./pages/Profile";
+import Games from "./pages/Games";
+import "./App.css";
 import { ToastContainer, ToastPosition } from "react-toastify";
 
 const userData = {
@@ -62,6 +63,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/games" element={<Games />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>

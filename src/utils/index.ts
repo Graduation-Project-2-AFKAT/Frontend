@@ -9,15 +9,11 @@ export const api = axios.create({
   },
 });
 
-export const setAuthToken = (token?: {
-  accessToken: string;
-  refreshToken: string;
-}) => {
+export const setAuthToken = (token?: { access: string; refresh: string }) => {
   if (token) {
-    api.defaults.headers.common["Authorization"] =
-      `Bearer ${token.accessToken}`;
-    localStorage.setItem("access_token", token.accessToken);
-    localStorage.setItem("refresh_token", token.refreshToken);
+    api.defaults.headers.common["Authorization"] = `Bearer ${token.access}`;
+    localStorage.setItem("access_token", token.access);
+    localStorage.setItem("refresh_token", token.refresh);
   } else {
     delete api.defaults.headers.common["Authorization"];
     localStorage.removeItem("access_token");
@@ -52,3 +48,13 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export const joinName = (name: string | undefined) => {
+  if (!name) {
+    return;
+  }
+
+  const joinedName = name?.replace(/[^a-zA-Z0-9#]/g, "");
+
+  return joinedName;
+};

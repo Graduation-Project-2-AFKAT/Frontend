@@ -1,53 +1,18 @@
 import { EllipsisVertical, MessageSquare, Trophy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { makeServer } from "../mirageServer";
+import { IUser } from "../interfaces";
 import { toast } from "react-toastify";
+import { joinName } from "../utils";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import Tabs from "../components/Tabs";
 
-interface IUser {
-  id?: number;
-  name: string;
-  email: string;
-  image?: string;
-}
-
-interface IProps {
-  user: IUser;
-}
-
-const Profile = ({ user }: IProps) => {
+const Profile = () => {
   const [profileSelectedTab, setProfileSelectedTab] = useState("posts");
-  const [usersData, setUsersData] = useState<IUser[]>([
-    {
-      name: "",
-      email: "",
-    },
-  ]);
+  const [userData, setUserData] = useState<IUser[]>([]);
+  const users = useSelector((state: RootState) => state.users);
 
-  const iRef = useRef<HTMLDivElement>(null);
-
-  function handleTabClick(tab: string) {
-    setProfileSelectedTab(tab);
-  }
-
-  useEffect(() => {
-    const server = makeServer();
-
-    fetch("/api/users")
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response was not ok");
-        const contentType = res.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("Received non-JSON response");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setUsersData(data.users);
-      })
-      .catch((error) => console.error("Error fetching users:", error));
-
-    return () => server.shutdown();
-  }, []);
+  const iRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const MSection = document.getElementById("MSection");
@@ -78,6 +43,7 @@ const Profile = ({ user }: IProps) => {
           }
         } else {
           if (currentRef) {
+            console.log(currentRef);
             // Reset currentRef styles
             currentRef.style.opacity = "0";
             currentRef.style.transform = isDesktop ? "translateY(0)" : "";
@@ -121,11 +87,17 @@ const Profile = ({ user }: IProps) => {
       {/* Header */}
       <header className="bgs-[#201D27] w-full lg:pl-20">
         <div className="hidden items-center gap-x-5 lg:flex">
-          <i className="fa-solid fa-circle-user relative top-8 text-9xl" />
+          {/* <i className="fa-solid fa-circle-user relative top-8 text-9xl" /> */}
+          <img
+            src={users.user?.avatar}
+            alt="profile avatar"
+            className="aspect-square w-20 rounded-full border object-cover"
+          />
+
           <div className="flex flex-col pt-10">
             <div className="text-3xl font-bold">
-              {usersData[0].name}&nbsp; | &nbsp;
-              <small>{user.email}</small>
+              @{users.user?.username}&nbsp; | &nbsp;
+              <small>{users.user?.email}</small>
             </div>
 
             <div className="my-2 flex items-center gap-x-2 text-base">
@@ -142,7 +114,12 @@ const Profile = ({ user }: IProps) => {
         </div>
 
         <div className="flex flex-col items-center space-y-5 pt-10 pb-5 lg:hidden">
-          <i className="fa-solid fa-circle-user text-7xl" />
+          {/* <i className="fa-solid fa-circle-user text-7xl" /> */}
+          <img
+            src={users.user?.avatar}
+            alt="profile avatar"
+            className="aspect-square w-20 rounded-full border object-cover"
+          />
 
           <div className="space-y- flex flex-col items-center">
             <ul className="grid grid-cols-2 gap-x-2 pb-2 text-center text-xs">
@@ -150,8 +127,8 @@ const Profile = ({ user }: IProps) => {
               <li className="bg-primary rounded px-1 py-1 font-bold">Online</li>
             </ul>
 
-            <small className="font-bold">@{usersData[0].name}</small>
-            <small className="font-light">{usersData[0].name}</small>
+            <small className="font-bold">@{users.user?.username}</small>
+            <small className="font-light">{users.user?.email}</small>
           </div>
 
           <div className="grid w-full grid-cols-3 text-center">
@@ -217,12 +194,19 @@ const Profile = ({ user }: IProps) => {
           <div className="flex w-full flex-col gap-x-4 px-5 text-center">
             <div
               ref={window.innerWidth >= 1280 ? iRef : undefined}
-              className="relative -top-26 col-span-3 flex translate-y-0 flex-col items-center opacity-0"
+              className="duration-150*-* relative -top-26 col-span-3 flex translate-y-0 flex-col items-center opacity-0"
             >
-              <i
+              {/* <i
                 ref={window.innerWidth >= 1280 ? iRef : undefined}
                 className="fa-solid fa-circle-user absolute -top-28 text-8xl"
+              /> */}
+              <img
+                src={users.user?.avatar}
+                alt="profile avatar"
+                ref={window.innerWidth >= 1280 ? iRef : undefined}
+                className="absolute -top-28 aspect-square w-20 rounded-full border object-cover"
               />
+
               <ul className="grid grid-cols-2 gap-x-2 text-xs">
                 <li className="bg-primary rounded px-1 py-1 font-bold">GMR</li>
                 <li className="bg-primary rounded px-1 py-1 font-bold">
@@ -264,9 +248,17 @@ const Profile = ({ user }: IProps) => {
         {/* Mid Section */}
         <div className="h-screen" id="MSection">
           <div className="flex items-center space-x-5 bg-white/5 px-5 py-5 shadow-md drop-shadow-md md:rounded-xl">
-            <i className="fa-solid fa-circle-user relative w-10 text-5xl" />
+            {/* <i className="fa-solid fa-circle-user relative w-10 text-5xl" /> */}
+            <img
+              src={users.user?.avatar}
+              alt="profile avatar"
+              className="aspect-square w-20 rounded-full border object-cover"
+            />
+
             <div className="flex w-full -translate-y-1 flex-col space-y-2">
-              <small className="text-xs">Hey @username</small>
+              <small className="text-xs">
+                Hey @{joinName(users.user?.username)}
+              </small>
               <input
                 type="text"
                 className="w-full rounded border px-4 py-2 text-sm"
@@ -275,76 +267,13 @@ const Profile = ({ user }: IProps) => {
             </div>
           </div>
 
-          <ul className="relative mt-10 flex items-center space-x-3 px-6 text-sm font-bold before:absolute before:bottom-0 before:left-0 before:w-full before:border-b before:border-white/25">
-            <li
-              className={`relative z-1 cursor-pointer rounded-t-lg border border-white/25 ${
-                profileSelectedTab === "posts"
-                  ? "border-b-transparent bg-[#23202A]"
-                  : ""
-              } px-4 py-2`}
-              onClick={() => handleTabClick("posts")}
-            >
-              <span
-                className={`${
-                  profileSelectedTab === "posts" ? "text-primary" : ""
-                } duration-150`}
-              >
-                Posts
-              </span>
-            </li>
-            <li
-              className={`relativetop-2 z-1 cursor-pointer rounded-t-lg border border-white/25 ${
-                profileSelectedTab === "likes"
-                  ? "border-b-transparent bg-[#23202A]"
-                  : ""
-              } px-4 py-2`}
-              onClick={() => handleTabClick("likes")}
-            >
-              <span
-                className={`${
-                  profileSelectedTab === "likes" ? "text-primary" : ""
-                } duration-150`}
-              >
-                Likes
-              </span>
-            </li>
-            <li
-              className={`relativetop-2 z-1 cursor-pointer rounded-t-lg border border-white/25 ${
-                profileSelectedTab === "draft posts"
-                  ? "border-b-transparent bg-[#23202A]"
-                  : ""
-              } px-4 py-2`}
-              onClick={() => handleTabClick("draft posts")}
-            >
-              <span
-                className={`${
-                  profileSelectedTab === "draft posts" ? "text-primary" : ""
-                } duration-150`}
-              >
-                Draft posts
-              </span>
-            </li>
-            <li
-              className={`relativetop-2 z-1 cursor-pointer rounded-t-lg border border-white/25 ${
-                profileSelectedTab === "scheduled posts"
-                  ? "border-b-transparent bg-[#23202A]"
-                  : ""
-              } px-4 py-2`}
-              onClick={() => handleTabClick("scheduled posts")}
-            >
-              <span
-                className={`${
-                  profileSelectedTab === "scheduled posts" ? "text-primary" : ""
-                } duration-150`}
-              >
-                Scheduled posts
-              </span>
-            </li>
-          </ul>
+          <Tabs
+            defaultTab="Posts"
+            tabs={["Posts", "Likes", "Draft Posts", "Scheduled Posts"]}
+          />
 
           <div className="flex h-full flex-col items-center py-10 text-xl font-light">
-            You haven't {profileSelectedTab === "likes" ? "liked" : "posted"}{" "}
-            anything yet.
+            You haven't anything yet.
           </div>
         </div>
 
@@ -372,7 +301,7 @@ const Profile = ({ user }: IProps) => {
                 <input
                   type="text"
                   id="invite-link"
-                  value={"AFK@T.com/invite/username"}
+                  value={`AFK@T.com/invite/${joinName(users.user?.username)}`}
                   className="w-full rounded border border-white/15 px-3 py-1.5 text-sm"
                   readOnly
                 />
@@ -408,10 +337,17 @@ const Profile = ({ user }: IProps) => {
                   ref={window.innerWidth < 1280 ? iRef : undefined}
                   className="relative -top-24 col-span-3 flex translate-y-20 flex-col items-center opacity-0 duration-150"
                 >
-                  <i
+                  {/* <i
                     ref={window.innerWidth < 1280 ? iRef : undefined}
                     className="fa-solid fa-circle-user absolute -top-28 text-8xl"
+                  /> */}
+                  <img
+                    src={users.user?.avatar}
+                    alt="profile avatar"
+                    ref={window.innerWidth < 1280 ? iRef : undefined}
+                    className="absolute -top-28 aspect-square w-20 rounded-full border object-cover"
                   />
+
                   <ul className="grid grid-cols-2 gap-x-2 text-xs">
                     <li className="bg-primary rounded px-1 py-1 font-bold">
                       GMR
