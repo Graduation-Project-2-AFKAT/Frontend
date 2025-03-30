@@ -1,9 +1,8 @@
 interface IProps {
-  username: string;
   className?: string;
 }
 
-const GameCard = ({ username, className }: IProps) => {
+const GameCard = ({ className }: IProps) => {
   return (
     <div
       className={`outline-primary m-5 rounded-2xl bg-[#2A2731] shadow-md drop-shadow-md duration-50 md:rounded-lg lg:hover:outline-2 lg:hover:outline-dashed ${className}`}
@@ -26,7 +25,7 @@ const GameCard = ({ username, className }: IProps) => {
               </div>
             </div>
 
-            <div className="rounded-md bg-black/20 px-3 py-1.5 text-sm font-bold">
+            <div className="self-start rounded-md bg-black/20 px-3 py-1.5 text-sm font-bold">
               FREE
             </div>
           </div>
@@ -39,9 +38,9 @@ const GameCard = ({ username, className }: IProps) => {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               className="lucide lucide-gamepad2-icon lucide-gamepad-2"
             >
               <line x1="6" x2="10" y1="11" y2="11" />
@@ -58,9 +57,9 @@ const GameCard = ({ username, className }: IProps) => {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               className="lucide lucide-swords-icon lucide-swords"
             >
               <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />

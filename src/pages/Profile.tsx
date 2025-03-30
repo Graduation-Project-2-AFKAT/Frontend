@@ -91,7 +91,7 @@ const Profile = () => {
           <img
             src={users.user?.avatar}
             alt="profile avatar"
-            className="aspect-square w-20 rounded-full border object-cover"
+            className="aspect-square w-20 self-end rounded-full border object-cover"
           />
 
           <div className="flex flex-col pt-10">

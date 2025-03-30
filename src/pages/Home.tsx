@@ -4,7 +4,7 @@ import Board from "../components/ui/Board";
 
 const Home = () => {
   return (
-    <main className="grid w-full overflow-y-auto border pt-10 lg:gap-10 lg:px-10 lg:pl-20">
+    <main className="grid w-full overflow-y-auto border pt-10 lg:gap-10 lg:px-10 lg:pl-15">
       {/*//! You think this is a useless line right ? ...Comment it and see how important it is ;) */}
       {/* //* Nah, you can comment it now c: */}
       {/* <div className="hidden lg:block"></div> */}

@@ -1,14 +1,41 @@
+import { useState, useEffect } from "react";
 import Input from "../components/form/Input";
 import Post from "../components/Post";
 import GameCard from "../components/GameCard";
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
 import Tabs from "../components/Tabs";
 
 const GameJams = () => {
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const main = document.querySelector("main") as HTMLDivElement;
+
+    const handleScroll = () => {
+      const currentScrollY = main.scrollTop;
+      console.log(currentScrollY);
+
+      if (currentScrollY > lastScrollY) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    main.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => main.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   return (
-    <main className="w-full overflow-y-auto border pt-0 lg:gap-10">
-      <header className="flex items-center justify-between bg-white/5 py-6 lg:px-10">
+    <main className="w-full overflow-y-auto pt-0 lg:gap-10">
+      <header
+        className={`sticky top-0 z-10 flex items-center justify-between bg-[#2E2B35] py-6 transition-transform duration-300 lg:px-10 ${
+          isVisible ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
         <p>Share Your Games With The World!</p>
         <button className="hover:bg-primary cursor-pointer rounded-lg bg-gray-100 px-4 py-2 text-sm font-bold text-black duration-50 hover:text-white">
           Add Your Game
@@ -17,7 +44,7 @@ const GameJams = () => {
 
       <div className="flex flex-col space-y-10 py-10 text-center font-bold lg:px-10">
         <span className="text-3xl">Browse Games</span>
-        <ul className="flex flex-wrap items-center justify-center gap-10 px-5">
+        <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 px-5">
           {/* //TODO make selected "text-primary" */}
           <li className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer">
             Action
@@ -109,7 +136,7 @@ const GameJams = () => {
         {/* sub-tabs */}
         <Tabs
           defaultTab="Featured"
-          tabs={["Featured", "Newest", "Top Rated", "Free to Play"]}
+          tabs={["Featured", "Newest", "Top Rated"]}
         />
 
         <ul

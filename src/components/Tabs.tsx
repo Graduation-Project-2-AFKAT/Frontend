@@ -32,30 +32,6 @@ const Tabs = ({ defaultTab, tabs }: IProps) => {
           />
         );
       })}
-      {/* <Tab
-        tab="featured"
-        title="Featured"
-        selectedTab={profileSelectedTab}
-        handleTabClick={handleTabClick}
-      />
-      <Tab
-        tab="newest"
-        title="Newest"
-        selectedTab={profileSelectedTab}
-        handleTabClick={handleTabClick}
-      />
-      <Tab
-        tab="top rated"
-        title="Top Rated"
-        selectedTab={profileSelectedTab}
-        handleTabClick={handleTabClick}
-      />
-      <Tab
-        tab="ftp"
-        title="Free to Play"
-        selectedTab={profileSelectedTab}
-        handleTabClick={handleTabClick}
-      /> */}
     </ul>
   );
 };

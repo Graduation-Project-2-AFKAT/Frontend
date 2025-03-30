@@ -22,6 +22,7 @@ const Navbar = ({
     location.pathname !== "/login" && location.pathname !== "/register";
 
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [darkTheme, setDarkTheme] = useState("ON");
 
   const handleMenuClick = () => {
     setShowSidebar((prev) => !prev);
@@ -130,7 +131,7 @@ const Navbar = ({
               </li>
 
               <li className="relative">
-                <i className="fa-solid fa-bell underlineNav w-10 cursor-pointer text-center text-xl after:-bottom-6.5"></i>
+                <i className="fa-solid fa-bell underlineNav w-10 cursor-pointer text-center text-xl after:-bottom-7"></i>
               </li>
 
               <li>
@@ -154,11 +155,13 @@ const Navbar = ({
             <div
               className={`${showUserMenu ? "opacity-100" : "pointer-events-none opacity-0 duration-200"} absolute top-22 right-10 z-5 aspect-auto w-60 rounded-lg border border-white/50 bg-black opacity-0 drop-shadow-2xl before:absolute before:-top-4.5 before:right-6 before:h-0 before:w-0 before:border-8 before:border-b-10 before:border-transparent before:border-b-white/50`}
             >
-              <div className="px-4 pt-4">
-                <p className="text-xl font-bold">Username</p>
-                <small className="font-medium">@username</small>
+              <div className="px-4 pt-4 hover:bg-white/10">
+                <NavLink to="/profile" onClick={() => setShowUserMenu(false)}>
+                  <p className="text-xl font-bold">Username</p>
+                  <small className="font-medium">@username</small>
 
-                <hr className="mt-4 border-white/50" />
+                  <hr className="mt-4 border-white/50" />
+                </NavLink>
               </div>
 
               <div>
@@ -170,7 +173,7 @@ const Navbar = ({
                   Profile
                 </NavLink>
                 <NavLink
-                  to="/settings"
+                  to="/games"
                   className="block px-4 py-2.5 hover:bg-white/10"
                   onClick={() => setShowUserMenu(false)}
                 >
@@ -183,12 +186,18 @@ const Navbar = ({
                 >
                   Settings
                 </NavLink>
-                <div className="flex items-center justify-between px-4 py-2.5 hover:bg-white/10">
-                  Dark Theme <small className="text-gray-500">on</small>
+                <div
+                  className="flex cursor-pointer items-center justify-between px-4 py-2.5 hover:bg-white/10"
+                  onClick={() =>
+                    setDarkTheme((prev) => (prev === "ON" ? "OFF" : "ON"))
+                  }
+                >
+                  Dark Theme
+                  <small className="text-gray-500">{darkTheme}</small>
                 </div>
 
                 <div className="px-4">
-                  <small className="bg-primary my-3 flex h-9 w-full items-center justify-center rounded-md font-medium tracking-wider">
+                  <small className="bg-primary my-3 flex h-9 w-full cursor-pointer items-center justify-center rounded-md text-base font-medium tracking-wider">
                     Invite a friend
                   </small>
 

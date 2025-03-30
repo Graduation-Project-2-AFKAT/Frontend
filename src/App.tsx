@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import Games from "./pages/Games";
 import "./App.css";
 import { ToastContainer, ToastPosition } from "react-toastify";
+import EditProfile from "./pages/profile/EditProfile";
 
 const userData = {
   email: "joe@joe.com",
@@ -60,6 +61,18 @@ function App() {
                 data={userData}
               >
                 <Profile user={userData} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile/edit"
+            element={
+              <ProtectedRoute
+                isAuthenticated={true}
+                redirectPath="/login"
+                data={userData}
+              >
+                <EditProfile />
               </ProtectedRoute>
             }
           />
