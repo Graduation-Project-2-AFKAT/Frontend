@@ -32,7 +32,7 @@ const GameJams = () => {
   return (
     <main className="w-full overflow-y-auto pt-0 lg:gap-10">
       <header
-        className={`sticky top-0 z-10 flex items-center justify-between bg-[#2E2B35] py-6 transition-transform duration-300 lg:px-10 ${
+        className={`sticky top-0 z-5 flex items-center justify-between bg-[#2E2B35] py-6 transition-transform duration-300 lg:px-10 ${
           isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
@@ -46,33 +46,84 @@ const GameJams = () => {
         <span className="text-3xl">Browse Games</span>
         <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 px-5">
           {/* //TODO make selected "text-primary" */}
-          <li className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer">
+          <a
+            href={
+              window.location.origin + window.location.pathname + "?tag=action"
+            }
+            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
+          >
             Action
-          </li>
-          <li className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer">
+          </a>
+          <a
+            href={
+              window.location.origin + window.location.pathname + "?tag=horror"
+            }
+            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
+          >
             Horror
-          </li>
-          <li className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer">
+          </a>
+          <a
+            href={
+              window.location.origin + window.location.pathname + "?tag=puzzle"
+            }
+            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
+          >
             Puzzle
-          </li>
-          <li className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer">
+          </a>
+          <a
+            href={
+              window.location.origin + window.location.pathname + "?tag=cards"
+            }
+            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
+          >
             Cards
-          </li>
-          <li className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer">
+          </a>
+          <a
+            href={
+              window.location.origin +
+              window.location.pathname +
+              "?tag=adventure"
+            }
+            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
+          >
             Adventure
-          </li>
-          <li className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer">
+          </a>
+          <a
+            href={
+              window.location.origin + window.location.pathname + "?tag=rpg"
+            }
+            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
+          >
             RPG
-          </li>
-          <li className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer">
+          </a>
+          <a
+            href={
+              window.location.origin +
+              window.location.pathname +
+              "?tag=shooting"
+            }
+            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
+          >
             Shooting
-          </li>
-          <li className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer">
+          </a>
+          <a
+            href={
+              window.location.origin + window.location.pathname + "?tag=arcade"
+            }
+            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
+          >
             Arcade
-          </li>
-          <li className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer">
+          </a>
+          <a
+            href={
+              window.location.origin +
+              window.location.pathname +
+              "?tag=survival"
+            }
+            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
+          >
             Survival
-          </li>
+          </a>
         </ul>
       </div>
 

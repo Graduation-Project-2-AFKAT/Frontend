@@ -77,9 +77,19 @@
   .grid {
     grid-template-rows: 1fr;
 
+    @media (max-width: 767px) {
+      &.editprofile-grid {
+        grid-template-columns: 1fr 2fr;
+      }
+    }
+
     @media (min-width: 768px) {
       &.grid-games {
         grid-template-columns: 1fr 1fr;
+      }
+
+      &.editprofile-grid {
+        grid-template-columns: 1fr 2fr;
       }
     }
 
@@ -88,6 +98,10 @@
 
       &.grid-games {
         grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      &.editprofile-grid {
+        grid-template-columns: 225px 2fr 1fr;
       }
     }
 

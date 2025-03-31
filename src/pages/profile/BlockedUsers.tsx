@@ -8,10 +8,10 @@ const BlockedUsers = ({}: IProps) => {
 
   return (
     <div className="flex flex-col items-center justify-between pt-5 pb-10">
-      <div className="w-full space-y-10">
+      <div className="w-full space-y-15">
         <p className="text-center text-2xl">You aren't blocking anyone.</p>
 
-        <div className="w-full">
+        <div className="w-full px-5">
           <button
             className="border-primary hover:bg-primary w-full rounded-lg border-2 py-1 font-bold duration-50 hover:text-black active:scale-99"
             onClick={() => setShowModal((prev) => !prev)}
@@ -50,7 +50,7 @@ const BlockedUsers = ({}: IProps) => {
         </div>
       </div>
 
-      <p className="text-sm font-extralight opacity-50">
+      <p className="text-sm font-extralight opacity-50 lg:hidden">
         When you block someone, that user won't be able to follow you, send you
         a friend request, or reply to your posts and comments.
       </p>

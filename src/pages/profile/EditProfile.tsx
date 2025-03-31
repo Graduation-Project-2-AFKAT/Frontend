@@ -23,8 +23,8 @@ const EditProfile = () => {
       id="profile"
     >
       {/* Header */}
-      <header className="w-full bg-[#201D27] lg:pl-20">
-        <div className="hidden items-center gap-x-5 py-5 lg:flex">
+      <header className="w-full bg-[#201D27] pl-20">
+        <div className="flex items-center gap-x-5 py-5">
           {/* <i className="fa-solid fa-circle-user relative top-8 text-9xl" /> */}
           <img
             src={users.user?.avatar}
@@ -35,77 +35,6 @@ const EditProfile = () => {
           <div className="flex flex-col pt-10">
             <h1 className="text-3xl font-bold">Edit Your Profile</h1>
             <small className="text-base font-normal">@Username</small>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center space-y-5 pt-10 pb-5 lg:hidden">
-          {/* <i className="fa-solid fa-circle-user text-7xl" /> */}
-          <img
-            src={users.user?.avatar}
-            alt="profile avatar"
-            className="aspect-square w-20 rounded-full border object-cover"
-          />
-
-          <div className="space-y- flex flex-col items-center">
-            <ul className="grid grid-cols-2 gap-x-2 pb-2 text-center text-xs">
-              <li className="bg-primary rounded px-1 py-1 font-bold">GMR</li>
-              <li className="bg-primary rounded px-1 py-1 font-bold">Online</li>
-            </ul>
-
-            <small className="font-bold">@{users.user?.username}</small>
-            <small className="font-light">{users.user?.email}</small>
-          </div>
-
-          <div className="grid w-full grid-cols-3 text-center">
-            <small className="flex flex-col">
-              <span className="text-xl font-bold">0</span>
-              <span className="opacity-50">Following</span>
-            </small>
-            <small className="flex flex-col">
-              <span className="text-xl font-bold">0</span>
-              <span className="opacity-50">Followers</span>
-            </small>
-            <small className="flex flex-col">
-              <span className="text-xl font-bold">0</span>
-              <span className="opacity-50">Likes</span>
-            </small>
-          </div>
-
-          <div className="flex w-full items-center justify-between space-x-2 px-5 md:px-0">
-            <a
-              href={`${window.location.pathname}/edit`}
-              className="border-primary hover:bg-primary w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black"
-            >
-              Edit profile
-            </a>
-
-            <button
-              onClick={() =>
-                (
-                  document.getElementById("profile-dialog") as HTMLDialogElement
-                )?.showModal()
-              }
-              className="hover:bg-primary hover:border-primary w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black"
-            >
-              About
-            </button>
-            <dialog
-              id="profile-dialog"
-              className="absolute m-auto rounded-lg p-6 backdrop:bg-black/50"
-            >
-              <h2 className="mb-4 text-xl font-bold">Edit Profile</h2>
-              <form method="dialog">
-                <button className="cursor-pointer rounded border px-4 py-2">
-                  Close
-                </button>
-              </form>
-            </dialog>
-
-            <div>
-              <button className="rounded-md border p-1.5">
-                <EllipsisVertical />
-              </button>
-            </div>
           </div>
         </div>
       </header>
@@ -246,9 +175,9 @@ const EditProfile = () => {
         </div>
       </dialog> */}
 
-      <section className="grid w-full flex-grow gap-x-10 bg-white/5 px-10 text-white md:px-15 lg:px-20 lg:pt-10">
+      <section className="editprofile-grid grid w-full flex-grow gap-x-10 bg-white/5 px-10 pt-10 text-white md:px-15 lg:px-20">
         {/* Left Section */}
-        <div className="sticky top-10 rounded-lg py-10 pt-4 duration-250 lg:pt-15">
+        <div className="rounded-lg py-10 pt-10 duration-250">
           <SideTabs
             activeTab={profileSelectedTab}
             handleTabClick={handleTabClick}
@@ -263,15 +192,27 @@ const EditProfile = () => {
         </div>
 
         {/* Mid Section */}
-        {profileSelectedTab === "Profile" ? (
-          <ProfileInfo nickname={nickname} setNickname={setNickname} />
-        ) : profileSelectedTab === "Blocked users" ? (
-          <BlockedUsers />
-        ) : profileSelectedTab === "Email Address" ? (
-          <EmailAddress />
-        ) : profileSelectedTab === "Password" ? (
-          <Password />
-        ) : null}
+        <div className="">
+          {profileSelectedTab === "Profile" ? (
+            <ProfileInfo nickname={nickname} setNickname={setNickname} />
+          ) : profileSelectedTab === "Blocked users" ? (
+            <BlockedUsers />
+          ) : profileSelectedTab === "Email Address" ? (
+            <EmailAddress />
+          ) : profileSelectedTab === "Password" ? (
+            <Password />
+          ) : null}
+        </div>
+
+        {/* Right Section */}
+        <div
+          className={`${profileSelectedTab !== "Blocked users" && "hidden"} hidden pt-10 lg:block`}
+        >
+          <p className="text-sm font-extralight opacity-50">
+            When you block someone, that user won't be able to follow you, send
+            you a friend request, or reply to your posts and comments.
+          </p>
+        </div>
       </section>
     </div>
   );

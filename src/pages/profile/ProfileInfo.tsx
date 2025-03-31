@@ -16,7 +16,7 @@ const ProfileInfo = ({ nickname, setNickname }: IProps) => {
               type="color"
               name="theme"
               id="theme"
-              className="absolute -top-5 -left-5 h-15 w-15"
+              className="absolute -top-5 -left-5 h-15 w-15 cursor-pointer"
             />
           </div>
         </div>
@@ -69,13 +69,6 @@ const ProfileInfo = ({ nickname, setNickname }: IProps) => {
           <span className="font-light text-white/50">(optional)</span>
         </label>
         <Input id="profile-bio" placeholder="Enter your profile bio" />
-      </div>
-
-      <div className="flex flex-col space-y-3">
-        <label className="font-bold" htmlFor="website">
-          Website <span className="font-light text-white/50">(optional)</span>
-        </label>
-        <Input id="website" placeholder="Enter your website URL" />
       </div>
     </div>
   );

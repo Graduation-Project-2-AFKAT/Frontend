@@ -1,5 +1,5 @@
 interface IProps {
-  title: string;
+  title?: string;
   className?: string;
   itemsCount?: number;
 }
@@ -11,11 +11,11 @@ const Board = ({
 }: IProps) => {
   return (
     <aside
-      className={`sticky top-0 hidden flex-col space-y-14 rounded-lg bg-[#2A2731] p-8 pb-10 shadow-md drop-shadow-md lg:flex ${className}`}
+      className={`sticky top-0 hidden flex-col space-y-10 rounded-lg bg-[#2A2731] p-8 pb-10 shadow-md drop-shadow-md lg:flex ${className}`}
     >
-      <div className="text-3xl underline underline-offset-[15px]">{title}</div>
+      <div className="text-2xl underline underline-offset-[15px]">{title}</div>
 
-      <div className={`px-4`}>
+      <div className={`px-2`}>
         <ul className="list-none space-y-10">
           {Array.from({ length: itemsCount }).map((_, index) => (
             <li key={index} className="flex items-center gap-2">

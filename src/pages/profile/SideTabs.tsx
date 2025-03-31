@@ -6,7 +6,7 @@ interface IProps {
 
 const SideTabs = ({ handleTabClick, tabs, activeTab }: IProps) => {
   return (
-    <ul className="w-[60%] space-y-5 text-nowrap">
+    <ul className="sticky top-10 w-[70%] space-y-5 text-nowrap">
       {tabs.map((tab) => {
         if (tab === ",") {
           return (

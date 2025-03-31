@@ -115,7 +115,7 @@ const Sidebar = ({
       />
 
       <div
-        className={`absolute ${expandSidebar ? "md:left-20" : "md:-left-59.5"} ${showSidebar ? "left-20" : "-left-80"} border-r-primary top-0 z-5 h-full w-80 border-r-2 bg-[#2A2731] py-15 pt-30 pl-10 backdrop-blur-[2px] duration-300`}
+        className={`absolute ${expandSidebar ? "md:left-20" : "md:-left-59.5"} ${showSidebar ? "left-20" : "-left-80"} border-r-primary top-0 z-10 h-full w-80 border-r-2 bg-[#2A2731] py-15 pt-30 pl-10 backdrop-blur-[2px] duration-300`}
       >
         <h1>Hi {selectedTab}</h1>
       </div>

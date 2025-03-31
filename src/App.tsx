@@ -11,6 +11,7 @@ import Games from "./pages/Games";
 import "./App.css";
 import { ToastContainer, ToastPosition } from "react-toastify";
 import EditProfile from "./pages/profile/EditProfile";
+import Game from "./pages/Game";
 
 const userData = {
   email: "joe@joe.com",
@@ -77,6 +78,8 @@ function App() {
             }
           />
           <Route path="/games" element={<Games />} />
+          {/*//TODO "/games/:title/:id" */}
+          <Route path="/game" element={<Game />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>
