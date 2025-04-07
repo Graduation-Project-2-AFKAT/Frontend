@@ -21,7 +21,7 @@ const validationSchema = yup.object({
   isMultiplayer: yup.boolean(),
 });
 
-const MemberShip = () => {
+const PublishGame = () => {
   const resolver = useYupValidationResolver(validationSchema);
 
   const {
@@ -65,7 +65,6 @@ const MemberShip = () => {
     "Fighting",
     "Shooter",
     "Horror",
-    "Platformer",
     "Card Game",
     "Educational",
   ];
@@ -377,7 +376,7 @@ const MemberShip = () => {
               </label>
               <select
                 id="price"
-                className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400"
+                className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
                 {...register("price")}
               >
                 <option value="Free">Free</option>
@@ -661,4 +660,4 @@ const MemberShip = () => {
   );
 };
 
-export default MemberShip;
+export default PublishGame;

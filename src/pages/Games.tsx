@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import Input from "../components/form/Input";
-import Post from "../components/Post";
 import GameCard from "../components/GameCard";
 import Tabs from "../components/Tabs";
+import { Link } from "react-router";
 
 const GameJams = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -36,9 +35,12 @@ const GameJams = () => {
         }`}
       >
         <p>Share Your Games With The World!</p>
-        <button className="hover:bg-primary cursor-pointer rounded-lg bg-gray-100 px-4 py-2 text-sm font-bold text-black duration-50 hover:text-white">
+        <Link
+          to={`${window.location.pathname}/publish`}
+          className="hover:bg-primary cursor-pointer rounded-lg bg-gray-100 px-4 py-2 text-sm font-bold text-black duration-50 hover:text-white"
+        >
           Add Your Game
-        </button>
+        </Link>
       </header>
 
       <div className="flex flex-col space-y-10 py-10 text-center font-bold lg:px-10">

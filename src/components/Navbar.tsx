@@ -123,7 +123,7 @@ const Navbar = ({
             <ul className="hidden items-center gap-2 lg:flex">
               <li>
                 <NavLink
-                  to="/membership"
+                  to="/login"
                   className="rounded-lg border-2 p-2 text-sm text-nowrap"
                 >
                   Become a member

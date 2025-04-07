@@ -12,7 +12,7 @@ import "./App.css";
 import { ToastContainer, ToastPosition } from "react-toastify";
 import EditProfile from "./pages/profile/EditProfile";
 import Game from "./pages/Game";
-import MemberShip from "./pages/MemberShip";
+import PublishGame from "./pages/PublishGame";
 
 const userData = {
   email: "joe@joe.com",
@@ -82,10 +82,10 @@ function App() {
           {/*//TODO "/games/:title/:id" */}
           <Route path="/game" element={<Game />} />
           <Route
-            path="/membership"
+            path="/games/publish"
             element={
               <ProtectedRoute isAuthenticated={true} redirectPath="/login">
-                <MemberShip />
+                <PublishGame />
               </ProtectedRoute>
             }
           />
