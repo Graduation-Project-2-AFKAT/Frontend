@@ -123,7 +123,7 @@ const Navbar = ({
             <ul className="hidden items-center gap-2 lg:flex">
               <li>
                 <NavLink
-                  to="/login"
+                  to="/membership"
                   className="rounded-lg border-2 p-2 text-sm text-nowrap"
                 >
                   Become a member
@@ -155,14 +155,14 @@ const Navbar = ({
             <div
               className={`${showUserMenu ? "opacity-100" : "pointer-events-none opacity-0 duration-200"} absolute top-22 right-10 z-5 aspect-auto w-60 rounded-lg border border-white/50 bg-black opacity-0 drop-shadow-2xl before:absolute before:-top-4.5 before:right-6 before:h-0 before:w-0 before:border-8 before:border-b-10 before:border-transparent before:border-b-white/50`}
             >
-              <div className="px-4 pt-4 hover:bg-white/10">
-                <NavLink to="/profile" onClick={() => setShowUserMenu(false)}>
+              <NavLink to="/profile" onClick={() => setShowUserMenu(false)}>
+                <div className="px-4 pt-4 hover:bg-white/10">
                   <p className="text-xl font-bold">Username</p>
                   <small className="font-medium">@username</small>
 
                   <hr className="mt-4 border-white/50" />
-                </NavLink>
-              </div>
+                </div>
+              </NavLink>
 
               <div>
                 <NavLink

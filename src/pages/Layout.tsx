@@ -48,7 +48,9 @@ const RootLayout = () => {
       )}
 
       {/* //TODO Refactor responsive outlet */}
-      <div className="flex h-screen justify-center pt-18 md:ml-20">
+      <div
+        className={`${authorized && "md:ml-20"} flex h-screen justify-center overflow-y-auto pt-18`}
+      >
         <Outlet />
       </div>
     </div>

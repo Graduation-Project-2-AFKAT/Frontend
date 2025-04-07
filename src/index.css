@@ -78,7 +78,8 @@
     grid-template-rows: 1fr;
 
     @media (max-width: 767px) {
-      &.editprofile-grid {
+      &.editprofile-grid,
+      &.game-grid {
         grid-template-columns: 1fr 2fr;
       }
     }
@@ -91,25 +92,37 @@
       &.editprofile-grid {
         grid-template-columns: 1fr 2fr;
       }
+
+      &.game-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (min-width: 1024px) {
       grid-template-columns: 2fr 1fr;
 
-      &.grid-games {
+      &.games-grid {
         grid-template-columns: 1fr 1fr 1fr;
       }
 
       &.editprofile-grid {
-        grid-template-columns: 225px 2fr 1fr;
+        grid-template-columns: 0.9fr 2fr 1fr;
+      }
+
+      &.game-grid {
+        grid-template-columns: 1fr;
       }
     }
 
     @media (min-width: 1280px) {
       grid-template-columns: 1fr 2fr 1fr;
 
-      &.grid-games {
+      &.games-grid {
         grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+
+      &.game-grid {
+        grid-template-columns: 0.9fr 2fr 1fr;
       }
     }
   }
@@ -190,3 +203,7 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
+
+label {
+  width: fit-content;
+}

@@ -1,12 +1,13 @@
-interface InputProps {
-  placeholder: string;
+import React from "react";
+
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  placeholder?: string;
   register?: any;
   rules?: {
     [key: string]: string | object;
   };
   errorMsg?: string;
   className?: string;
-  type?: string;
 }
 
 const Input = ({
@@ -16,6 +17,7 @@ const Input = ({
   errorMsg,
   className = "",
   type = "text",
+  ...rest
 }: InputProps) => (
   <>
     <input
@@ -23,6 +25,7 @@ const Input = ({
       className={`w-[250px] rounded-md border-1 border-gray-200 p-2 text-sm duration-300 focus:px-4 ${className}`}
       placeholder={placeholder}
       type={type}
+      {...rest}
     />
     {errorMsg && <small className="self-start text-red-400">{errorMsg}</small>}
   </>

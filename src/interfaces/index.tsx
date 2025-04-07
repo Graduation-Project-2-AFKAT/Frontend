@@ -14,3 +14,14 @@ export interface IUser {
     refresh: string;
   };
 }
+
+export interface IFormData {
+  title: string;
+  description: string;
+  genre: string[];
+  releaseDate: string;
+  version: string;
+  price: string;
+  tags: string[];
+  isMultiplayer: boolean;
+}

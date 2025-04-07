@@ -1,6 +1,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import Input from "./Input";
 import { useLocation } from "react-router";
+import Input from "./Input";
 import { IInputs } from "../../interfaces";
 import getValidationSchema from "./validationSchema";
 import useYupValidationResolver from "./userYupValidationResolver";

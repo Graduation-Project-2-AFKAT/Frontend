@@ -20,10 +20,55 @@ const Game = ({}: IProps) => {
   const users = useSelector((state: RootState) => state.users);
   const [favorite, setFavorite] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
+  const [stars, setStars] = useState({
+    one: false,
+    two: false,
+    three: false,
+    four: false,
+    five: false,
+  });
+
+  const handleRating = (rate: keyof typeof stars) => {
+    const index = Object.keys(stars).indexOf(rate);
+
+    if (stars[rate]) {
+      const hasHigherRatedStars = Object.keys(stars).some((s, indx) => {
+        return stars[s as keyof typeof stars] === true && indx > index;
+      });
+
+      if (hasHigherRatedStars) {
+        const updatedStars = { ...stars };
+        Object.keys(stars).forEach((s, indx) => {
+          if (indx > index) {
+            updatedStars[s as keyof typeof stars] = false;
+          }
+        });
+        setStars(updatedStars);
+        return;
+      }
+
+      setStars({
+        one: false,
+        two: false,
+        three: false,
+        four: false,
+        five: false,
+      });
+    } else {
+      const updatedStars = { ...stars };
+      Object.keys(stars).forEach((s, indx) => {
+        if (indx <= index) {
+          updatedStars[s as keyof typeof stars] = true;
+        }
+      });
+      setStars(updatedStars);
+    }
+  };
 
   return (
-    <div className="editprofile-grid grid w-full grid-cols-2 gap-x-10 overflow-y-auto px-10 py-5">
-      <div className="space-y-10 border pb-20">
+    <div className="game-grid grid w-full grid-cols-2 gap-x-10 overflow-y-auto px-10 py-5">
+      {/* Left Section */}
+      <div className="borders h-fit space-y-10">
         <button
           onClick={() => window.history.back()}
           className="mx-5 my-5 flex items-center gap-2 text-lg font-bold text-white hover:opacity-80"
@@ -32,43 +77,48 @@ const Game = ({}: IProps) => {
           Go Back
         </button>
 
-        <Board
-          title="Suggestion"
-          itemsCount={3}
-          className="!static border-2 px-5"
-        />
+        <div className="hidden space-y-10 xl:block">
+          <Board
+            title="Suggestion"
+            headerSize="text-xl"
+            itemsCount={3}
+            className="!static border border-white/10 px-5"
+          />
 
-        <div className="flex w-full flex-col space-y-3 rounded-lg border-2 bg-white/5 px-5 py-5">
-          <h1 className="text-lg font-bold">Your invite link</h1>
-          <div className="flex items-center gap-x-3">
-            <input
-              type="text"
-              id="invite-link"
-              value={`AFK@T.com/invite/${joinName(users.user?.username)}`}
-              className="w-full rounded border border-white/15 px-3 py-1.5 text-sm"
-              readOnly
-            />
-            <button
-              className="hover:bg-primary hover:border-primary cursor-pointer rounded border px-3 py-1.5 text-sm font-medium duration-150 hover:text-black"
-              onClick={() => {
-                navigator.clipboard.writeText(
-                  (document.getElementById("invite-link") as HTMLInputElement)
-                    .value,
-                );
-                toast("Copied to clipboard");
-              }}
-            >
-              Copy
-            </button>
+          <div className="hidden w-full flex-col space-y-5 rounded-lg border border-white/10 bg-white/5 p-5 shadow-md shadow-black/50 xl:flex">
+            <h2 className="font-bold">
+              <i className="font-light">Don't be AFK, </i>
+              <span className="text-primary font-bold text-nowrap">
+                SHARE IT!
+              </span>
+            </h2>
+            <div className="flex items-center gap-x-2">
+              <input
+                type="text"
+                id="invite-link"
+                value={`AFK@T.com/games/${joinName(users.user?.username)}`}
+                className="w-full rounded border border-white/15 px-3 py-1.5"
+                readOnly
+              />
+              <button
+                className="hover:bg-primary hover:border-primary cursor-pointer rounded border px-2 py-1.5 font-medium duration-150 hover:text-black"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    (document.getElementById("invite-link") as HTMLInputElement)
+                      .value,
+                  );
+                  toast("Copied to clipboard");
+                }}
+              >
+                Copy
+              </button>
+            </div>
           </div>
-          <p className="text-sm">
-            Accounts created using your invite link automatically become your
-            followers.
-          </p>
         </div>
       </div>
 
-      <div className="col-span-2 flex flex-col space-y-3">
+      {/* Main */}
+      <div className="col-span-2 flex flex-col space-y-3 pt-5 pb-25">
         <div className="pr- flex justify-between">
           <div>
             <h1 className="text-2xl">Game Title</h1>
@@ -77,8 +127,8 @@ const Game = ({}: IProps) => {
             </i>
           </div>
 
-          <div className="flex items-center">
-            <button className="bg-primary my-1 flex gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 hover:scale-95">
+          <div className="flex items-start">
+            <button className="bg-primary my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 hover:scale-95">
               Download
               <Download width={18} />
             </button>
@@ -111,7 +161,7 @@ const Game = ({}: IProps) => {
                 onClick={() => setShowDialog(false)}
               >
                 <div
-                  className="relative mx-auto w-full overflow-hidden bg-[#29282D] py-5 shadow-lg sm:my-20 sm:w-[35rem] sm:rounded-lg"
+                  className="relative mx-auto w-full overflow-hidden bg-[#29282D] py-5 shadow-lg sm:my-20 sm:w-[38rem] sm:rounded-lg"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
@@ -119,7 +169,7 @@ const Game = ({}: IProps) => {
                     onClick={() => setShowDialog(false)}
                   >
                     <span className="duration-50 group-hover:opacity-0">X</span>
-                    <span className="text-sm">Close</span>
+                    <span className="text-sm text-black">Close</span>
                   </button>
 
                   <h2 className="my-5 px-5 text-lg font-bold">Add a Comment</h2>
@@ -371,29 +421,129 @@ const Game = ({}: IProps) => {
             )}
           </div>
 
+          {/* Rating */}
           <div className="flex items-end gap-x-5">
             <p className="text-sm">( 3.7 / 5 )</p>
             <div className="flex">
               <Star
-                fill={`${favorite ? "white" : "transparent"}`}
-                className="cursor-pointer"
+                id="one"
+                fill={`${stars.one ? "white" : "transparent"}`}
+                className="cursor-pointer duration-50 hover:opacity-80"
+                onClick={() => handleRating("one")}
               />
               <Star
-                fill={`${favorite ? "white" : "transparent"}`}
-                className="cursor-pointer"
+                id="two"
+                fill={`${stars.two ? "white" : "transparent"}`}
+                className="cursor-pointer duration-50 hover:opacity-80"
+                onClick={() => handleRating("two")}
               />
               <Star
-                fill={`${favorite ? "white" : "transparent"}`}
-                className="cursor-pointer"
+                id="three"
+                fill={`${stars.three ? "white" : "transparent"}`}
+                className="cursor-pointer duration-50 hover:opacity-80"
+                onClick={() => handleRating("three")}
               />
               <Star
-                fill={`${favorite ? "white" : "transparent"}`}
-                className="cursor-pointer"
+                id="four"
+                fill={`${stars.four ? "white" : "transparent"}`}
+                className="cursor-pointer duration-50 hover:opacity-80"
+                onClick={() => handleRating("four")}
               />
               <Star
-                fill={`${favorite ? "white" : "transparent"}`}
-                className="cursor-pointer"
+                id="five"
+                fill={`${stars.five ? "white" : "transparent"}`}
+                className="cursor-pointer duration-50 hover:opacity-80"
+                onClick={() => handleRating("five")}
               />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="mt-5 text-xl font-bold">How to Play</h2>
+
+          <p className="p-3 font-light">
+            To play this game, follow these simple steps:
+            <ol className="list-decimal py-3 pl-10">
+              <li>
+                Open the game in your web browser. Ensure you have a stable
+                internet connection for the best experience.
+              </li>
+              <li>
+                Use your keyboard or mouse to navigate through the game.
+                Specific controls will be displayed on the screen as you
+                progress.
+              </li>
+              <li>
+                Complete the objectives or challenges presented in each level to
+                advance further.
+              </li>
+              <li>
+                Keep an eye on your score and try to beat your personal best or
+                compete with friends.
+              </li>
+              <li>
+                If you encounter any difficulties, refer to the in-game tutorial
+                or help section for guidance.
+              </li>
+            </ol>
+            Enjoy the game and have fun!
+          </p>
+        </div>
+
+        <div>
+          <h2 className="mt-5 text-xl font-bold">Description</h2>
+
+          <p className="p-3 font-light">
+            Embark on an epic adventure in "Quest of Realms," a captivating
+            fantasy game where you explore vast landscapes, solve intricate
+            puzzles, and battle formidable foes. With stunning visuals and an
+            immersive storyline, this game offers hours of thrilling gameplay.
+            Customize your character, forge alliances, and uncover hidden
+            secrets as you journey through enchanted forests, treacherous
+            dungeons, and mystical kingdoms. Will you rise as the hero of the
+            realms or succumb to the challenges that lie ahead? The choice is
+            yours!
+          </p>
+        </div>
+
+        {/* small screens (aside -> below) */}
+        <div className="mt-10 flex flex-col gap-y-10 xl:hidden">
+          <Board
+            title="Suggestion"
+            headerSize="text-xl"
+            itemsDirection="row"
+            itemsCount={10}
+            className="!static !flex border border-white/10 !pb-5"
+          />
+
+          <div className="flex w-full flex-col space-y-5 rounded-lg border border-white/10 bg-white/5 p-5 shadow-md shadow-black/50">
+            <h2 className="font-bold">
+              <i className="font-light">
+                Don't be AFK,{" "}
+                <span className="text-primary font-bold">SHARE IT!</span>
+              </i>
+            </h2>
+            <div className="flex items-center gap-x-2">
+              <input
+                type="text"
+                id="invite-link"
+                value={`AFK@T.com/games/${joinName(users.user?.username)}`}
+                className="w-full rounded border border-white/15 px-3 py-1.5"
+                readOnly
+              />
+              <button
+                className="hover:bg-primary hover:border-primary cursor-pointer rounded border px-3 py-1.5 font-medium duration-150 hover:text-black"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    (document.getElementById("invite-link") as HTMLInputElement)
+                      .value,
+                  );
+                  toast("Copied to clipboard");
+                }}
+              >
+                Copy
+              </button>
             </div>
           </div>
         </div>

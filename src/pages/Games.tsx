@@ -13,7 +13,6 @@ const GameJams = () => {
 
     const handleScroll = () => {
       const currentScrollY = main.scrollTop;
-      console.log(currentScrollY);
 
       if (currentScrollY > lastScrollY) {
         setIsVisible(false);
@@ -191,7 +190,7 @@ const GameJams = () => {
         />
 
         <ul
-          className="grid-games mb-25 grid space-y-6 px-10 md:px-0"
+          className="games-grid mb-25 grid space-y-6 px-10 md:px-0"
           style={
             {
               // gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
