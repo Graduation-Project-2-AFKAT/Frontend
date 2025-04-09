@@ -6,6 +6,7 @@ import useYupValidationResolver from "../components/form/userYupValidationResolv
 import { Upload, Image, Info, Package, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { IFormData } from "../interfaces";
+import { build } from "vite";
 
 const validationSchema = yup.object({
   title: yup.string().required("Game title is required"),
@@ -45,12 +46,14 @@ const PublishGame = () => {
 
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [uploadedWebGLFiles, setUploadedWebGLFiles] = useState<File[]>([]);
+  const [uploadedWindowsFiles, setUploadedWindowsFiles] = useState<File[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [customTag, setCustomTag] = useState("");
   const [tags, setTags] = useState<string[]>([]);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const WebGLfileInputRef = useRef<HTMLInputElement>(null);
+  const WindowsfileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const genres = [
@@ -73,13 +76,14 @@ const PublishGame = () => {
     e.preventDefault();
   };
 
-  const handleFileDrop = (e: React.DragEvent) => {
+  const handleFileDrop = (buildType: string, e: React.DragEvent) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
-    handleFileUpload(files);
+    handleFileUpload(files, buildType);
   };
 
-  const handleFileUpload = (files: File[]) => {
+  const handleFileUpload = (files: File[], buildType: string) => {
+    console.log(buildType);
     const validFiles = files.filter(
       (file) =>
         file.type === "application/zip" ||
@@ -89,9 +93,27 @@ const PublishGame = () => {
     );
 
     if (validFiles.length) {
-      setUploadedFiles([...uploadedFiles, ...validFiles]);
+      if (buildType === "WebGL") {
+        console.log("uploaded to WebGL");
+        setUploadedWebGLFiles([...validFiles]);
+      } else if (buildType === "Windows") {
+        console.log("uploaded to Windows");
+        setUploadedWindowsFiles([...validFiles]);
+      }
     } else {
       toast.error("Please upload ZIP or RAR files only");
+    }
+  };
+
+  const handleRemoveFile = (file: File, buildType: string) => {
+    if (buildType === "WebGL") {
+      setUploadedWebGLFiles(uploadedWebGLFiles.filter((f) => f !== file));
+
+      if (WebGLfileInputRef.current) WebGLfileInputRef.current.value = "";
+    } else if (buildType === "Windows") {
+      setUploadedWindowsFiles(uploadedWindowsFiles.filter((f) => f !== file));
+
+      if (WindowsfileInputRef.current) WindowsfileInputRef.current.value = "";
     }
   };
 
@@ -169,19 +191,22 @@ const PublishGame = () => {
     );
   };
 
-  const handleRemoveFile = (file: File) => {
-    setUploadedFiles(uploadedFiles.filter((f) => f !== file));
-  };
-
   const onSubmit = (data: IFormData) => {
     if (activeStep === 3) {
-      if (uploadedFiles.length === 0) {
+      if (uploadedWebGLFiles.length === 0) {
         toast.error("Please upload the game files");
         return;
       }
     }
 
-    console.log({ ...data, files: uploadedFiles, coverImage: uploadedImage });
+    console.log({
+      ...data,
+      files: {
+        WebGL: uploadedWebGLFiles,
+        Windows: uploadedWindowsFiles,
+      },
+      coverImage: uploadedImage,
+    });
     toast.success(
       "Game uploaded successfully! Our team will review it shortly.",
     );
@@ -533,61 +558,133 @@ const PublishGame = () => {
         {/* Step 3: Upload Files */}
         {activeStep === 3 && (
           <div className="space-y-6">
-            <div
-              className="flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
-              onClick={() => fileInputRef.current?.click()}
-              onDragOver={handleDragOver}
-              onDrop={handleFileDrop}
-            >
-              <div className="flex flex-col items-center justify-center p-6">
-                <Upload size={48} className="mb-2 text-white/70" />
-                <p className="mb-1 text-center text-white/70">
-                  Click to upload or drag and drop your game files
-                </p>
-                <p className="text-center text-xs text-white/50">
-                  ZIP or RAR files only
-                </p>
+            <div className="flex justify-between px-10">
+              <div>
+                <p className="mb-2 text-center">WebGL Build</p>
+                <div
+                  className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                  onClick={() => WebGLfileInputRef.current?.click()}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleFileDrop("WebGL", e)}
+                >
+                  <div className="flex flex-col items-center justify-center p-6">
+                    <Upload size={48} className="mb-2 text-white/70" />
+                    <p className="mb-1 text-center text-white/70">
+                      Click to upload or drag and drop your game files
+                    </p>
+                    <p className="text-center text-xs text-white/50">
+                      ZIP or RAR files only
+                    </p>
+                  </div>
+                </div>
               </div>
+
+              <input
+                type="file"
+                ref={WebGLfileInputRef}
+                className="hidden"
+                accept=".zip,.rar"
+                onChange={(e) => {
+                  if (e.target.files) {
+                    handleFileUpload(Array.from(e.target.files), "WebGL");
+                  }
+                }}
+                multiple
+              />
+
+              <div className="mx-10 mt-8 border border-white/10" />
+
+              <div>
+                <p className="mb-2 text-center">Windows Build</p>
+                <div
+                  className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                  onClick={() => WindowsfileInputRef.current?.click()}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleFileDrop("Windows", e)}
+                >
+                  <div className="flex flex-col items-center justify-center p-6">
+                    <Upload size={48} className="mb-2 text-white/70" />
+                    <p className="mb-1 text-center text-white/70">
+                      Click to upload or drag and drop your game files
+                    </p>
+                    <p className="text-center text-xs text-white/50">
+                      ZIP or RAR files only
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <input
+                type="file"
+                ref={WindowsfileInputRef}
+                className="hidden"
+                accept=".zip,.rar"
+                onChange={(e) => {
+                  if (e.target.files) {
+                    handleFileUpload(Array.from(e.target.files), "Windows");
+                  }
+                }}
+                multiple
+              />
             </div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept=".zip,.rar"
-              onChange={(e) => {
-                if (e.target.files) {
-                  handleFileUpload(Array.from(e.target.files));
-                }
-              }}
-              multiple
-            />
 
             {/* Uploaded Files */}
-            {uploadedFiles.length > 0 && (
+            {(uploadedWebGLFiles.length > 0 ||
+              uploadedWindowsFiles.length > 0) && (
               <div className="space-y-2">
                 <p className="text-sm font-medium">Uploaded Files</p>
-                <div className="space-y-2">
-                  {uploadedFiles.map((file, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between rounded bg-white/10 p-2"
-                    >
-                      <div className="flex items-center">
-                        <Package className="mr-2 text-white/70" size={16} />
-                        <span className="text-sm">{file.name}</span>
-                        <span className="ml-2 text-xs text-white/50">
-                          ({Math.round((file.size / 1024 / 1024) * 10) / 10} MB)
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        className="text-white/70 hover:text-white"
-                        onClick={() => handleRemoveFile(file)}
+                <div className="flex justify-between px-10">
+                  {/* WebGL Files */}
+                  <div className="flex flex-col gap-y-2">
+                    {uploadedWebGLFiles.map((file, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between rounded bg-white/10 p-2"
                       >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  ))}
+                        <div className="flex items-center">
+                          <Package className="mr-2 text-white/70" size={16} />
+                          <span className="text-sm">{file.name}</span>
+                          <span className="ml-2 text-xs text-white/50">
+                            ({Math.round((file.size / 1024 / 1024) * 10) / 10}{" "}
+                            MB)
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="text-white/70 hover:text-white"
+                          onClick={() => handleRemoveFile(file, "WebGL")}
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Windows Files */}
+                  <div className="flex flex-col gap-y-2">
+                    {uploadedWindowsFiles.map((file, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between rounded bg-white/10 p-2"
+                      >
+                        <div className="flex items-center">
+                          <Package className="mr-2 text-white/70" size={16} />
+                          <span className="text-sm">{file.name}</span>
+                          <span className="ml-2 text-xs text-white/50">
+                            ({Math.round((file.size / 1024 / 1024) * 10) / 10}{" "}
+                            MB)
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="text-white/70 hover:text-white"
+                          onClick={() => handleRemoveFile(file, "Windows")}
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
