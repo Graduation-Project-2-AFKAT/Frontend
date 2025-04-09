@@ -13,6 +13,7 @@ import { ToastContainer, ToastPosition } from "react-toastify";
 import EditProfile from "./pages/profile/EditProfile";
 import Game from "./pages/Game";
 import PublishGame from "./pages/PublishGame";
+import BecomeAMember from "./pages/BecomeAMember";
 
 const userData = {
   email: "joe@joe.com",
@@ -86,6 +87,14 @@ function App() {
             element={
               <ProtectedRoute isAuthenticated={true} redirectPath="/login">
                 <PublishGame />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/membership"
+            element={
+              <ProtectedRoute isAuthenticated={true} redirectPath="/login">
+                <BecomeAMember />
               </ProtectedRoute>
             }
           />

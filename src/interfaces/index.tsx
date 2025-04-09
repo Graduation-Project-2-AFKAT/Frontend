@@ -15,7 +15,7 @@ export interface IUser {
   };
 }
 
-export interface IFormData {
+export interface IAddGameFormData {
   title: string;
   description: string;
   genre: string[];
@@ -24,4 +24,13 @@ export interface IFormData {
   price: string;
   tags: string[];
   isMultiplayer: boolean;
+}
+
+export interface IMembershipFormData {
+  role: "developer" | "designer" | "admin";
+  experience: string;
+  portfolio: string;
+  skills: string[];
+  motivation: string;
+  references: string;
 }

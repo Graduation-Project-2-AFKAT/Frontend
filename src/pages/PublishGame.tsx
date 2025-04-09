@@ -5,8 +5,7 @@ import Input from "../components/form/Input";
 import useYupValidationResolver from "../components/form/userYupValidationResolver";
 import { Upload, Image, Info, Package, X } from "lucide-react";
 import { toast } from "react-toastify";
-import { IFormData } from "../interfaces";
-import { build } from "vite";
+import { IAddGameFormData } from "../interfaces";
 
 const validationSchema = yup.object({
   title: yup.string().required("Game title is required"),
@@ -30,7 +29,7 @@ const PublishGame = () => {
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm<IFormData>({
+  } = useForm<IAddGameFormData>({
     resolver,
     defaultValues: {
       title: "",
@@ -83,7 +82,6 @@ const PublishGame = () => {
   };
 
   const handleFileUpload = (files: File[], buildType: string) => {
-    console.log(buildType);
     const validFiles = files.filter(
       (file) =>
         file.type === "application/zip" ||
@@ -94,10 +92,8 @@ const PublishGame = () => {
 
     if (validFiles.length) {
       if (buildType === "WebGL") {
-        console.log("uploaded to WebGL");
         setUploadedWebGLFiles([...validFiles]);
       } else if (buildType === "Windows") {
-        console.log("uploaded to Windows");
         setUploadedWindowsFiles([...validFiles]);
       }
     } else {
@@ -191,7 +187,7 @@ const PublishGame = () => {
     );
   };
 
-  const onSubmit = (data: IFormData) => {
+  const onSubmit = (data: IAddGameFormData) => {
     if (activeStep === 3) {
       if (uploadedWebGLFiles.length === 0) {
         toast.error("Please upload the game files");
@@ -334,6 +330,7 @@ const PublishGame = () => {
             <div className="col-span-1 md:col-span-2">
               <label className="mb-2 block text-sm font-medium" htmlFor="title">
                 Game Title
+                <span className="ml-1 text-red-400">*</span>
               </label>
               <Input
                 placeholder="Enter your game title"
@@ -351,6 +348,7 @@ const PublishGame = () => {
             <div className="col-span-1 md:col-span-2">
               <label className="mb-2 block text-sm font-medium" htmlFor="desc">
                 Description
+                <span className="ml-1 text-red-400">*</span>
               </label>
               <textarea
                 id="desc"
@@ -435,6 +433,7 @@ const PublishGame = () => {
             <div>
               <label className="mb-2 block text-sm font-medium">
                 Cover Image
+                <span className="ml-1 text-red-400">*</span>
               </label>
               <div
                 className="flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
@@ -485,6 +484,7 @@ const PublishGame = () => {
             <div>
               <label className="mb-2 block text-sm font-medium">
                 Genres (select at least one)
+                <span className="ml-1 text-red-400">*</span>
               </label>
               <div className="flex flex-wrap gap-2">
                 {genres.map((genre) => (
@@ -515,7 +515,7 @@ const PublishGame = () => {
               <div className="flex items-center">
                 <Input
                   placeholder="Add custom tags (optional)"
-                  className="flex-1"
+                  className="colors flex-1 rounded-l rounded-r-none border border-white/10 bg-white/5 text-white placeholder-white/50 transition outline-none focus:border-teal-400 focus:px-2!"
                   value={customTag}
                   onChange={(e) => setCustomTag(e.target.value)}
                   onKeyDown={(e) => {
@@ -527,7 +527,7 @@ const PublishGame = () => {
                 />
                 <button
                   type="button"
-                  className="ml-2 rounded bg-white/10 px-4 py-2 text-sm hover:bg-white/20"
+                  className="rounded-r bg-white/10 px-4 py-2 hover:bg-white/20"
                   onClick={handleAddTag}
                 >
                   Add
@@ -559,8 +559,10 @@ const PublishGame = () => {
         {activeStep === 3 && (
           <div className="space-y-6">
             <div className="flex justify-between px-10">
-              <div>
-                <p className="mb-2 text-center">WebGL Build</p>
+              <div className="flex flex-col justify-between">
+                <p className="mb-2 text-center">
+                  WebGL Build<span className="ml-1 text-red-400">*</span>
+                </p>
                 <div
                   className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
                   onClick={() => WebGLfileInputRef.current?.click()}
@@ -595,7 +597,10 @@ const PublishGame = () => {
               <div className="mx-10 mt-8 border border-white/10" />
 
               <div>
-                <p className="mb-2 text-center">Windows Build</p>
+                <p className="mb-2 text-center">
+                  Windows Build{" "}
+                  <span className="text-white/50">(Optional)</span>
+                </p>
                 <div
                   className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
                   onClick={() => WindowsfileInputRef.current?.click()}
