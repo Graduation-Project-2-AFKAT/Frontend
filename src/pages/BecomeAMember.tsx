@@ -186,7 +186,7 @@ const BecomeAMember = () => {
       </div>
 
       <form
-        className="border-primary rounded-2xl border-2 bg-[#121015] p-8 shadow-lg"
+        className="border-primary rounded-2xl border-2 bg-[#121015] p-8 shadow-lg duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
         onSubmit={handleSubmit(onSubmit)}
       >
         {/* Show form errors at the top */}

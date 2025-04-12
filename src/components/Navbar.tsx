@@ -73,7 +73,7 @@ const Navbar = ({
             </li>
 
             <li className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300">
-              Store
+              <a href="/arts">Arts</a>
             </li>
 
             <li className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300">
@@ -95,7 +95,7 @@ const Navbar = ({
                       <a href="/games">Discover</a>
                     </li>
                     <li className="cursor-pointer px-4 py-2 hover:bg-[#1f1c24]">
-                      Store
+                      <a href="/arts">Arts</a>
                     </li>
                     <li className="cursor-pointer px-4 py-2 hover:bg-[#1f1c24]">
                       Learn

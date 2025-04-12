@@ -16,15 +16,14 @@ export const loadUser = createAsyncThunk("user/load", async () => {
 export const userRegister = createAsyncThunk(
   "user/register",
   async (userData, { dispatch, rejectWithValue }) => {
-    //https://ec62-2a01-9700-4200-4700-33de-9eba-4faa-1df2.ngrok-free.app/dra/reg/
     try {
-      // const res = await api.post(
-      //   "http://localhost:3000/users/register",
-      //   userData,
-      // );
+      const res = await api.post(
+        "https://49fe-2a01-9700-42c6-8800-b127-b48b-ee34-8ddc.ngrok-free.app/api/v1/auth/register/",
+        userData,
+      );
 
+      console.log(res);
       // After successful registration, load the user data
-      await dispatch(loadUser());
       await dispatch(
         showAlert({ msg: "Registration successful", type: "success" }),
       );
@@ -41,10 +40,17 @@ export const userRegister = createAsyncThunk(
 export const userLogin = createAsyncThunk(
   "user/login",
   async (userData, { dispatch, rejectWithValue }) => {
+    // https://49fe-2a01-9700-42c6-8800-b127-b48b-ee34-8ddc.ngrok-free.app/api/v1/auth/login
     try {
-      const res = await api.post("http://localhost:3000/users/login", userData);
+      const res = await api.post(
+        "https://49fe-2a01-9700-42c6-8800-b127-b48b-ee34-8ddc.ngrok-free.app/api/v1/auth/login",
+        userData,
+      );
 
-      await dispatch(loadUser());
+      console.log(res.data);
+
+      // await dispatch(loadUser());
+      await dispatch(showAlert({ msg: "Login successful", type: "success" }));
 
       return res.data;
     } catch (err: unknown) {
@@ -74,8 +80,13 @@ const initialState = {
   user: null as {
     username: string;
     email: string;
-    avatar: string;
-    token: { access: string; refresh: string };
+    userprofile: {
+      country: string;
+      github_link: string;
+      linkedin_link: string;
+      phone: string;
+      profile_image: string;
+    };
   } | null,
   isAuth: false,
   loading: false,
@@ -89,26 +100,24 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(loadUser.fulfilled, (state, action) => {
+      console.log(action.payload);
       state.isAuth = true;
       state.loading = false;
-      state.user = action.payload;
+      // state.user = action.payload;
     });
 
     builder.addMatcher(
       isAnyOf(userLogin.fulfilled, userRegister.fulfilled),
-      (state) => {
-        setAuthToken(userData.token);
-        state.token = {
-          access: userData.token.access,
-          refresh: userData.token.refresh,
+      (state, action) => {
+        const token = {
+          access: action.payload.access,
+          refresh: action.payload.refresh,
         };
-        // setAuthToken(action.payload.token);
-        // state.token = {
-        //   access: action.payload.token.access,
-        //   refresh: action.payload.token.refresh,
-        // };
+        state.token = token;
+        state.user = action.payload.user;
         state.isAuth = true;
         state.loading = false;
+        setAuthToken(token);
       },
     );
 
