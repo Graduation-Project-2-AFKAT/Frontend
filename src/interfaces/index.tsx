@@ -26,6 +26,16 @@ export interface IAddGameFormData {
   isMultiplayer: boolean;
 }
 
+export interface IAddArtFormData {
+  title: string;
+  description: string;
+  category: string[];
+  fileFormat: string;
+  license: string;
+  price: string;
+  tags: string[];
+}
+
 export interface IMembershipFormData {
   role: "developer" | "designer" | "admin";
   experience: string;

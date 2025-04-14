@@ -61,7 +61,7 @@ const Navbar = ({
             />
 
             <img
-              src="../../public/images/logoOutlined.svg"
+              src="/images/logoOutlined.svg"
               alt="AFKAT Logo"
               className="hidden lg:inline"
             />

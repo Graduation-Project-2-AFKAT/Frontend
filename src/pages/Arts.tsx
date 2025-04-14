@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Component } from "lucide-react";
 
 // Sample categories for game art assets
 const categories = [
@@ -182,6 +183,18 @@ const Arts = () => {
   return (
     <div className="mx-auto w-full max-w-7xl p-10">
       <div className="flex flex-col gap-y-5">
+        <div className="my-5 flex items-center justify-between">
+          <h1 className="text-2xl font-bold">
+            Share Your Game Assets With The World!
+          </h1>
+          <Link
+            to={`${window.location.pathname}/publish`}
+            className="hover:bg-primary focus:bg-primary/75 flex cursor-pointer items-center gap-x-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-bold text-black duration-50 focus:translate-y-0.5"
+          >
+            Add Your Asset <Component size={20} />
+          </Link>
+        </div>
+
         {/* Hero section */}
         <div className="relative mb-6 h-64 overflow-hidden rounded-xl">
           <div className="from-primary/40 absolute inset-0 bg-gradient-to-r to-transparent" />

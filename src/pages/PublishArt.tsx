@@ -3,25 +3,25 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import Input from "../components/form/Input";
 import useYupValidationResolver from "../components/form/userYupValidationResolver";
-import { Upload, Image, Info, Package, X } from "lucide-react";
+import { Image, Info, X, FileText, Box } from "lucide-react";
 import { toast } from "react-toastify";
-import { IAddGameFormData } from "../interfaces";
+
+import { IAddArtFormData } from "../interfaces";
 
 const validationSchema = yup.object({
-  title: yup.string().required("Game title is required"),
+  title: yup.string().required("Asset title is required"),
   description: yup
     .string()
     .required("Description is required")
     .min(20, "Description must be at least 20 characters"),
-  genre: yup.array().min(1, "Select at least one genre"),
-  releaseDate: yup.string(),
-  version: yup.string().required("Version is required"),
+  category: yup.array().min(1, "Select at least one category"),
+  fileFormat: yup.string().required("File format is required"),
+  license: yup.string().required("License is required"),
   price: yup.string().required("Price is required"),
   tags: yup.array(),
-  isMultiplayer: yup.boolean(),
 });
 
-const PublishGame = () => {
+const PublishArt = () => {
   const resolver = useYupValidationResolver(validationSchema);
 
   const {
@@ -29,133 +29,136 @@ const PublishGame = () => {
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm<IAddGameFormData>({
+  } = useForm<IAddArtFormData>({
     resolver,
     defaultValues: {
       title: "",
       description: "",
-      genre: [],
-      releaseDate: "",
-      version: "1.0.0",
+      category: [],
+      fileFormat: "GLTF",
+      license: "Standard Commercial License",
       price: "Free",
       tags: [],
-      isMultiplayer: false,
     },
   });
 
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [uploadedWebGLFiles, setUploadedWebGLFiles] = useState<File | null>(
-    null,
-  );
-  const [uploadedWindowsFiles, setUploadedWindowsFiles] = useState<File | null>(
-    null,
-  );
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [uploadedModelFile, setUploadedModelFile] = useState<File | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [customTag, setCustomTag] = useState("");
   const [tags, setTags] = useState<string[]>([]);
 
-  const WebGLfileInputRef = useRef<HTMLInputElement>(null);
-  const WindowsfileInputRef = useRef<HTMLInputElement>(null);
+  const modelFileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
-  const genres = [
-    "Action",
-    "Adventure",
-    "RPG",
-    "Strategy",
-    "Simulation",
-    "Sports",
-    "Puzzle",
-    "Racing",
-    "Fighting",
-    "Shooter",
-    "Horror",
-    "Card Game",
-    "Educational",
+  const categories = [
+    "Characters",
+    "Environments",
+    "Props",
+    "Vehicles",
+    "Weapons",
+    "Furniture",
+    "Architecture",
+    "Nature",
+    "Sci-Fi",
+    "Fantasy",
+    "Industrial",
+    "Anatomy",
+    "VFX",
+  ];
+
+  const fileFormats = ["GLTF", "GLB"];
+
+  const licenses = [
+    "Standard Commercial License",
+    "Extended Commercial License",
+    "Editorial Use Only",
+    "Personal Use Only",
+    "Creative Commons",
   ];
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
   };
 
-  const handleFileDrop = (buildType: string, e: React.DragEvent) => {
+  const handleFileDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
 
     if (files.length > 1) {
       toast.error(
         <div>
-          <h1 className="mb-2 font-bold">Only one archive file is allowed.</h1>
+          <h1 className="mb-2 font-bold">Only one model file is allowed.</h1>
           <p className="font-light">
-            Please package all your game files in a single ZIP or RAR file.
+            Please upload a single 3D model file or an archive containing the
+            asset.
           </p>
         </div>,
       );
       return;
     }
 
-    const fileSize = files[0].size / 1024 / 1024 / 1024; // Convert to GB
-    if (fileSize > 1) {
+    const fileSize = files[0].size / 1024 / 1024; // Convert to MB
+    if (fileSize > 100) {
       toast.error(
         <div>
           <h1 className="mb-2 font-bold">File too large</h1>
           <p className="font-light">
-            Your game file exceeds the 1GB size limit. Please compress your
-            files or reduce content.
+            Your 3D model file exceeds the 100MB size limit. Please optimize
+            your model or compress your files.
           </p>
         </div>,
       );
       return;
     }
-    handleFileUpload(files, buildType);
+    handleFileUpload(files);
   };
 
-  const handleFileUpload = (files: File[], buildType: string) => {
+  const handleFileUpload = (files: File[]) => {
     if (!files.length) return; // No files selected
 
     const file = files[0];
 
-    const fileSize = file.size / 1024 / 1024 / 1024; // Convert to GB
-    if (fileSize > 1) {
+    const fileSize = file.size / 1024 / 1024; // Convert to MB
+    if (fileSize > 100) {
       toast.error(
         <div>
           <h1 className="mb-2 font-bold">File too large</h1>
           <p className="font-light">
-            Your game file exceeds the 1GB size limit. Please compress your
-            files or reduce content.
+            Your 3D model file exceeds the 100MB size limit. Please optimize
+            your model or compress your files.
           </p>
         </div>,
       );
       return;
     }
-    const isValidType =
-      file.type === "application/zip" ||
-      file.type === "application/x-zip-compressed" ||
-      file.name.endsWith(".zip") ||
-      file.name.endsWith(".rar");
 
-    if (!isValidType) {
-      toast.error("Please upload ZIP or RAR files only");
+    const validFileExtensions = [".gltf", ".glb"];
+
+    const extension = file.name
+      .substring(file.name.lastIndexOf("."))
+      .toLowerCase();
+
+    if (!validFileExtensions.includes(extension)) {
+      toast.error(
+        <div>
+          <h1 className="mb-2 font-bold">Invalid file format</h1>
+          <p className="font-light">
+            Please upload a valid 3D model file or compressed archive (GLTF,
+            GLB, FBX, OBJ, STL, ZIP, etc.)
+          </p>
+        </div>,
+      );
+      return;
     }
 
-    if (buildType === "WebGL") {
-      setUploadedWebGLFiles(file);
-    } else if (buildType === "Windows") {
-      setUploadedWindowsFiles(file);
-    }
+    setUploadedModelFile(file);
   };
 
-  const handleRemoveFile = (buildType: string) => {
-    if (buildType === "WebGL") {
-      setUploadedWebGLFiles(null);
-
-      if (WebGLfileInputRef.current) WebGLfileInputRef.current.value = "";
-    } else if (buildType === "Windows") {
-      setUploadedWindowsFiles(null);
-
-      if (WindowsfileInputRef.current) WindowsfileInputRef.current.value = "";
-    }
+  const handleRemoveFile = () => {
+    setUploadedModelFile(null);
+    if (modelFileInputRef.current) modelFileInputRef.current.value = "";
   };
 
   const handleImageDrop = (e: React.DragEvent) => {
@@ -166,9 +169,7 @@ const PublishGame = () => {
     const imageFile = files.find(
       (file) =>
         file.type.startsWith("image/") &&
-        (file.type === "image/jpeg" ||
-          file.type === "image/png" ||
-          file.type === "image/gif"),
+        (file.type === "image/jpeg" || file.type === "image/png"),
     );
 
     if (imageFile) {
@@ -185,7 +186,7 @@ const PublishGame = () => {
       };
       reader.readAsDataURL(imageFile);
     } else {
-      toast.error("Please upload a valid image file (JPG, PNG, GIF)");
+      toast.error("Please upload a valid image file (JPG, PNG)");
     }
   };
 
@@ -206,15 +207,15 @@ const PublishGame = () => {
     }
   };
 
-  const handleGenreToggle = (genre: string) => {
-    // Calculate the new genres array directly
-    const newGenres = selectedGenres.includes(genre)
-      ? selectedGenres.filter((g) => g !== genre)
-      : [...selectedGenres, genre];
+  const handleCategoryToggle = (category: string) => {
+    // Calculate the new categories array directly
+    const newCategories = selectedCategories.includes(category)
+      ? selectedCategories.filter((g) => g !== category)
+      : [...selectedCategories, category];
 
     // Update both the state and form value with the same new value
-    setSelectedGenres(newGenres);
-    setValue("genre", newGenres);
+    setSelectedCategories(newCategories);
+    setValue("category", newCategories);
   };
 
   const handleAddTag = () => {
@@ -233,31 +234,28 @@ const PublishGame = () => {
     );
   };
 
-  const onSubmit = (data: IAddGameFormData) => {
+  const onSubmit = (data: IAddArtFormData) => {
     if (activeStep === 3) {
-      if (!uploadedWebGLFiles) {
-        toast.error("Please upload the game files");
+      if (!uploadedModelFile) {
+        toast.error("Please upload a 3D model file");
         return;
       }
     }
 
     console.log({
       ...data,
-      files: {
-        WebGL: uploadedWebGLFiles,
-        Windows: uploadedWindowsFiles,
-      },
+      modelFile: uploadedModelFile,
       coverImage: uploadedImage,
     });
     toast.success(
-      "Game uploaded successfully! Our team will review it shortly.",
+      "3D model uploaded successfully! Our team will review it shortly.",
     );
     // Here you would typically send the data to your backend
   };
 
   const nextStep = () => {
     const errors: string[] = [];
-    // For step 1, validate title, description, version
+    // For step 1, validate title, description
     if (activeStep === 1) {
       const titleValue = document.getElementById("title") as HTMLInputElement;
       const descValue = document.getElementById(
@@ -266,7 +264,7 @@ const PublishGame = () => {
 
       // Collect all errors
       if (!titleValue?.value) {
-        errors.push("Please enter a game title");
+        errors.push("Please enter an asset title");
       }
 
       if (!descValue?.value) {
@@ -276,20 +274,19 @@ const PublishGame = () => {
       }
     }
 
-    // For step 2, validate image and genres
+    // For step 2, validate image and categories
     if (activeStep === 2) {
       if (!uploadedImage) {
         errors.push("Please upload a cover image");
       }
 
-      if (selectedGenres.length === 0) {
-        errors.push("Please select at least one genre");
+      if (selectedCategories.length === 0) {
+        errors.push("Please select at least one category");
       }
     }
 
     // If there are errors, show them all at once
     if (errors.length > 0) {
-      // Option 1: Show all errors in a single toast
       toast.error(
         <div>
           <p className="mb-2 font-bold">Please fix the following errors:</p>
@@ -324,9 +321,9 @@ const PublishGame = () => {
     >
       {/* Header */}
       <div className="w-full border-b border-white/10 p-6">
-        <h1 className="text-2xl font-bold">Upload Your Game</h1>
+        <h1 className="text-2xl font-bold">Upload Your 3D Asset</h1>
         <p className="text-sm text-white/70">
-          Share your creation with thousands of players around the world
+          Share your 3D models with creatives and developers worldwide
         </p>
       </div>
 
@@ -337,9 +334,9 @@ const PublishGame = () => {
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full ${activeStep >= 1 ? "bg-primary text-black" : "bg-white/20"}`}
             >
-              <Package size={20} />
+              <FileText size={20} />
             </div>
-            <span className="mt-2 text-sm">Game Details</span>
+            <span className="mt-2 text-sm">Asset Details</span>
           </div>
           <div className="relative flex-1">
             <div
@@ -352,7 +349,7 @@ const PublishGame = () => {
             >
               <Image size={20} />
             </div>
-            <span className="mt-2 text-sm">Media & Tags</span>
+            <span className="mt-2 text-sm">Preview & Tags</span>
           </div>
           <div className="relative flex-1">
             <div
@@ -363,9 +360,9 @@ const PublishGame = () => {
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full ${activeStep >= 3 ? "bg-primary text-black" : "bg-white/20"}`}
             >
-              <Upload size={20} />
+              <Box size={20} />
             </div>
-            <span className="mt-2 text-sm">Upload Files</span>
+            <span className="mt-2 text-sm">Upload Model</span>
           </div>
         </div>
       </div>
@@ -377,11 +374,11 @@ const PublishGame = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="col-span-1 md:col-span-2">
               <label className="mb-2 block text-sm font-medium" htmlFor="title">
-                Game Title
+                Asset Title
                 <span className="ml-1 text-red-400">*</span>
               </label>
               <Input
-                placeholder="Enter your game title"
+                placeholder="Enter your 3D asset title"
                 className="w-full"
                 id="title"
                 {...register("title")}
@@ -404,7 +401,7 @@ const PublishGame = () => {
               <textarea
                 id="description"
                 className="min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400"
-                placeholder="Describe your game (features, story, etc.)"
+                placeholder="Describe your 3D model (features, uses, technical details, etc.)"
                 {...register("description")}
               />
               {errors.description && (
@@ -417,36 +414,49 @@ const PublishGame = () => {
             <div>
               <label
                 className="mb-2 block text-sm font-medium"
-                htmlFor="version"
+                htmlFor="fileFormat"
               >
-                Version
+                File Format
+                <span className="ml-1 text-red-400">*</span>
               </label>
-              <Input
-                id="version"
-                placeholder="1.0.0"
-                className="w-full"
-                {...register("version")}
-              />
+              <select
+                id="fileFormat"
+                className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
+                {...register("fileFormat")}
+              >
+                {fileFormats.map((format) => (
+                  <option key={format} value={format}>
+                    {format}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
               <label
                 className="mb-2 block text-sm font-medium"
-                htmlFor="release"
+                htmlFor="license"
               >
-                Release Date
+                License
+                <span className="ml-1 text-red-400">*</span>
               </label>
-              <Input
-                id="release"
-                type="date"
-                className="w-full"
-                {...register("releaseDate")}
-              />
+              <select
+                id="license"
+                className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
+                {...register("license")}
+              >
+                {licenses.map((license) => (
+                  <option key={license} value={license}>
+                    {license}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
               <label className="mb-2 block text-sm font-medium" htmlFor="price">
                 Price
+                <span className="ml-1 text-red-400">*</span>
               </label>
               <select
                 id="price"
@@ -454,25 +464,13 @@ const PublishGame = () => {
                 {...register("price")}
               >
                 <option value="Free">Free</option>
-                <option value="$0.99">$0.99</option>
-                <option value="$1.99">$1.99</option>
-                <option value="$2.99">$2.99</option>
                 <option value="$4.99">$4.99</option>
                 <option value="$9.99">$9.99</option>
                 <option value="$14.99">$14.99</option>
                 <option value="$19.99">$19.99</option>
+                <option value="$24.99">$24.99</option>
+                <option value="$29.99">$29.99</option>
               </select>
-            </div>
-
-            <div>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-white/10 bg-white/5 text-teal-400 transition-colors"
-                  {...register("isMultiplayer")}
-                />
-                <span className="text-sm font-medium">Multiplayer Support</span>
-              </label>
             </div>
           </div>
         )}
@@ -516,9 +514,7 @@ const PublishGame = () => {
                     <p className="mb-1 text-white/70">
                       Click or drop an image here
                     </p>
-                    <p className="text-xs text-white/50">
-                      PNG, JPG, GIF up to 5MB
-                    </p>
+                    <p className="text-xs text-white/50">PNG, JPG up to 5MB</p>
                   </div>
                 )}
               </div>
@@ -526,37 +522,37 @@ const PublishGame = () => {
                 type="file"
                 ref={imageInputRef}
                 className="hidden"
-                accept=".jpg,.jpeg,.png,.gif"
+                accept=".jpg,.jpeg,.png"
                 multiple={false}
                 onChange={handleImageUpload}
               />
             </div>
 
-            {/* Genres */}
+            {/* Categories */}
             <div>
               <label className="mb-2 block text-sm font-medium">
-                Genres (select at least one)
+                Categories (select at least one)
                 <span className="ml-1 text-red-400">*</span>
               </label>
               <div className="flex flex-wrap gap-2">
-                {genres.map((genre) => (
+                {categories.map((category) => (
                   <button
-                    key={genre}
+                    key={category}
                     type="button"
                     className={`rounded-full px-4 py-1 text-sm transition-colors ${
-                      selectedGenres.includes(genre)
+                      selectedCategories.includes(category)
                         ? "bg-primary text-black"
                         : "border border-white/30 bg-white/5 hover:border-teal-400/50"
                     }`}
-                    onClick={() => handleGenreToggle(genre)}
+                    onClick={() => handleCategoryToggle(category)}
                   >
-                    {genre}
+                    {category}
                   </button>
                 ))}
               </div>
-              {errors.genre && (
+              {errors.category && (
                 <p className="mt-1 text-xs text-red-400">
-                  {errors.genre.message}
+                  {errors.category.message}
                 </p>
               )}
             </div>
@@ -610,146 +606,71 @@ const PublishGame = () => {
         {/* Step 3: Upload Files */}
         {activeStep === 3 && (
           <div className="space-y-6">
-            <div className="flex justify-between px-10">
-              <div className="flex flex-col justify-between">
-                <p className="mb-2 text-center">
-                  WebGL Build<span className="ml-1 text-red-400">*</span>
-                </p>
-                <div
-                  className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
-                  onClick={() => WebGLfileInputRef.current?.click()}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleFileDrop("WebGL", e)}
-                >
-                  <div className="flex flex-col items-center justify-center p-6">
-                    <Upload size={48} className="mb-2 text-white/70" />
-                    <p className="mb-1 text-center text-white/70">
-                      Click to upload or drag and drop your game files
-                    </p>
-                    <p className="text-center text-xs text-white/50">
-                      ZIP or RAR files only
-                    </p>
-                    <p className="mt-1 text-center text-xs text-white/40">
-                      Maximum file size: 1GB
-                    </p>
-                  </div>
+            <div className="flex flex-col items-center justify-center">
+              <p className="mb-4 text-center text-lg font-medium">
+                Upload Your 3D Model<span className="ml-1 text-red-400">*</span>
+              </p>
+              <div
+                className="flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                onClick={() => modelFileInputRef.current?.click()}
+                onDragOver={handleDragOver}
+                onDrop={handleFileDrop}
+              >
+                <div className="flex flex-col items-center justify-center p-6">
+                  <Box size={64} className="mb-4 text-white/70" />
+                  <p className="mb-2 text-center text-lg text-white/70">
+                    Click to upload or drag and drop your 3D model file
+                  </p>
+                  <p className="text-center text-sm text-white/50">
+                    Supports GLTF, GLB and ZIP/RAR archives
+                  </p>
+                  <p className="mt-1 text-center text-xs text-white/40">
+                    Maximum file size: 100MB
+                  </p>
                 </div>
               </div>
-
-              <input
-                type="file"
-                ref={WebGLfileInputRef}
-                className="hidden"
-                accept=".zip,.rar"
-                multiple={false}
-                onChange={(e) => {
-                  if (e.target.files) {
-                    handleFileUpload(Array.from(e.target.files), "WebGL");
-                  }
-                }}
-              />
-
-              <div className="mx-10 mt-8 border border-white/10" />
-
-              <div>
-                <p className="mb-2 text-center">
-                  Windows Build{" "}
-                  <span className="text-white/50">(Optional)</span>
-                </p>
-                <div
-                  className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
-                  onClick={() => WindowsfileInputRef.current?.click()}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleFileDrop("Windows", e)}
-                >
-                  <div className="flex flex-col items-center justify-center p-6">
-                    <Upload size={48} className="mb-2 text-white/70" />
-                    <p className="mb-1 text-center text-white/70">
-                      Click to upload or drag and drop your game files
-                    </p>
-                    <p className="text-center text-xs text-white/50">
-                      ZIP or RAR files only
-                    </p>
-                    <p className="mt-1 text-center text-xs text-white/40">
-                      Maximum file size: 1GB
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <input
-                type="file"
-                ref={WindowsfileInputRef}
-                className="hidden"
-                accept=".zip,.rar"
-                multiple={false}
-                onChange={(e) => {
-                  if (e.target.files) {
-                    handleFileUpload(Array.from(e.target.files), "Windows");
-                  }
-                }}
-              />
             </div>
 
-            {/* Uploaded Files */}
-            {(uploadedWebGLFiles || uploadedWindowsFiles) && (
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Uploaded Files</p>
-                <div className="flex justify-between px-10">
-                  {/* WebGL Files */}
-                  <div className="flex flex-col gap-y-2">
-                    {uploadedWebGLFiles && (
-                      <div className="flex items-center justify-between rounded bg-white/10 p-2">
-                        <div className="flex items-center">
-                          <Package className="mr-2 text-white/70" size={16} />
-                          <span className="text-sm">
-                            {uploadedWebGLFiles.name}
-                          </span>
-                          <span className="ml-2 text-xs text-white/50">
-                            (
-                            {Math.round(
-                              (uploadedWebGLFiles.size / 1024 / 1024) * 10,
-                            ) / 10}{" "}
-                            MB)
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          className="text-white/70 hover:text-white"
-                          onClick={() => handleRemoveFile("WebGL")}
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
+            <input
+              type="file"
+              ref={modelFileInputRef}
+              className="hidden"
+              accept=".gltf,.glb,.fbx,.obj,.stl,.blend,.max,.c4d,.usd,.zip,.rar"
+              multiple={false}
+              onChange={(e) => {
+                if (e.target.files) {
+                  handleFileUpload(Array.from(e.target.files));
+                }
+              }}
+            />
 
-                  {/* Windows Files */}
-                  <div className="flex flex-col gap-y-2">
-                    {uploadedWindowsFiles && (
-                      <div className="flex items-center justify-between rounded bg-white/10 p-2">
-                        <div className="flex items-center">
-                          <Package className="mr-2 text-white/70" size={16} />
-                          <span className="text-sm">
-                            {uploadedWindowsFiles.name}
-                          </span>
-                          <span className="ml-2 text-xs text-white/50">
-                            (
-                            {Math.round(
-                              (uploadedWindowsFiles.size / 1024 / 1024) * 10,
-                            ) / 10}{" "}
-                            MB)
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          className="text-white/70 hover:text-white"
-                          onClick={() => handleRemoveFile("Windows")}
-                        >
-                          <X size={16} />
-                        </button>
+            {/* Uploaded Files */}
+            {uploadedModelFile && (
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Uploaded File</p>
+                <div className="flex justify-center">
+                  <div className="flex w-full items-center justify-between rounded bg-white/10 p-3">
+                    <div className="flex items-center">
+                      <Box className="mr-3 text-white/70" size={20} />
+                      <div>
+                        <span className="text-sm font-medium">
+                          {uploadedModelFile.name}
+                        </span>
+                        <p className="text-xs text-white/50">
+                          {Math.round(
+                            (uploadedModelFile.size / 1024 / 1024) * 100,
+                          ) / 100}
+                          MB
+                        </p>
                       </div>
-                    )}
+                    </div>
+                    <button
+                      type="button"
+                      className="text-white/70 hover:text-white"
+                      onClick={() => handleRemoveFile()}
+                    >
+                      <X size={20} />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -760,21 +681,21 @@ const PublishGame = () => {
                 <Info size={20} className="mt-0.5 mr-3 text-teal-400" />
                 <div>
                   <h3 className="text-sm font-medium">
-                    Guidelines for game submissions:
+                    Guidelines for 3D model submissions:
                   </h3>
                   <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-white/70">
                     <li>
-                      Make sure your game does not contain prohibited content
+                      Ensure your model has proper topology and is optimized for
+                      real-time use
                     </li>
                     <li>
-                      Include any installation instructions or dependencies
+                      Include textures and materials with your model submission
                     </li>
                     <li>
-                      Submit a playable build that doesn't require additional
-                      downloads
+                      Make sure you have proper rights to all parts of the model
                     </li>
                     <li>
-                      Make sure your description accurately represents your game
+                      Provide accurate scale information in your description
                     </li>
                     <li>
                       Our team will review your submission within 1-3 business
@@ -814,7 +735,7 @@ const PublishGame = () => {
               className="bg-primary rounded px-6 py-2 font-bold text-black hover:bg-teal-400"
               onClick={() => handleSubmit(onSubmit)()}
             >
-              Submit Game
+              Submit 3D Asset
             </button>
           )}
         </div>
@@ -823,4 +744,4 @@ const PublishGame = () => {
   );
 };
 
-export default PublishGame;
+export default PublishArt;

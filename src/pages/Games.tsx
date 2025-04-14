@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import GameCard from "../components/GameCard";
 import Tabs from "../components/Tabs";
 import { Link } from "react-router";
+import { Gamepad } from "lucide-react";
 
 const GameJams = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -37,9 +38,9 @@ const GameJams = () => {
         <p>Share Your Games With The World!</p>
         <Link
           to={`${window.location.pathname}/publish`}
-          className="hover:bg-primary cursor-pointer rounded-lg bg-gray-100 px-4 py-2 text-sm font-bold text-black duration-50 hover:text-white"
+          className="hover:bg-primary focus:bg-primary/75 flex cursor-pointer items-center gap-x-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-bold text-black duration-50 focus:translate-y-0.5"
         >
-          Add Your Game
+          Add Your Game <Gamepad size={25} />
         </Link>
       </header>
 
