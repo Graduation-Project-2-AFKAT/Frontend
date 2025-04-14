@@ -14,20 +14,6 @@ const categories = [
   "Animation",
 ];
 
-// Sample filter options
-const filters = {
-  license: ["Free", "Paid", "CC Attribution", "CC Commercial"],
-  style: [
-    "Realistic",
-    "Stylized",
-    "Low Poly",
-    "Pixel Art",
-    "Hand-painted",
-    "Vector",
-  ],
-  fileFormat: ["FBX", "OBJ", "GLTF", "PNG", "PSD", "Blender"],
-};
-
 // Sample arts data
 const sampleArts = [
   {
@@ -134,8 +120,6 @@ const Arts = () => {
   const [activeTab, setActiveTab] = useState("All");
   const [loading, setLoading] = useState(true);
   const [arts, setArts] = useState<IArtAsset[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [openFilter, setOpenFilter] = useState<string | null>(null);
 
   useEffect(() => {
     // Simulate loading data
@@ -148,34 +132,10 @@ const Arts = () => {
     loadData();
   }, []);
 
-  const filteredArts = arts.filter((art) => {
-    // Filter by category tab
-    if (activeTab !== "All" && art.category !== activeTab) return false;
-
-    // Filter by search term
-    if (
-      searchTerm &&
-      !art.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !art.author.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-      return false;
-
-    return true;
-  });
-
-  const toggleFilter = (filterName: string) => {
-    if (openFilter === filterName) {
-      setOpenFilter(null);
-    } else {
-      setOpenFilter(filterName);
-    }
-  };
-
   const scrollToTop = () => {
     const main = document.getElementById("main-elem");
 
     if (main) {
-      console.log(main);
       main.scrollTop = 0;
     }
   };
@@ -183,7 +143,7 @@ const Arts = () => {
   return (
     <div className="mx-auto w-full max-w-7xl p-10">
       <div className="flex flex-col gap-y-5">
-        <div className="my-5 flex items-center justify-between">
+        <div className="mb-5 flex items-center justify-between">
           <h1 className="text-2xl font-bold">
             Share Your Game Assets With The World!
           </h1>
@@ -209,81 +169,6 @@ const Arts = () => {
               Discover and download high-quality game assets, 3D models, and
               designs for your projects
             </p>
-          </div>
-        </div>
-
-        {/* Search and filters */}
-        <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row">
-          <div className="relative max-w-xl flex-grow">
-            <input
-              type="text"
-              className="w-full rounded-lg border border-white/10 bg-white/5 p-3 pl-10 text-white placeholder-white/50 transition-colors outline-none focus:border-teal-400"
-              placeholder="Search for assets, 3D models, or creators..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-white/50"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(filters).map(([filterName, options]) => (
-              <div key={filterName} className="relative">
-                <button
-                  onClick={() => toggleFilter(filterName)}
-                  className="flex items-center gap-2 rounded border border-white/10 bg-white/5 px-4 py-2 hover:border-teal-400/50"
-                >
-                  <span>
-                    {filterName.charAt(0).toUpperCase() + filterName.slice(1)}
-                  </span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className={`h-4 w-4 transition-transform ${openFilter === filterName ? "rotate-180" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-
-                {openFilter === filterName && (
-                  <div className="absolute z-10 mt-1 w-48 rounded-md border border-white/10 bg-[#2A2731] shadow-lg">
-                    <div className="py-1">
-                      {options.map((option) => (
-                        <button
-                          key={option}
-                          className="block w-full px-4 py-2 text-left text-sm hover:bg-white/5"
-                        >
-                          {option}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-
-            <button className="rounded border border-teal-400 px-4 py-2 text-teal-400 hover:bg-teal-400/10">
-              Reset Filters
-            </button>
           </div>
         </div>
 
@@ -344,9 +229,9 @@ const Arts = () => {
           </div>
         ) : (
           <>
-            {filteredArts.length > 0 ? (
+            {arts.length > 0 ? (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredArts.map((art) => (
+                {arts.map((art) => (
                   <Link
                     to={`/arts/${art.id}`}
                     key={art.id}
@@ -445,7 +330,7 @@ const Arts = () => {
               </div>
             )}
 
-            {filteredArts.length > 0 && (
+            {arts.length > 0 && (
               <div className="my-10 flex justify-center">
                 <button
                   className="rounded-lg border border-white/10 bg-white/5 px-6 py-2 hover:border-teal-400/50"

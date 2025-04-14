@@ -204,10 +204,10 @@ const Art = () => {
         </header>
 
         {/* 3D Model Viewer */}
-        <section className="relative overflow-hidden rounded-xl border border-white/10 bg-[#16141C]">
+        <section className="flex flex-col items-center">
           <div
             ref={canvasContainerRef}
-            className="aspect-video min-h-[500px] w-full"
+            className="relative aspect-video min-h-[500px] w-full max-w-[68rem] self-center overflow-hidden rounded-xl border border-white/10 bg-[#16141C]"
           >
             <Canvas
               camera={{
@@ -257,28 +257,28 @@ const Art = () => {
               <StableOrbitControls autoRotate={autoRotate} />
               {/* <Environment background preset="park" blur={0.05} /> */}
             </Canvas>
-          </div>
 
-          <div className="pointer-events-none absolute bottom-4 left-4 rounded bg-black/50 px-3 py-1 text-sm backdrop-blur-sm">
-            <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-green-500"></span>
-              Click and drag to rotate model
+            <div className="pointer-events-none absolute bottom-4 left-4 rounded bg-black/50 px-3 py-1 text-sm backdrop-blur-sm">
+              <div className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-green-500"></span>
+                Click and drag to rotate model
+              </div>
             </div>
-          </div>
 
-          <div className="absolute right-4 bottom-4 flex gap-2">
-            <button
-              className={`rounded px-2 py-1 text-sm ${autoRotate ? "bg-primary text-black" : "bg-black/50 text-white/70"} backdrop-blur-sm`}
-              onClick={() => setAutoRotate(!autoRotate)}
-            >
-              Auto-Rotate
-            </button>
-            <button
-              className={`rounded px-2 py-1 text-sm ${wireframe ? "bg-primary text-black" : "bg-black/50 text-white/70"} backdrop-blur-sm`}
-              onClick={() => setWireframe(!wireframe)}
-            >
-              Wireframe
-            </button>
+            <div className="absolute right-4 bottom-4 flex gap-2">
+              <button
+                className={`rounded px-2 py-1 text-sm ${autoRotate ? "bg-primary text-black" : "bg-black/50 text-white/70"} backdrop-blur-sm`}
+                onClick={() => setAutoRotate(!autoRotate)}
+              >
+                Auto-Rotate
+              </button>
+              <button
+                className={`rounded px-2 py-1 text-sm ${wireframe ? "bg-primary text-black" : "bg-black/50 text-white/70"} backdrop-blur-sm`}
+                onClick={() => setWireframe(!wireframe)}
+              >
+                Wireframe
+              </button>
+            </div>
           </div>
         </section>
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Divider from "./ui/Divider";
-import { NavLink, useLocation } from "react-router";
+import { Link, NavLink, useLocation } from "react-router";
 import { LogOut } from "lucide-react";
 
 interface IProps {
@@ -73,15 +73,15 @@ const Navbar = ({
         <div className="hidden grow items-center gap-5 border-2 px-0 md:mx-8 md:flex">
           <ul className="hidden items-center gap-4 lg:flex">
             <li className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300">
-              <a href="/games">Discover</a>
+              <Link to="/games">Discover</Link>
             </li>
 
             <li className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300">
-              <a href="/arts">Arts</a>
+              <Link to="/arts">Arts</Link>
             </li>
 
             <li className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300">
-              Learn
+              <Link to="/jams">Jams</Link>
             </li>
           </ul>
 
@@ -89,20 +89,44 @@ const Navbar = ({
           <div className="md:block lg:hidden">
             <i
               className="fa-solid fa-ellipsis-vertical cursor-pointer"
-              onClick={() => setShowMiniNav(!showMiniNav)}
+              onClick={() => setShowMiniNav((prev) => !prev)}
             />
             {showMiniNav && (
               <>
-                <div className="absolute top-full left-30.5 z-10 mt-2 w-48 rounded-md bg-[#3B3842] py-2 shadow-lg before:absolute before:-top-full before:bottom-full before:left-6 before:-z-1 before:border-r-10 before:border-b-15 before:border-l-10 before:border-[#3B3842] before:border-r-transparent before:border-l-transparent">
+                <div className="absolute top-full left-29 z-10 mt-2 w-48 rounded-md bg-[#3B3842] py-2 shadow-lg before:absolute before:-top-full before:bottom-full before:left-6 before:-z-1 before:border-r-10 before:border-b-15 before:border-l-10 before:border-[#3B3842] before:border-r-transparent before:border-l-transparent">
                   <ul className="text-sm">
-                    <li className="cursor-pointer px-4 py-2 hover:bg-[#1f1c24]">
-                      <a href="/games">Discover</a>
+                    <li className="cursor-pointer hover:bg-[#1f1c24]">
+                      <Link
+                        to="/games"
+                        className="block px-4 py-2"
+                        onClick={() => {
+                          setShowMiniNav(false);
+                        }}
+                      >
+                        Discover
+                      </Link>
                     </li>
-                    <li className="cursor-pointer px-4 py-2 hover:bg-[#1f1c24]">
-                      <a href="/arts">Arts</a>
+                    <li className="cursor-pointer hover:bg-[#1f1c24]">
+                      <Link
+                        to="/arts"
+                        className="block px-4 py-2"
+                        onClick={() => {
+                          setShowMiniNav(false);
+                        }}
+                      >
+                        Arts
+                      </Link>
                     </li>
-                    <li className="cursor-pointer px-4 py-2 hover:bg-[#1f1c24]">
-                      Learn
+                    <li className="cursor-pointer hover:bg-[#1f1c24]">
+                      <Link
+                        to="/jams"
+                        className="block px-4 py-2"
+                        onClick={() => {
+                          setShowMiniNav(false);
+                        }}
+                      >
+                        Jams
+                      </Link>
                     </li>
                   </ul>
                 </div>

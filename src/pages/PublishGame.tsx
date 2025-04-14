@@ -13,11 +13,10 @@ const validationSchema = yup.object({
     .string()
     .required("Description is required")
     .min(20, "Description must be at least 20 characters"),
-  genre: yup.array().min(1, "Select at least one genre"),
+  tags: yup.array().min(1, "Select at least one tag"),
   releaseDate: yup.string(),
   version: yup.string().required("Version is required"),
   price: yup.string().required("Price is required"),
-  tags: yup.array(),
   isMultiplayer: yup.boolean(),
 });
 
@@ -28,17 +27,17 @@ const PublishGame = () => {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
     setValue,
   } = useForm<IAddGameFormData>({
     resolver,
     defaultValues: {
       title: "",
       description: "",
-      genre: [],
+      tags: [],
       releaseDate: "",
       version: "1.0.0",
       price: "Free",
-      tags: [],
       isMultiplayer: false,
     },
   });
@@ -51,15 +50,12 @@ const PublishGame = () => {
   const [uploadedWindowsFiles, setUploadedWindowsFiles] = useState<File | null>(
     null,
   );
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [customTag, setCustomTag] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
-
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const WebGLfileInputRef = useRef<HTMLInputElement>(null);
   const WindowsfileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
-  const genres = [
+  const tags = [
     "Action",
     "Adventure",
     "RPG",
@@ -206,39 +202,28 @@ const PublishGame = () => {
     }
   };
 
-  const handleGenreToggle = (genre: string) => {
-    // Calculate the new genres array directly
-    const newGenres = selectedGenres.includes(genre)
-      ? selectedGenres.filter((g) => g !== genre)
-      : [...selectedGenres, genre];
+  const handleTagToggle = (tag: string) => {
+    // Calculate the new tags array directly
+    const newTags = selectedTags.includes(tag)
+      ? selectedTags.filter((t) => t !== tag)
+      : [...selectedTags, tag];
 
     // Update both the state and form value with the same new value
-    setSelectedGenres(newGenres);
-    setValue("genre", newGenres);
-  };
-
-  const handleAddTag = () => {
-    if (customTag && !tags.includes(customTag)) {
-      setTags([...tags, customTag]);
-      setValue("tags", [...tags, customTag]);
-      setCustomTag("");
-    }
-  };
-
-  const handleRemoveTag = (tag: string) => {
-    setTags(tags.filter((t) => t !== tag));
-    setValue(
-      "tags",
-      tags.filter((t) => t !== tag),
-    );
+    setSelectedTags(newTags);
+    setValue("tags", newTags);
   };
 
   const onSubmit = (data: IAddGameFormData) => {
     if (activeStep === 3) {
       if (!uploadedWebGLFiles) {
-        toast.error("Please upload the game files");
+        toast.error("Please make sure to upload game files (WebGl)");
         return;
       }
+    }
+
+    const releaseDate = getValues("releaseDate");
+    if (releaseDate === "") {
+      setValue("releaseDate", new Date().toISOString().split("T")[0]);
     }
 
     console.log({
@@ -276,14 +261,14 @@ const PublishGame = () => {
       }
     }
 
-    // For step 2, validate image and genres
+    // For step 2, validate image and Tags
     if (activeStep === 2) {
       if (!uploadedImage) {
         errors.push("Please upload a cover image");
       }
 
-      if (selectedGenres.length === 0) {
-        errors.push("Please select at least one genre");
+      if (selectedTags.length === 0) {
+        errors.push("Please select at least one tag");
       }
     }
 
@@ -532,77 +517,33 @@ const PublishGame = () => {
               />
             </div>
 
-            {/* Genres */}
+            {/* Tags */}
             <div>
               <label className="mb-2 block text-sm font-medium">
-                Genres (select at least one)
+                Tags (select at least one)
                 <span className="ml-1 text-red-400">*</span>
               </label>
               <div className="flex flex-wrap gap-2">
-                {genres.map((genre) => (
+                {tags.map((tag) => (
                   <button
-                    key={genre}
+                    key={tag}
                     type="button"
                     className={`rounded-full px-4 py-1 text-sm transition-colors ${
-                      selectedGenres.includes(genre)
-                        ? "bg-primary text-black"
+                      selectedTags.includes(tag)
+                        ? "bg-primary border-primary border text-black"
                         : "border border-white/30 bg-white/5 hover:border-teal-400/50"
                     }`}
-                    onClick={() => handleGenreToggle(genre)}
+                    onClick={() => handleTagToggle(tag)}
                   >
-                    {genre}
+                    {tag}
                   </button>
                 ))}
               </div>
-              {errors.genre && (
+              {errors.tags && (
                 <p className="mt-1 text-xs text-red-400">
-                  {errors.genre.message}
+                  {errors.tags.message}
                 </p>
               )}
-            </div>
-
-            {/* Tags */}
-            <div>
-              <label className="mb-2 block text-sm font-medium">Tags</label>
-              <div className="flex items-center">
-                <Input
-                  placeholder="Add custom tags (optional)"
-                  className="colors flex-1 rounded-l rounded-r-none border border-white/10 bg-white/5 text-white placeholder-white/50 transition outline-none focus:border-teal-400 focus:px-2!"
-                  value={customTag}
-                  onChange={(e) => setCustomTag(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddTag();
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  className="rounded-r bg-white/10 px-4 py-2 hover:bg-white/20"
-                  onClick={handleAddTag}
-                >
-                  Add
-                </button>
-              </div>
-
-              <div className="mt-2 flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <div
-                    key={tag}
-                    className="flex items-center rounded bg-white/10 px-2 py-1 text-sm"
-                  >
-                    <span>{tag}</span>
-                    <button
-                      type="button"
-                      className="ml-2 text-white/70 hover:text-white"
-                      onClick={() => handleRemoveTag(tag)}
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         )}

@@ -6,17 +6,18 @@ import Register from "./pages/auth/Register";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import ErrorHandler from "./components/errors/ErrorHanbdler";
 import PageNotFound from "./pages/PageNotFound";
-import Profile from "./pages/Profile";
-import Games from "./pages/Games";
-import "./App.css";
 import { ToastContainer, ToastPosition } from "react-toastify";
+import "./App.css";
+import Profile from "./pages/Profile";
 import EditProfile from "./pages/profile/EditProfile";
+import BecomeAMember from "./pages/BecomeAMember";
+import Games from "./pages/Games";
 import Game from "./pages/Game";
 import PublishGame from "./pages/PublishGame";
-import BecomeAMember from "./pages/BecomeAMember";
 import Arts from "./pages/Arts";
 import Art from "./pages/Art";
 import PublishArt from "./pages/PublishArt";
+import GameJam from "./pages/GameJam";
 
 const userData = {
   email: "joe@joe.com",
@@ -46,6 +47,9 @@ function App() {
           element={<RootLayout />}
           errorElement={<ErrorHandler />}
         >
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
           <Route
             index
             element={
@@ -125,8 +129,14 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route
+            path="/jams"
+            element={
+              <ProtectedRoute isAuthenticated={true} redirectPath="/login">
+                <GameJam />
+              </ProtectedRoute>
+            }
+          />
         </Route>
 
         <Route path="*" element={<PageNotFound />} />

@@ -4,9 +4,41 @@ import Tabs from "../components/Tabs";
 import { Link } from "react-router";
 import { Gamepad } from "lucide-react";
 
-const GameJams = () => {
+const Games = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  const tags = [
+    "Action",
+    "Horror",
+    "Puzzle",
+    "Cards",
+    "Adventure",
+    "RPG",
+    "Shooting",
+    "Arcade",
+    "Survival",
+  ];
+
+  const handleTagToggle = (tag: string) => {
+    const newTags = selectedTags.includes(tag)
+      ? selectedTags.filter((t) => t !== tag)
+      : [...selectedTags, tag];
+
+    setSelectedTags(newTags);
+  };
+
+  //TODO refetch data depending on selected tags
+  useEffect(() => {
+    // let tagsParams = "";
+    // if (selectedTags.length > 0) {
+    //   tagsParams += "?tag=";
+    // }
+    //
+    // tagsParams += selectedTags.join("&tag=");
+    // console.log(window.location.origin + window.location.pathname + tagsParams);
+  }, [selectedTags]);
 
   useEffect(() => {
     const main = document.querySelector("main") as HTMLDivElement;
@@ -31,7 +63,7 @@ const GameJams = () => {
   return (
     <main className="w-full overflow-y-auto pt-0 lg:gap-10">
       <header
-        className={`sticky top-0 z-5 flex items-center justify-between bg-[#2E2B35] py-6 transition-transform duration-300 lg:px-10 ${
+        className={`sticky top-0 z-2 flex items-center justify-between bg-[#2E2B35] px-10 py-6 transition-transform duration-300 ${
           isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
@@ -48,143 +80,31 @@ const GameJams = () => {
         <span className="text-3xl">Browse Games</span>
         <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 px-5">
           {/* //TODO make selected "text-primary" */}
-          <a
-            href={
-              window.location.origin + window.location.pathname + "?tag=action"
-            }
-            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
-          >
-            Action
-          </a>
-          <a
-            href={
-              window.location.origin + window.location.pathname + "?tag=horror"
-            }
-            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
-          >
-            Horror
-          </a>
-          <a
-            href={
-              window.location.origin + window.location.pathname + "?tag=puzzle"
-            }
-            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
-          >
-            Puzzle
-          </a>
-          <a
-            href={
-              window.location.origin + window.location.pathname + "?tag=cards"
-            }
-            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
-          >
-            Cards
-          </a>
-          <a
-            href={
-              window.location.origin +
-              window.location.pathname +
-              "?tag=adventure"
-            }
-            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
-          >
-            Adventure
-          </a>
-          <a
-            href={
-              window.location.origin + window.location.pathname + "?tag=rpg"
-            }
-            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
-          >
-            RPG
-          </a>
-          <a
-            href={
-              window.location.origin +
-              window.location.pathname +
-              "?tag=shooting"
-            }
-            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
-          >
-            Shooting
-          </a>
-          <a
-            href={
-              window.location.origin + window.location.pathname + "?tag=arcade"
-            }
-            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
-          >
-            Arcade
-          </a>
-          <a
-            href={
-              window.location.origin +
-              window.location.pathname +
-              "?tag=survival"
-            }
-            className="hover:border-primary flex h-8 w-fit items-center justify-center rounded-full border bg-white/5 px-5 duration-150 hover:cursor-pointer"
-          >
-            Survival
-          </a>
+          {tags.map((tag) => (
+            <button
+              key={tag}
+              // href={
+              //   window.location.origin +
+              //   window.location.pathname +
+              //   `?tag=${tag}`
+              // }
+              className={`rounded-full px-4 py-1 text-sm transition-colors ${
+                selectedTags.includes(tag)
+                  ? "bg-primary border-primary border text-black"
+                  : "border border-white/30 bg-white/5 hover:border-teal-400/50"
+              }`}
+              onClick={() => {
+                handleTagToggle(tag);
+              }}
+            >
+              {tag}
+            </button>
+          ))}
         </ul>
       </div>
 
       <section className="col-span-2 space-y-6 scroll-smooth md:mx-auto md:w-[85%] lg:w-full lg:px-10">
-        <div className="lg:border-primary*-* flex flex-col space-y-10 border shadow-md drop-shadow-md md:rounded-lg">
-          {/* <Carousel
-            arrows={true}
-            // autoPlay
-            // autoPlaySpeed={5000}
-            centerMode={false}
-            className=""
-            draggable
-            infinite
-            keyBoardControl
-            pauseOnHover
-            renderArrowsWhenDisabled={true}
-            renderButtonGroupOutside={false}
-            renderDotsOutside={true}
-            responsive={{
-              desktop: {
-                breakpoint: {
-                  max: 3000,
-                  min: 1024,
-                },
-                items: 2,
-                partialVisibilityGutter: 30,
-              },
-              mobile: {
-                breakpoint: {
-                  max: 464,
-                  min: 0,
-                },
-                items: 1,
-                partialVisibilityGutter: 30,
-              },
-              tablet: {
-                breakpoint: {
-                  max: 1024,
-                  min: 464,
-                },
-                items: 2,
-                partialVisibilityGutter: 30,
-              },
-            }}
-            rewind={false}
-            rewindWithAnimation={false}
-            rtl={false}
-            shouldResetAutoplay
-            showDots={true}
-            sliderClass=""
-            slidesToSlide={1}
-          >
-            <GameCard username="user1" />
-            <GameCard username="user2" />
-            <GameCard username="user3" />
-            <GameCard username="user4" />
-            <GameCard username="user5" />
-          </Carousel> */}
-        </div>
+        <div className="flex flex-col space-y-10 border-b border-white/20 shadow-md drop-shadow-md md:rounded-lg"></div>
 
         {/* sub-tabs */}
         <Tabs
@@ -224,4 +144,4 @@ const GameJams = () => {
   );
 };
 
-export default GameJams;
+export default Games;

@@ -14,11 +14,10 @@ const validationSchema = yup.object({
     .string()
     .required("Description is required")
     .min(20, "Description must be at least 20 characters"),
-  category: yup.array().min(1, "Select at least one category"),
+  tag: yup.array().min(1, "Select at least one category"),
   fileFormat: yup.string().required("File format is required"),
   license: yup.string().required("License is required"),
   price: yup.string().required("Price is required"),
-  tags: yup.array(),
 });
 
 const PublishArt = () => {
@@ -34,25 +33,22 @@ const PublishArt = () => {
     defaultValues: {
       title: "",
       description: "",
-      category: [],
+      tags: [],
       fileFormat: "GLTF",
       license: "Standard Commercial License",
       price: "Free",
-      tags: [],
     },
   });
 
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedModelFile, setUploadedModelFile] = useState<File | null>(null);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [customTag, setCustomTag] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const modelFileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
-  const categories = [
+  const tags = [
     "Characters",
     "Environments",
     "Props",
@@ -207,31 +203,15 @@ const PublishArt = () => {
     }
   };
 
-  const handleCategoryToggle = (category: string) => {
-    // Calculate the new categories array directly
-    const newCategories = selectedCategories.includes(category)
-      ? selectedCategories.filter((g) => g !== category)
-      : [...selectedCategories, category];
+  const handleTagToggle = (tag: string) => {
+    // Calculate the new tags array directly
+    const newTags = selectedTags.includes(tag)
+      ? selectedTags.filter((t) => t !== tag)
+      : [...selectedTags, tag];
 
     // Update both the state and form value with the same new value
-    setSelectedCategories(newCategories);
-    setValue("category", newCategories);
-  };
-
-  const handleAddTag = () => {
-    if (customTag && !tags.includes(customTag)) {
-      setTags([...tags, customTag]);
-      setValue("tags", [...tags, customTag]);
-      setCustomTag("");
-    }
-  };
-
-  const handleRemoveTag = (tag: string) => {
-    setTags(tags.filter((t) => t !== tag));
-    setValue(
-      "tags",
-      tags.filter((t) => t !== tag),
-    );
+    setSelectedTags(newTags);
+    setValue("category", newTags);
   };
 
   const onSubmit = (data: IAddArtFormData) => {
@@ -274,14 +254,14 @@ const PublishArt = () => {
       }
     }
 
-    // For step 2, validate image and categories
+    // For step 2, validate image and tags
     if (activeStep === 2) {
       if (!uploadedImage) {
         errors.push("Please upload a cover image");
       }
 
-      if (selectedCategories.length === 0) {
-        errors.push("Please select at least one category");
+      if (selectedTags.length === 0) {
+        errors.push("Please select at least one tag");
       }
     }
 
@@ -528,25 +508,25 @@ const PublishArt = () => {
               />
             </div>
 
-            {/* Categories */}
+            {/* Tags */}
             <div>
               <label className="mb-2 block text-sm font-medium">
-                Categories (select at least one)
+                Tags (select at least one)
                 <span className="ml-1 text-red-400">*</span>
               </label>
               <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
+                {tags.map((tag) => (
                   <button
-                    key={category}
+                    key={tag}
                     type="button"
                     className={`rounded-full px-4 py-1 text-sm transition-colors ${
-                      selectedCategories.includes(category)
-                        ? "bg-primary text-black"
+                      selectedTags.includes(tag)
+                        ? "bg-primary border-primary border text-black"
                         : "border border-white/30 bg-white/5 hover:border-teal-400/50"
                     }`}
-                    onClick={() => handleCategoryToggle(category)}
+                    onClick={() => handleTagToggle(tag)}
                   >
-                    {category}
+                    {tag}
                   </button>
                 ))}
               </div>
@@ -555,50 +535,6 @@ const PublishArt = () => {
                   {errors.category.message}
                 </p>
               )}
-            </div>
-
-            {/* Tags */}
-            <div>
-              <label className="mb-2 block text-sm font-medium">Tags</label>
-              <div className="flex items-center">
-                <Input
-                  placeholder="Add custom tags (optional)"
-                  className="colors flex-1 rounded-l rounded-r-none border border-white/10 bg-white/5 text-white placeholder-white/50 transition outline-none focus:border-teal-400 focus:px-2!"
-                  value={customTag}
-                  onChange={(e) => setCustomTag(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddTag();
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  className="rounded-r bg-white/10 px-4 py-2 hover:bg-white/20"
-                  onClick={handleAddTag}
-                >
-                  Add
-                </button>
-              </div>
-
-              <div className="mt-2 flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <div
-                    key={tag}
-                    className="flex items-center rounded bg-white/10 px-2 py-1 text-sm"
-                  >
-                    <span>{tag}</span>
-                    <button
-                      type="button"
-                      className="ml-2 text-white/70 hover:text-white"
-                      onClick={() => handleRemoveTag(tag)}
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         )}
