@@ -16,7 +16,6 @@ import PublishGame from "./pages/PublishGame";
 import BecomeAMember from "./pages/BecomeAMember";
 import Arts from "./pages/Arts";
 import Art from "./pages/Art";
-import ArtTest from "./pages/ArtTest";
 
 const userData = {
   email: "joe@joe.com",
@@ -114,14 +113,6 @@ function App() {
             element={
               <ProtectedRoute isAuthenticated={true} redirectPath="/login">
                 <Art />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/artsTest/:id"
-            element={
-              <ProtectedRoute isAuthenticated={true} redirectPath="/login">
-                <ArtTest />
               </ProtectedRoute>
             }
           />

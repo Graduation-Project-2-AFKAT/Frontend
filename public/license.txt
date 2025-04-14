@@ -1,0 +1,11 @@
+Model Information:
+* title:	Cyberpunk Enigma - Katana
+* source:	https://sketchfab.com/3d-models/cyberpunk-enigma-katana-ef259946b2a149609187cdcd60f9ff91
+* author:	Jysn (https://sketchfab.com/soleusity)
+
+Model License:
+* license type:	CC-BY-NC-ND-4.0 (http://creativecommons.org/licenses/by-nc-nd/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions can not be distributed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Cyberpunk Enigma - Katana" (https://sketchfab.com/3d-models/cyberpunk-enigma-katana-ef259946b2a149609187cdcd60f9ff91) by Jysn (https://sketchfab.com/soleusity) licensed under CC-BY-NC-ND-4.0 (http://creativecommons.org/licenses/by-nc-nd/4.0/)

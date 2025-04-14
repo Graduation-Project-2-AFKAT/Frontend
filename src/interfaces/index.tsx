@@ -34,3 +34,7 @@ export interface IMembershipFormData {
   motivation: string;
   references: string;
 }
+
+export interface AlertMessages {
+  [key: string]: string[] | undefined;
+}

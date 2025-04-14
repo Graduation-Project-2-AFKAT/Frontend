@@ -18,7 +18,7 @@ export const userRegister = createAsyncThunk(
   async (userData, { dispatch, rejectWithValue }) => {
     try {
       const res = await api.post(
-        "https://49fe-2a01-9700-42c6-8800-b127-b48b-ee34-8ddc.ngrok-free.app/api/v1/auth/register/",
+        "https://2a0a-2a01-9700-4201-300-4c48-1f48-2cdd-a3a4.ngrok-free.app/api/v1/auth/register/",
         userData,
       );
 
@@ -40,10 +40,10 @@ export const userRegister = createAsyncThunk(
 export const userLogin = createAsyncThunk(
   "user/login",
   async (userData, { dispatch, rejectWithValue }) => {
-    // https://49fe-2a01-9700-42c6-8800-b127-b48b-ee34-8ddc.ngrok-free.app/api/v1/auth/login
+    // https://2a0a-2a01-9700-4201-300-4c48-1f48-2cdd-a3a4.ngrok-free.app/api/v1/auth/login
     try {
       const res = await api.post(
-        "https://49fe-2a01-9700-42c6-8800-b127-b48b-ee34-8ddc.ngrok-free.app/api/v1/auth/login",
+        "https://2a0a-2a01-9700-4201-300-4c48-1f48-2cdd-a3a4.ngrok-free.app/api/v1/auth/login",
         userData,
       );
 

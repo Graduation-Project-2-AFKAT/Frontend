@@ -7,7 +7,7 @@ const getValidationSchema = (path: string) =>
         ? yup
             .string()
             .required("username is required")
-            .min(5, "username must be at least 5 characters")
+            .min(1, "username must be at least 5 characters")
             .max(20, "username must be at most 20 characters")
         : yup.string(),
     email: yup

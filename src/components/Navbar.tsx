@@ -54,7 +54,11 @@ const Navbar = ({
             to="/"
             className="underlineNav flex h-10 w-auto cursor-pointer gap-4 after:-left-full after:scale-x-325"
           >
-            <img src="/images/AFK.svg" alt="AFK Buttons Logo" className="" />
+            <img
+              src="/images/AFK_Buttons.svg"
+              alt="AFK Buttons Logo"
+              className=""
+            />
 
             <img
               src="../../public/images/logoOutlined.svg"

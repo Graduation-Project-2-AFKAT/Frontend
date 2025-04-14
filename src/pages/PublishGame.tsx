@@ -78,26 +78,67 @@ const PublishGame = () => {
   const handleFileDrop = (buildType: string, e: React.DragEvent) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
+
+    if (files.length > 1) {
+      toast.error(
+        <div>
+          <h1 className="mb-2 font-bold">Only one archive file is allowed.</h1>
+          <p className="font-light">
+            Please package all your game files in a single ZIP or RAR file.
+          </p>
+        </div>,
+      );
+      return;
+    }
+
+    const fileSize = files[0].size / 1024 / 1024 / 1024; // Convert to GB
+    if (fileSize > 1) {
+      toast.error(
+        <div>
+          <h1 className="mb-2 font-bold">File too large</h1>
+          <p className="font-light">
+            Your game file exceeds the 1GB size limit. Please compress your
+            files or reduce content.
+          </p>
+        </div>,
+      );
+      return;
+    }
     handleFileUpload(files, buildType);
   };
 
   const handleFileUpload = (files: File[], buildType: string) => {
-    const validFiles = files.filter(
-      (file) =>
-        file.type === "application/zip" ||
-        file.type === "application/x-zip-compressed" ||
-        file.name.endsWith(".zip") ||
-        file.name.endsWith(".rar"),
-    );
+    if (!files.length) return; // No files selected
 
-    if (validFiles.length) {
-      if (buildType === "WebGL") {
-        setUploadedWebGLFiles([...validFiles]);
-      } else if (buildType === "Windows") {
-        setUploadedWindowsFiles([...validFiles]);
-      }
-    } else {
+    const file = files[0];
+
+    const fileSize = file.size / 1024 / 1024 / 1024; // Convert to GB
+    if (fileSize > 1) {
+      toast.error(
+        <div>
+          <h1 className="mb-2 font-bold">File too large</h1>
+          <p className="font-light">
+            Your game file exceeds the 1GB size limit. Please compress your
+            files or reduce content.
+          </p>
+        </div>,
+      );
+      return;
+    }
+    const isValidType =
+      file.type === "application/zip" ||
+      file.type === "application/x-zip-compressed" ||
+      file.name.endsWith(".zip") ||
+      file.name.endsWith(".rar");
+
+    if (!isValidType) {
       toast.error("Please upload ZIP or RAR files only");
+    }
+
+    if (buildType === "WebGL") {
+      setUploadedWebGLFiles([file]);
+    } else if (buildType === "Windows") {
+      setUploadedWindowsFiles([file]);
     }
   };
 
@@ -116,6 +157,7 @@ const PublishGame = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+
       if (file.size > 5 * 1024 * 1024) {
         toast.error("Image size should be less than 5MB");
         return;
@@ -214,7 +256,9 @@ const PublishGame = () => {
     // For step 1, validate title, description, version
     if (activeStep === 1) {
       const titleValue = document.getElementById("title") as HTMLInputElement;
-      const descValue = document.getElementById("desc") as HTMLTextAreaElement;
+      const descValue = document.getElementById(
+        "description",
+      ) as HTMLTextAreaElement;
 
       // Collect all errors
       if (!titleValue?.value) {
@@ -346,12 +390,15 @@ const PublishGame = () => {
             </div>
 
             <div className="col-span-1 md:col-span-2">
-              <label className="mb-2 block text-sm font-medium" htmlFor="desc">
+              <label
+                className="mb-2 block text-sm font-medium"
+                htmlFor="description"
+              >
                 Description
                 <span className="ml-1 text-red-400">*</span>
               </label>
               <textarea
-                id="desc"
+                id="description"
                 className="min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400"
                 placeholder="Describe your game (features, story, etc.)"
                 {...register("description")}
@@ -476,6 +523,7 @@ const PublishGame = () => {
                 ref={imageInputRef}
                 className="hidden"
                 accept=".jpg,.jpeg,.png,.gif"
+                multiple={false}
                 onChange={handleImageUpload}
               />
             </div>
@@ -586,12 +634,12 @@ const PublishGame = () => {
                 ref={WebGLfileInputRef}
                 className="hidden"
                 accept=".zip,.rar"
+                multiple={false}
                 onChange={(e) => {
                   if (e.target.files) {
                     handleFileUpload(Array.from(e.target.files), "WebGL");
                   }
                 }}
-                multiple
               />
 
               <div className="mx-10 mt-8 border border-white/10" />
@@ -624,12 +672,12 @@ const PublishGame = () => {
                 ref={WindowsfileInputRef}
                 className="hidden"
                 accept=".zip,.rar"
+                multiple={false}
                 onChange={(e) => {
                   if (e.target.files) {
                     handleFileUpload(Array.from(e.target.files), "Windows");
                   }
                 }}
-                multiple
               />
             </div>
 

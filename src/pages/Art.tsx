@@ -9,11 +9,19 @@ const Art = () => {
   const [liked, setLiked] = useState(false);
   const [autoRotate, setAutoRotate] = useState(false);
   const [wireframe, setWireframe] = useState(false);
-  const [modelUrl] = useState(
-    "https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf",
-  );
-
   const canvasContainerRef = useRef<HTMLDivElement>(null);
+  const [gridPosition, setGridPosition] = useState(-2);
+  const [modelUrl, setModelUrl] = useState("/Landscape3.glb");
+  // https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf
+
+  const handleDownload = () => {
+    // If your model URL is already directly downloadable
+    const a = document.createElement("a");
+    a.href = modelUrl;
+    a.download = modelUrl.split("/").pop() || "model.gltf";
+    // a.target = "_blank";
+    a.click();
+  };
 
   function Loader() {
     return (
@@ -47,6 +55,7 @@ const Art = () => {
     );
   }
 
+  // Provides OrbitControls with auto-rotation functionality
   function StableOrbitControls({ autoRotate }: { autoRotate: boolean }) {
     const { camera, gl } = useThree();
     const controlsRef = useRef<any>(null);
@@ -87,7 +96,14 @@ const Art = () => {
     useEffect(() => {
       scene.traverse((node: any) => {
         if (node.isMesh) {
-          node.material.wireframe = wireframe;
+          // Handle both single materials and material arrays
+          if (Array.isArray(node.material)) {
+            node.material.forEach((mat: any) => {
+              if (mat) mat.wireframe = wireframe;
+            });
+          } else if (node.material) {
+            node.material.wireframe = wireframe;
+          }
         }
       });
     }, [wireframe, scene]);
@@ -96,8 +112,26 @@ const Art = () => {
       if (modelRef.current) {
         // Center the model properly
         const box = new THREE.Box3().setFromObject(modelRef.current);
+        const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
         modelRef.current.position.sub(center);
+
+        const maxDimension = Math.max(size.x, size.y, size.z);
+        if (maxDimension > 5) {
+          const scale = 5 / maxDimension;
+          modelRef.current.scale.set(scale, scale, scale);
+        } else if (maxDimension < 1) {
+          const scale = 2.5 / maxDimension;
+          modelRef.current.scale.set(scale, scale, scale);
+        }
+        // console.log("x:", size.x);
+        // console.log("y:", size.y);
+        // console.log("z:", size.z);
+
+        // Calculate grid position based on model's bottom
+        const newBox = new THREE.Box3().setFromObject(modelRef.current);
+        const bottomY = newBox.min.y - 0.1;
+        setGridPosition(bottomY);
       }
     }, [scene]);
 
@@ -149,7 +183,11 @@ const Art = () => {
           </div>
 
           <div className="flex gap-x-3">
-            <button className="bg-primary flex items-center gap-x-2 rounded px-6 py-2 font-medium text-black">
+            <button
+              id="download-button"
+              className="bg-primary flex items-center gap-x-2 rounded px-6 py-2 font-medium text-black"
+              onClick={handleDownload}
+            >
               <Download size={18} />
               Download
             </button>
@@ -175,8 +213,8 @@ const Art = () => {
               camera={{
                 fov: 45,
                 near: 0.1,
-                far: 1000,
-                position: [-1, 0.5, 4],
+                far: 2000,
+                position: [-1, 0.5, 5],
               }}
               dpr={[1, 2]}
               frameloop="demand"
@@ -187,19 +225,34 @@ const Art = () => {
             >
               <Suspense fallback={<Loader />}>
                 <Stage intensity={0.6} adjustCamera={false}>
-                  <Model url={modelUrl} wireframe={wireframe} />
+                  <group>
+                    {/* <directionalLight
+                      position={[0, 10, 5]}
+                      intensity={0.7}
+                      color="#ffffff"
+                      castShadow
+                      shadow-mapSize={[2048, 2048]}
+                    />
+                    <directionalLight
+                      position={[0, 1, 8]}
+                      intensity={0.3}
+                      color="#e1eaff"
+                    />
+                    <ambientLight intensity={0.2} color="#e6e6e6" /> */}
+                    <Model url={modelUrl} wireframe={wireframe} />
+                  </group>
                 </Stage>
               </Suspense>
               <Grid
                 renderOrder={-1}
-                position={[0, -1, 0]}
+                position={[0, gridPosition, 0]}
                 infiniteGrid
-                cellSize={0.6}
+                cellSize={1}
                 cellThickness={0.6}
-                sectionSize={3.3}
+                sectionSize={5}
                 sectionThickness={1.5}
                 sectionColor="#AAA"
-                fadeDistance={30}
+                fadeDistance={50}
               />
               <StableOrbitControls autoRotate={autoRotate} />
               {/* <Environment background preset="park" blur={0.05} /> */}

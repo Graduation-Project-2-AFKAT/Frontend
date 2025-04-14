@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   show: false,
-  msg: "",
+  msgs: {},
   type: "info",
 };
 
@@ -12,7 +12,7 @@ export const alertSlice = createSlice({
   reducers: {
     showAlert: (state, action) => {
       state.show = true;
-      state.msg = action.payload.msg;
+      state.msgs = action.payload.msg;
       state.type = action.payload.type;
     },
   },

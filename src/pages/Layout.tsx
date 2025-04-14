@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { toast } from "react-toastify";
+import { AlertMessages } from "../interfaces";
 
 const RootLayout = () => {
   const location = useLocation();
@@ -17,17 +18,28 @@ const RootLayout = () => {
 
   useEffect(() => {
     if (alerts.show) {
-      toast(alerts.msg, {
-        type: alerts.type as
-          | "info"
-          | "success"
-          | "warning"
-          | "error"
-          | "default",
+      const errorsMsgs = alerts.msgs as AlertMessages;
+
+      Object.keys(errorsMsgs).forEach((key) => {
+        const msg = errorsMsgs[key];
+
+        if (msg) {
+          msg.forEach((message: string) => {
+            toast(message, {
+              type: alerts.type as
+                | "info"
+                | "success"
+                | "warning"
+                | "error"
+                | "default",
+            });
+          });
+        }
       });
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [alerts.show]);
+  }, [alerts.msgs]);
 
   return (
     <div>
@@ -51,6 +63,7 @@ const RootLayout = () => {
       {/* //TODO Refactor responsive outlet */}
       <div
         className={`${authorized && "md:ml-20"} flex h-screen justify-center overflow-y-auto pt-18`}
+        id="main-elem"
       >
         <Outlet />
       </div>

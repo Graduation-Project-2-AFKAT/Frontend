@@ -170,6 +170,15 @@ const Arts = () => {
     }
   };
 
+  const scrollToTop = () => {
+    const main = document.getElementById("main-elem");
+
+    if (main) {
+      console.log(main);
+      main.scrollTop = 0;
+    }
+  };
+
   return (
     <div className="mx-auto w-full max-w-7xl p-10">
       <div className="flex flex-col gap-y-5">
@@ -325,7 +334,12 @@ const Arts = () => {
             {filteredArts.length > 0 ? (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredArts.map((art) => (
-                  <Link to={`/arts/${art.id}`} key={art.id} className="group">
+                  <Link
+                    to={`/arts/${art.id}`}
+                    key={art.id}
+                    className="group"
+                    onClick={scrollToTop}
+                  >
                     <div className="overflow-hidden rounded-lg border border-white/10 bg-[#2A2731] transition-all hover:border-teal-400/50 hover:shadow-lg hover:shadow-teal-400/10">
                       <div className="relative aspect-video overflow-hidden">
                         <img
