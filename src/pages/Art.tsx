@@ -390,7 +390,7 @@ const Art = () => {
               <textarea
                 className="field-sizing-content min-h-40 w-full rounded border border-white/10 bg-white/5 p-3 text-white placeholder-white/50 transition-colors outline-none focus:border-teal-400"
                 placeholder="Share your thoughts about this asset..."
-              ></textarea>
+              />
               <div className="mt-4 flex justify-end">
                 <button className="bg-primary rounded px-6 py-2 font-medium text-black">
                   Post Comment

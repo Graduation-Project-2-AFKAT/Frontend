@@ -4,7 +4,15 @@ import * as yup from "yup";
 import { toast } from "react-toastify";
 import { Code, Palette, ShieldCheck, X } from "lucide-react";
 import useYupValidationResolver from "../components/form/userYupValidationResolver";
-import { IMembershipFormData } from "../interfaces";
+
+export interface IMembershipFormData {
+  role: "developer" | "designer" | "admin";
+  experience: string;
+  portfolio: string;
+  skills: string[];
+  motivation: string;
+  references: string;
+}
 
 const BecomeAMember = () => {
   const [selectedRole, setSelectedRole] = useState<

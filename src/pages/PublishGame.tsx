@@ -5,7 +5,16 @@ import Input from "../components/form/Input";
 import useYupValidationResolver from "../components/form/userYupValidationResolver";
 import { Upload, Image, Info, Package, X } from "lucide-react";
 import { toast } from "react-toastify";
-import { IAddGameFormData } from "../interfaces";
+
+interface IAddGameFormData {
+  title: string;
+  description: string;
+  releaseDate: string;
+  version: string;
+  price: string;
+  tags: string[];
+  isMultiplayer: boolean;
+}
 
 const validationSchema = yup.object({
   title: yup.string().required("Game title is required"),
@@ -388,7 +397,7 @@ const PublishGame = () => {
               </label>
               <textarea
                 id="description"
-                className="min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400"
+                className="field-sizing-content min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400"
                 placeholder="Describe your game (features, story, etc.)"
                 {...register("description")}
               />

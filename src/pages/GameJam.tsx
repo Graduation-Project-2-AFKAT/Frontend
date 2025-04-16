@@ -11,15 +11,37 @@ import {
   X,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { GameJamType } from "../interfaces";
 import { toast } from "react-toastify";
+
+interface IGameJam {
+  id: string;
+  title: string;
+  status: "active" | "upcoming" | "past";
+  theme?: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  isOnline: boolean;
+  participants: number;
+  maxParticipants?: number;
+  image: string;
+  description: string;
+  prizes: {
+    position: string;
+    prize: string;
+  }[];
+  organizer: {
+    name: string;
+    logo: string;
+  };
+}
 
 const GameJam = () => {
   const [activeTab, setActiveTab] = useState<"active" | "upcoming" | "past">(
     "active",
   );
-  const [gameJams, setGameJams] = useState<GameJamType[]>([]);
-  const [selectedJam, setSelectedJam] = useState<GameJamType | null>(null);
+  const [gameJams, setGameJams] = useState<IGameJam[]>([]);
+  const [selectedJam, setSelectedJam] = useState<IGameJam | null>(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
@@ -33,7 +55,7 @@ const GameJam = () => {
         // const data = await response.json();
 
         // Using mock data for now
-        const mockData: GameJamType[] = [
+        const mockData: IGameJam[] = [
           {
             id: "1",
             title: "AFKAT Winter Game Jam 2025",
@@ -243,9 +265,17 @@ const GameJam = () => {
     return `${days}d ${hours}h remaining`;
   };
 
-  const handleJamDetails = (jam: GameJamType) => {
+  const handleJamDetails = (jam: IGameJam) => {
     setSelectedJam(jam);
     setShowModal(true);
+  };
+
+  const scrollToTop = () => {
+    const main = document.getElementById("main-elem");
+
+    if (main) {
+      main.scrollTop = 0;
+    }
   };
 
   return (
@@ -676,8 +706,9 @@ const GameJam = () => {
           a successful game jam.
         </p>
         <Link
-          to="/host-gamejam"
+          to="/jams/host"
           className="bg-primary hover:bg-primary/90 inline-flex items-center rounded-md px-6 py-3 font-bold text-black transition-colors"
+          onClick={scrollToTop}
         >
           Apply to Host <ArrowRight size={16} className="ml-2" />
         </Link>

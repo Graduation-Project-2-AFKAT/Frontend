@@ -150,6 +150,7 @@ const Arts = () => {
           <Link
             to={`${window.location.pathname}/publish`}
             className="hover:bg-primary focus:bg-primary/75 flex cursor-pointer items-center gap-x-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-bold text-black duration-50 focus:translate-y-0.5"
+            onClick={scrollToTop}
           >
             Add Your Asset <Component size={20} />
           </Link>

@@ -29,7 +29,7 @@ const Games = () => {
     setSelectedTags(newTags);
   };
 
-  //TODO refetch data depending on selected tags
+  //TODO refetch data whenever selectedTags change
   useEffect(() => {
     // let tagsParams = "";
     // if (selectedTags.length > 0) {

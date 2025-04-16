@@ -18,6 +18,7 @@ import Arts from "./pages/Arts";
 import Art from "./pages/Art";
 import PublishArt from "./pages/PublishArt";
 import GameJam from "./pages/GameJam";
+import HostJam from "./pages/HostJam";
 
 const userData = {
   email: "joe@joe.com",
@@ -137,8 +138,16 @@ function App() {
               </ProtectedRoute>
             }
           />
-        </Route>
 
+          <Route
+            path="/jams/host"
+            element={
+              <ProtectedRoute isAuthenticated={true} redirectPath="/login">
+                <HostJam />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </div>
