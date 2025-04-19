@@ -1,13 +1,29 @@
+import { useEffect, useState } from "react";
 import Input from "../../components/ui/Input";
+import { useAppSelector } from "../../redux/hooks";
 
-interface IProps {}
+const EmailAddress = () => {
+  const { user } = useAppSelector((state) => state.users);
 
-const EmailAddress = ({}: IProps) => {
+  const [email, setEmail] = useState<string>(user?.email || "");
+
+  useEffect(() => {
+    if (user) {
+      setEmail(user.email);
+    }
+  }, [user]);
+
   return (
     <div>
       <div className="flex flex-col space-y-3">
         <label htmlFor="email">Email Address</label>
-        <Input type="email" id="email" placeholder="Email Address" />
+        <Input
+          type="email"
+          id="email"
+          placeholder="Email Address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
       </div>
 
       <hr className="my-20 opacity-25" />

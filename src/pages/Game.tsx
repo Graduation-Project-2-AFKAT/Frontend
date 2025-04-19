@@ -1,3 +1,11 @@
+import Board from "../components/ui/Board";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { downloadAGame, loadAGame } from "../redux/modules/games";
 import {
   Download,
   Heart,
@@ -7,17 +15,28 @@ import {
   ThumbsUp,
   Undo2,
 } from "lucide-react";
-import Board from "../components/ui/Board";
-import { joinName } from "../utils";
-import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { useState } from "react";
 
-interface IProps {}
+const Game = () => {
+  const location = useLocation();
+  const Game = useSelector((state: RootState) => state.games.Game);
+  const { isLoading, type } = useAppSelector((state) => state.loading);
+  const { downloadProgress, estimatedTime } = useAppSelector(
+    (state) => state.games,
+  );
+  const {
+    id = "",
+    title = "",
+    description = "",
+    creator = "",
+    rating = 0,
+    game_file = "",
+    thumbnail = "",
+    tags = [],
+    user_rating = 0,
+    download_count = 0,
+  } = Game || {};
+  const dispatch = useAppDispatch();
 
-const Game = ({}: IProps) => {
-  const users = useSelector((state: RootState) => state.users);
   const [favorite, setFavorite] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [stars, setStars] = useState({
@@ -27,6 +46,14 @@ const Game = ({}: IProps) => {
     four: false,
     five: false,
   });
+
+  useEffect(() => {
+    if (!Game) {
+      const pathParts = location.pathname.split("/");
+      const gameId = pathParts[pathParts.length - 1];
+      dispatch(loadAGame(gameId));
+    }
+  }, [Game]);
 
   const handleRating = (rate: keyof typeof stars) => {
     const index = Object.keys(stars).indexOf(rate);
@@ -65,17 +92,68 @@ const Game = ({}: IProps) => {
     }
   };
 
+  const handleDownload = () => {
+    if (id) {
+      dispatch(
+        downloadAGame({ id: id, gameTitle: title, gameFile: game_file }),
+      );
+    }
+  };
+
   return (
     <div className="game-grid grid w-full grid-cols-2 gap-x-10 overflow-y-auto px-10 py-5">
       {/* Left Section */}
-      <div className="borders h-fit space-y-10">
-        <button
-          onClick={() => window.history.back()}
-          className="mx-5 my-5 flex items-center gap-2 text-lg font-bold text-white hover:opacity-80"
-        >
-          <Undo2 />
-          Go Back
-        </button>
+      <div className="col-span-2 h-fit pt-5 pb-2 xl:col-span-1 xl:py-0">
+        <div className="flex items-center justify-between px-2 xl:px-0">
+          <button
+            onClick={() => window.history.back()}
+            className="m-0 flex items-center gap-2 text-lg font-bold text-white hover:opacity-80 xl:m-5"
+          >
+            <Undo2 />
+            Go Back
+          </button>
+
+          <div className="flex flex-col items-center xl:hidden">
+            <h1 className="text-2xl">{title}</h1>
+            <div>
+              by:{" "}
+              <a href="">
+                <span className="font-extralight underline-offset-2 hover:underline">
+                  @{creator}
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-end xl:hidden">
+            <button
+              onClick={handleDownload}
+              disabled={isLoading && type === "games/download"}
+              className={`${isLoading && type === "games/download" ? "bg-primary/70 cursor-not-allowed!" : "bg-primary"} my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 ${!(isLoading && type === "games") && "hover:scale-95"}`}
+            >
+              {isLoading && type === "games/download"
+                ? `Downloading...`
+                : `Download`}
+              <Download width={18} />
+            </button>
+
+            {/* Progress bar - only show when downloading */}
+            {isLoading && type === "games/download" && downloadProgress > 0 && (
+              <div className="mt-2 w-full max-w-[150px] xl:hidden">
+                <div className="h-1.5 w-full rounded-full bg-gray-700">
+                  <div
+                    className="bg-primary h-1.5 rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${downloadProgress}%` }}
+                  />
+                </div>
+                <div className="mt-1 flex justify-between text-xs">
+                  <p>~{estimatedTime || 0}s left</p>
+                  <p>{downloadProgress}%</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
         <div className="hidden space-y-10 xl:block">
           <Board
@@ -96,7 +174,7 @@ const Game = ({}: IProps) => {
               <input
                 type="text"
                 id="invite-link"
-                value={`AFK@T.com/games/${joinName(users.user?.username)}`}
+                value={`AFK@T.com/games/${id}`}
                 className="w-full rounded border border-white/15 px-3 py-1.5"
                 readOnly
               />
@@ -118,24 +196,59 @@ const Game = ({}: IProps) => {
       </div>
 
       {/* Main */}
-      <div className="col-span-2 flex flex-col space-y-3 pt-5 pb-25">
-        <div className="pr- flex justify-between">
+      <div className="col-span-2 flex flex-col space-y-3 pt-3 pb-20">
+        <div className="hidden justify-between px-2 xl:flex">
           <div>
-            <h1 className="text-2xl">Game Title</h1>
-            <i className="font-extralight underline underline-offset-2">
-              @developer
-            </i>
+            <h1 className="text-2xl">{title}</h1>
+            <div>
+              by:{" "}
+              <a href="">
+                <span className="font-extralight underline-offset-2 hover:underline">
+                  @{creator}
+                </span>
+              </a>
+            </div>
           </div>
 
-          <div className="flex items-start">
-            <button className="bg-primary my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 hover:scale-95">
-              Download
+          <div className="flex flex-col items-end">
+            <button
+              onClick={handleDownload}
+              disabled={isLoading && type === "games/download"}
+              className={`${isLoading && type === "games/download" ? "bg-primary/70 cursor-wait" : "bg-primary"} my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 ${!(isLoading && type === "games") && "hover:scale-95"}`}
+            >
+              {isLoading && type === "games/download"
+                ? `Downloading...`
+                : `Download`}
               <Download width={18} />
             </button>
+
+            {/* Progress bar - only show when downloading */}
+            {isLoading && type === "games/download" && downloadProgress > 0 && (
+              <div className="mt-2 hidden w-full max-w-[150px] xl:block">
+                <div className="h-1.5 w-full rounded-full bg-gray-700">
+                  <div
+                    className="bg-primary h-1.5 rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${downloadProgress}%` }}
+                  />
+                </div>
+                <div className="mt-1 flex justify-between text-xs">
+                  <p>~{estimatedTime || 0}s left</p>
+                  <p>{downloadProgress}%</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="aspect-video rounded-lg border"></div>
+        <div className="aspect-video rounded-lg border">
+          {thumbnail ? (
+            <img src={thumbnail} alt={title} />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-[#1A191F]">
+              <div className="border-primary h-10 w-10 animate-spin rounded-full border-t-2 border-b-2" />
+            </div>
+          )}
+        </div>
 
         <div className="my-5 flex justify-between border px-5">
           <div className="flex gap-x-5">
@@ -423,7 +536,7 @@ const Game = ({}: IProps) => {
 
           {/* Rating */}
           <div className="flex items-end gap-x-5">
-            <p className="text-sm">( 3.7 / 5 )</p>
+            <p className="text-sm">( {rating} / 5 )</p>
             <div className="flex">
               <Star
                 id="one"
@@ -462,7 +575,7 @@ const Game = ({}: IProps) => {
         <div>
           <h2 className="mt-5 text-xl font-bold">How to Play</h2>
 
-          <p className="p-3 font-light">
+          <div className="p-3 font-light">
             To play this game, follow these simple steps:
             <ol className="list-decimal py-3 pl-10">
               <li>
@@ -488,23 +601,13 @@ const Game = ({}: IProps) => {
               </li>
             </ol>
             Enjoy the game and have fun!
-          </p>
+          </div>
         </div>
 
         <div>
           <h2 className="mt-5 text-xl font-bold">Description</h2>
 
-          <p className="p-3 font-light">
-            Embark on an epic adventure in "Quest of Realms," a captivating
-            fantasy game where you explore vast landscapes, solve intricate
-            puzzles, and battle formidable foes. With stunning visuals and an
-            immersive storyline, this game offers hours of thrilling gameplay.
-            Customize your character, forge alliances, and uncover hidden
-            secrets as you journey through enchanted forests, treacherous
-            dungeons, and mystical kingdoms. Will you rise as the hero of the
-            realms or succumb to the challenges that lie ahead? The choice is
-            yours!
-          </p>
+          <p className="p-3 font-light">{description}</p>
         </div>
 
         {/* small screens (aside -> below) */}
@@ -527,8 +630,8 @@ const Game = ({}: IProps) => {
             <div className="flex items-center gap-x-2">
               <input
                 type="text"
-                id="invite-link"
-                value={`AFK@T.com/games/${joinName(users.user?.username)}`}
+                id="invite-link-sm"
+                value={`AFK@T.com/games/${id}`}
                 className="w-full rounded border border-white/15 px-3 py-1.5"
                 readOnly
               />
@@ -536,8 +639,11 @@ const Game = ({}: IProps) => {
                 className="hover:bg-primary hover:border-primary cursor-pointer rounded border px-3 py-1.5 font-medium duration-150 hover:text-black"
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    (document.getElementById("invite-link") as HTMLInputElement)
-                      .value,
+                    (
+                      document.getElementById(
+                        "invite-link-sm",
+                      ) as HTMLInputElement
+                    ).value,
                   );
                   toast("Copied to clipboard");
                 }}

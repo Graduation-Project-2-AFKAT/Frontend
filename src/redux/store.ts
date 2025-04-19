@@ -4,7 +4,24 @@ import rootReducer from "./modules";
 
 const store = configureStore({
   reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [
+          "games/setDownloadProgress",
+          "games/downloadGame/pending",
+          "games/downloadGame/fullfiled",
+          "games/downloadGame/rejected",
+        ],
+        ignoredPath: ["games.downloadBlob"],
+      },
+    }),
 });
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+export default store;
 
 // let currentState = store.getState();
 
@@ -17,7 +34,3 @@ const store = configureStore({
 //     setAuthToken(token);
 //   }
 // });
-
-export default store;
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;

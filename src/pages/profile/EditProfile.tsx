@@ -1,17 +1,16 @@
-import { EllipsisVertical } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import ProfileInfo from "./ProfileInfo";
 import SideTabs from "./SideTabs";
 import BlockedUsers from "./BlockedUsers";
 import EmailAddress from "./EmailAddress";
-import Password from "./Password";
+import ChangePassword from "./ChangePassword";
 
 const EditProfile = () => {
+  const { user } = useSelector((state: RootState) => state.users);
+
   const [profileSelectedTab, setProfileSelectedTab] = useState("Profile"); //TODO create content based on this state
-  const [nickname, setNickname] = useState<string>("");
-  const users = useSelector((state: RootState) => state.users);
 
   const handleTabClick = (tab: string) => {
     setProfileSelectedTab(tab);
@@ -27,18 +26,21 @@ const EditProfile = () => {
         <div className="flex items-center gap-x-5 py-5">
           {/* <i className="fa-solid fa-circle-user relative top-8 text-9xl" /> */}
           <img
-            src={users.user?.avatar}
+            src={user?.userProfile?.profile_image || "#"}
             alt="profile avatar"
             className="relative top-10 aspect-square w-25 self-end rounded-full border object-cover"
           />
 
           <div className="flex flex-col pt-10">
             <h1 className="text-3xl font-bold">Edit Your Profile</h1>
-            <small className="text-base font-normal">@Username</small>
+            <small className="text-base font-normal italic">
+              @{user?.username}
+            </small>
           </div>
         </div>
       </header>
 
+      {/* header image (profile banner) */}
       {/* <section className="min-h-50 w-full bg-red-400">
         <div
           className="flex h-full cursor-pointer items-center justify-center bg-black/50 text-white hover:bg-black/60"
@@ -67,9 +69,9 @@ const EditProfile = () => {
             <p className="font-bold">Change profile header</p>
           </div>
         </div>
-      </section> */}
+      </section>
 
-      {/* <dialog id="header-image-dialog" className="place-self-center rounded-lg bg-[#2A2731] p-6 text-white backdrop:bg-black/50">
+      <dialog id="header-image-dialog" className="place-self-center rounded-lg bg-[#2A2731] p-6 text-white backdrop:bg-black/50">
         <div className="mb-4 flex max-w-150 flex-col items-center justify-between">
           <form method="dialog" className="self-end">
             <button className="rounded-full p-1 hover:bg-white/10">
@@ -192,15 +194,16 @@ const EditProfile = () => {
         </div>
 
         {/* Mid Section */}
+        {/* //TODO create form for each component with PATCH request */}
         <div className="">
           {profileSelectedTab === "Profile" ? (
-            <ProfileInfo nickname={nickname} setNickname={setNickname} />
+            <ProfileInfo />
           ) : profileSelectedTab === "Blocked users" ? (
             <BlockedUsers />
           ) : profileSelectedTab === "Email Address" ? (
             <EmailAddress />
           ) : profileSelectedTab === "Password" ? (
-            <Password />
+            <ChangePassword />
           ) : null}
         </div>
 

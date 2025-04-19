@@ -1,16 +1,14 @@
 import { EllipsisVertical, MessageSquare, Trophy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { IUser } from "../interfaces";
 import { toast } from "react-toastify";
 import { joinName } from "../utils";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { useAppSelector } from "../redux/hooks";
 import Tabs from "../components/Tabs";
+import { IUser } from "../interfaces";
 
 const Profile = () => {
   const [profileSelectedTab, setProfileSelectedTab] = useState("posts");
-  const [userData, setUserData] = useState<IUser[]>([]);
-  const users = useSelector((state: RootState) => state.users);
+  const { user } = useAppSelector((state) => state.users);
 
   const iRef = useRef<HTMLImageElement>(null);
 
@@ -43,7 +41,6 @@ const Profile = () => {
           }
         } else {
           if (currentRef) {
-            console.log(currentRef);
             // Reset currentRef styles
             currentRef.style.opacity = "0";
             currentRef.style.transform = isDesktop ? "translateY(0)" : "";
@@ -78,6 +75,7 @@ const Profile = () => {
       }
     };
   }, []);
+  console.log(user?.userProfile);
 
   return (
     <div
@@ -89,15 +87,15 @@ const Profile = () => {
         <div className="hidden items-center gap-x-5 lg:flex">
           {/* <i className="fa-solid fa-circle-user relative top-8 text-9xl" /> */}
           <img
-            src={users.user?.avatar}
+            src={user?.userProfile?.profile_image || "#"}
             alt="profile avatar"
             className="aspect-square w-20 self-end rounded-full border object-cover"
           />
 
           <div className="flex flex-col pt-10">
             <div className="text-3xl font-bold">
-              @{users.user?.username}&nbsp; | &nbsp;
-              <small>{users.user?.email}</small>
+              @{user?.username}&nbsp; | &nbsp;
+              <small>{user?.email}</small>
             </div>
 
             <div className="my-2 flex items-center gap-x-2 text-base">
@@ -116,7 +114,7 @@ const Profile = () => {
         <div className="flex flex-col items-center space-y-5 pt-10 pb-5 lg:hidden">
           {/* <i className="fa-solid fa-circle-user text-7xl" /> */}
           <img
-            src={users.user?.avatar}
+            src={user?.userProfile?.profile_image || "#"}
             alt="profile avatar"
             className="aspect-square w-20 rounded-full border object-cover"
           />
@@ -127,8 +125,8 @@ const Profile = () => {
               <li className="bg-primary rounded px-1 py-1 font-bold">Online</li>
             </ul>
 
-            <small className="font-bold">@{users.user?.username}</small>
-            <small className="font-light">{users.user?.email}</small>
+            <small className="font-bold">@{user?.username}</small>
+            <small className="font-light">{user?.email}</small>
           </div>
 
           <div className="grid w-full grid-cols-3 text-center">
@@ -201,7 +199,7 @@ const Profile = () => {
                 className="fa-solid fa-circle-user absolute -top-28 text-8xl"
               /> */}
               <img
-                src={users.user?.avatar}
+                src={user?.userProfile?.profile_image || "#"}
                 alt="profile avatar"
                 ref={window.innerWidth >= 1280 ? iRef : undefined}
                 className="absolute -top-28 aspect-square w-20 rounded-full border object-cover"
@@ -250,15 +248,13 @@ const Profile = () => {
           <div className="flex items-center space-x-5 bg-white/5 px-5 py-5 shadow-md drop-shadow-md md:rounded-xl">
             {/* <i className="fa-solid fa-circle-user relative w-10 text-5xl" /> */}
             <img
-              src={users.user?.avatar}
+              src={user?.userProfile?.profile_image || "#"}
               alt="profile avatar"
               className="aspect-square w-20 rounded-full border object-cover"
             />
 
             <div className="flex w-full -translate-y-1 flex-col space-y-2">
-              <small className="text-xs">
-                Hey @{joinName(users.user?.username)}
-              </small>
+              <small className="text-xs">Hey @{joinName(user?.username)}</small>
               <input
                 type="text"
                 className="w-full rounded border px-4 py-2 text-sm"
@@ -301,7 +297,7 @@ const Profile = () => {
                 <input
                   type="text"
                   id="invite-link"
-                  value={`AFK@T.com/invite/${joinName(users.user?.username)}`}
+                  value={`AFK@T.com/invite/${joinName(user?.username)}`}
                   className="w-full rounded border border-white/15 px-3 py-1.5 text-sm"
                   readOnly
                 />
@@ -342,7 +338,7 @@ const Profile = () => {
                     className="fa-solid fa-circle-user absolute -top-28 text-8xl"
                   /> */}
                   <img
-                    src={users.user?.avatar}
+                    src={user?.userProfile?.profile_image || "#"}
                     alt="profile avatar"
                     ref={window.innerWidth < 1280 ? iRef : undefined}
                     className="absolute -top-28 aspect-square w-20 rounded-full border object-cover"

@@ -1,16 +1,11 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import Input from "./Input";
 import { IInputs } from "../../interfaces";
 import getValidationSchema from "./validationSchema";
 import useYupValidationResolver from "./userYupValidationResolver";
-import { useSelector, useDispatch } from "react-redux";
-import { userLogin, userRegister } from "../../redux/modules/users";
-import { IUser } from "../../interfaces";
-
-interface RootState {
-  users: IUser;
-}
+import { loginUser, registerUser } from "../../redux/modules/users";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 
 interface IProps {
   label: string;
@@ -19,9 +14,8 @@ interface IProps {
 
 const Form = ({ label, redirect }: IProps) => {
   const location = useLocation();
-
-  const user = useSelector((state: RootState) => state.users);
-  const dispatch = useDispatch();
+  const { isLoading } = useAppSelector((state) => state.loading);
+  const dispatch = useAppDispatch();
 
   const resolver = useYupValidationResolver(
     getValidationSchema(location.pathname),
@@ -31,13 +25,34 @@ const Form = ({ label, redirect }: IProps) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IInputs>({ resolver });
+    watch,
+  } = useForm<IInputs>({
+    resolver,
+    defaultValues: {
+      email: localStorage.getItem("email") || "",
+      username: localStorage.getItem("username") || "",
+    },
+  });
 
   const onSubmit: SubmitHandler<IInputs> = (data) => {
+    const email = watch("email");
+
     if (location.pathname === "/register") {
-      dispatch(userRegister(data));
+      const username = watch("username");
+
+      if (username) {
+        localStorage.setItem("username", username);
+      }
+    }
+
+    if (email) {
+      localStorage.setItem("email", email);
+    }
+
+    if (location.pathname === "/register") {
+      dispatch(registerUser(data));
     } else if (location.pathname === "/login") {
-      dispatch(userLogin(data));
+      dispatch(loginUser(data));
     }
   };
 
@@ -48,7 +63,7 @@ const Form = ({ label, redirect }: IProps) => {
     >
       <div className="mb-4 flex flex-1 flex-col">
         <img
-          src="../../public/images/AFK.svg"
+          src="/images/AFK_Buttons.svg"
           alt="AFK Buttons Logo"
           className="mt-10 h-24 w-auto duration-300 group-focus-within:mt-8 group-focus-within:h-27"
         />
@@ -68,7 +83,6 @@ const Form = ({ label, redirect }: IProps) => {
         <div className="flex flex-col space-y-1">
           <Input
             placeholder="email"
-            type="email"
             register={register}
             errorMsg={errors.email?.message}
           />
@@ -94,18 +108,23 @@ const Form = ({ label, redirect }: IProps) => {
           </div>
         )}
       </div>
-      <a href={redirect} className="text-primary mt-8 text-xs duration-150">
+      <Link to={redirect} className="text-primary mt-8 text-xs duration-150">
         {redirect === "/register"
           ? "Don't have an account?"
           : "Already have an account?"}
-      </a>
+      </Link>
 
       <div className="my-8 flex flex-1 items-center">
         <button
           type="submit"
-          className="cursor-pointer rounded-md border-2 border-gray-200 px-4 py-2 font-bold duration-300 hover:bg-gray-200 hover:text-[#23202A]"
+          disabled={isLoading}
+          className={`rounded-md border-2 border-gray-200 px-4 py-2 font-bold duration-300 ${
+            isLoading
+              ? "cursor-not-allowed opacity-60"
+              : "cursor-pointer hover:bg-gray-200 hover:text-[#23202A]"
+          }`}
         >
-          {label}
+          {isLoading ? "Loading..." : label}
         </button>
       </div>
     </form>

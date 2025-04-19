@@ -1,17 +1,25 @@
+import { Link } from "react-router";
+import { IGames } from "../interfaces";
+
 interface IProps {
+  game: IGames;
   className?: string;
 }
 
-const GameCard = ({ className }: IProps) => {
+const GameCard = ({ game, className }: IProps) => {
+  const { id, title, creator, tags, thumbnail } = game;
+
   return (
-    <div
-      className={`outline-primary m-5 rounded-2xl bg-[#2A2731] shadow-md drop-shadow-md duration-50 md:rounded-lg lg:hover:outline-2 lg:hover:outline-dashed ${className}`}
+    <Link
+      to={`${window.location.href}/${id}`}
+      className={`${className} outline-primary m-5 rounded-2xl bg-[#2A2731] shadow-md drop-shadow-md duration-50 md:rounded-lg lg:hover:outline-2 lg:hover:outline-dashed`}
+      key={id}
     >
       <div className="flex h-full flex-col justify-between">
         <img
-          src="https://m.gjcdn.net/game-thumbnail/400/366063-h97avijq-v4.webp"
-          alt=""
-          className="h-[70%] rounded-t-xl object-fill" //TODO object-cover
+          src={thumbnail}
+          alt="title"
+          className="h-[70%] rounded-t-xl object-cover" //TODO object-cover
         />
 
         <div className="space-y-5 px-3 py-5">
@@ -20,8 +28,8 @@ const GameCard = ({ className }: IProps) => {
               <i className="fa-solid fa-circle-user w-10 cursor-pointer text-4xl" />
 
               <div className="ml-2 flex flex-col">
-                <small className="font-bold opacity-70">AFKAT Studio</small>
-                <span className="font-bold">Mario Party</span>
+                <small className="font-bold opacity-70">{creator}</small>
+                <span className="font-bold">{title}</span>
               </div>
             </div>
 
@@ -30,51 +38,63 @@ const GameCard = ({ className }: IProps) => {
             </div>
           </div>
 
-          <div className="flex space-x-2 pl-1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-gamepad2-icon lucide-gamepad-2"
-            >
-              <line x1="6" x2="10" y1="11" y2="11" />
-              <line x1="8" x2="8" y1="9" y2="13" />
-              <line x1="15" x2="15.01" y1="12" y2="12" />
-              <line x1="18" x2="18.01" y1="10" y2="10" />
-              <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z" />
-            </svg>
+          <div className="flex items-center justify-between space-x-2 pl-1">
+            <div className="flex gap-x-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-gamepad2-icon lucide-gamepad-2"
+              >
+                <line x1="6" x2="10" y1="11" y2="11" />
+                <line x1="8" x2="8" y1="9" y2="13" />
+                <line x1="15" x2="15.01" y1="12" y2="12" />
+                <line x1="18" x2="18.01" y1="10" y2="10" />
+                <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z" />
+              </svg>
 
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-swords-icon lucide-swords"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-swords-icon lucide-swords"
+              >
+                <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+                <line x1="13" x2="19" y1="19" y2="13" />
+                <line x1="16" x2="20" y1="16" y2="20" />
+                <line x1="19" x2="21" y1="21" y2="19" />
+                <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" />
+                <line x1="5" x2="9" y1="14" y2="18" />
+                <line x1="7" x2="4" y1="17" y2="20" />
+                <line x1="3" x2="5" y1="19" y2="21" />
+              </svg>
+            </div>
+            <button
+              // href={
+              //   window.location.origin +
+              //   window.location.pathname +
+              //   `?tag=${tag}`
+              // }
+              className={`rounded-full border border-white/30 bg-white/5 px-4 py-1 text-sm transition-colors hover:border-teal-400/50`}
             >
-              <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
-              <line x1="13" x2="19" y1="19" y2="13" />
-              <line x1="16" x2="20" y1="16" y2="20" />
-              <line x1="19" x2="21" y1="21" y2="19" />
-              <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" />
-              <line x1="5" x2="9" y1="14" y2="18" />
-              <line x1="7" x2="4" y1="17" y2="20" />
-              <line x1="3" x2="5" y1="19" y2="21" />
-            </svg>
+              {tags[0]}
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

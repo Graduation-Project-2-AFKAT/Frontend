@@ -22,6 +22,7 @@ const Home = () => {
             className="w-full rounded-lg border border-gray-500 px-4 py-2"
           /> */}
           <Input
+            id="search-bar-posts"
             placeholder="What's on your mind?"
             className="w-full border-gray-500"
           />

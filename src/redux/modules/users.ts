@@ -1,62 +1,74 @@
 import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
-import { api, setAuthToken } from "../../utils/index.ts";
-import { showAlert } from "./Alerts.ts";
+import { setAuthToken } from "../../utils";
+import api from "../../utils/api.ts";
+import { showAlert } from "./alerts.ts";
 import { AxiosError } from "axios";
-import { createRandomUser } from "../../Mocks/fakeUsers.ts";
+import { IInputs } from "../../interfaces";
+import { startLoading, stopLoading } from "./loading.ts";
 
-const userData = createRandomUser();
-console.log(userData);
+export const loadUser = createAsyncThunk(
+  "user/load",
+  async (_, { dispatch, rejectWithValue }) => {
+    dispatch(startLoading("user"));
 
-export const loadUser = createAsyncThunk("user/load", async () => {
-  // const res = await api.get(`http://localhost:3000/users/10`);
-
-  return userData;
-});
-
-export const userRegister = createAsyncThunk(
-  "user/register",
-  async (userData, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.post(
-        "https://2a0a-2a01-9700-4201-300-4c48-1f48-2cdd-a3a4.ngrok-free.app/api/v1/auth/register/",
-        userData,
-      );
+      const res = await api.get(`/auth/user`);
 
-      console.log(res);
-      // After successful registration, load the user data
-      await dispatch(
-        showAlert({ msg: "Registration successful", type: "success" }),
-      );
+      // console.log(res);
 
-      return userData;
+      return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
-      return rejectWithValue(error.response?.data); //TODO: errors should be in Error redux module
+      console.log("ERROR:", error.response);
+      return rejectWithValue(error.response?.data);
+    } finally {
+      dispatch(stopLoading());
     }
   },
 );
 
-export const userLogin = createAsyncThunk(
-  "user/login",
-  async (userData, { dispatch, rejectWithValue }) => {
-    // https://2a0a-2a01-9700-4201-300-4c48-1f48-2cdd-a3a4.ngrok-free.app/api/v1/auth/login
+export const registerUser = createAsyncThunk(
+  "user/register",
+  async (userData: IInputs, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.post(
-        "https://2a0a-2a01-9700-4201-300-4c48-1f48-2cdd-a3a4.ngrok-free.app/api/v1/auth/login",
-        userData,
-      );
+      dispatch(startLoading("user"));
 
-      console.log(res.data);
+      const res = await api.post("/auth/register/", userData);
 
-      // await dispatch(loadUser());
-      await dispatch(showAlert({ msg: "Login successful", type: "success" }));
+      // console.log(res);
+
+      dispatch(showAlert({ msg: "Registration successful", type: "success" }));
 
       return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
       return rejectWithValue(error.response?.data); //TODO: errors should be in Error redux module
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
+export const loginUser = createAsyncThunk(
+  "user/login",
+  async (userData: IInputs, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("user"));
+
+      const res = await api.post("/auth/login", userData);
+
+      // await dispatch(loadUser());
+      dispatch(showAlert({ msg: "Login successful", type: "success" }));
+
+      return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data); //TODO: errors should be in Error redux module
+    } finally {
+      dispatch(stopLoading());
     }
   },
 );
@@ -65,7 +77,6 @@ const resetAuthState = (state: typeof initialState) => {
   setAuthToken();
   state.user = null;
   state.isAuth = false;
-  state.loading = false;
   state.token = {
     access: null,
     refresh: null,
@@ -80,7 +91,7 @@ const initialState = {
   user: null as {
     username: string;
     email: string;
-    userprofile: {
+    userProfile: {
       country: string;
       github_link: string;
       linkedin_link: string;
@@ -89,7 +100,6 @@ const initialState = {
     };
   } | null,
   isAuth: false,
-  loading: false,
 };
 
 export const userSlice = createSlice({
@@ -100,38 +110,28 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(loadUser.fulfilled, (state, action) => {
-      console.log(action.payload);
       state.isAuth = true;
-      state.loading = false;
-      // state.user = action.payload;
+      state.user = action.payload;
     });
 
     builder.addMatcher(
-      isAnyOf(userLogin.fulfilled, userRegister.fulfilled),
+      isAnyOf(loginUser.fulfilled, registerUser.fulfilled),
       (state, action) => {
         const token = {
           access: action.payload.access,
           refresh: action.payload.refresh,
         };
+        setAuthToken(token);
         state.token = token;
         state.user = action.payload.user;
         state.isAuth = true;
-        state.loading = false;
-        setAuthToken(token);
       },
     );
 
     builder.addMatcher(
-      isAnyOf(userLogin.rejected, userRegister.rejected, loadUser.rejected),
+      isAnyOf(loginUser.rejected, registerUser.rejected, loadUser.rejected),
       (state) => {
         resetAuthState(state);
-      },
-    );
-
-    builder.addMatcher(
-      (action) => action.type.endsWith("/pending"),
-      (state) => {
-        state.loading = true;
       },
     );
   },

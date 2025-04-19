@@ -7,7 +7,7 @@ const getValidationSchema = (path: string) =>
         ? yup
             .string()
             .required("username is required")
-            .min(1, "username must be at least 5 characters")
+            .min(5, "username must be at least 5 characters")
             .max(20, "username must be at most 20 characters")
         : yup.string(),
     email: yup
@@ -18,7 +18,7 @@ const getValidationSchema = (path: string) =>
     password: yup
       .string()
       .required("Password is required")
-      .min(1, "Password must be at least 8 characters"),
+      .min(8, "Password must be at least 8 characters"),
     confirm_password:
       path === "/register"
         ? yup

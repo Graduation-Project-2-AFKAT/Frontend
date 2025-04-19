@@ -19,14 +19,12 @@ import Art from "./pages/Art";
 import PublishArt from "./pages/PublishArt";
 import GameJam from "./pages/GameJam";
 import HostJam from "./pages/HostJam";
-
-const userData = {
-  email: "joe@joe.com",
-  name: "joe",
-  image: "image.webp",
-};
+import { RootState } from "./redux/store";
+import { useSelector } from "react-redux";
 
 function App() {
+  const { isAuth } = useSelector((state: RootState) => state.users);
+
   const options = {
     theme: "dark",
     autoClose: 2500,
@@ -48,17 +46,27 @@ function App() {
           element={<RootLayout />}
           errorElement={<ErrorHandler />}
         >
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route
+            path="/login"
+            element={
+              <ProtectedRoute isAuthenticated={!isAuth} redirectPath="/">
+                <Login />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <ProtectedRoute isAuthenticated={!isAuth} redirectPath="/">
+                <Register />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             index
             element={
-              <ProtectedRoute
-                isAuthenticated={true}
-                redirectPath="/login"
-                data={userData}
-              >
+              <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
                 <Home />
               </ProtectedRoute>
             }
@@ -66,34 +74,33 @@ function App() {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute
-                isAuthenticated={true}
-                redirectPath="/login"
-                data={userData}
-              >
-                <Profile user={userData} />
+              <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
+                <Profile />
               </ProtectedRoute>
             }
           />
           <Route
             path="/profile/edit"
             element={
-              <ProtectedRoute
-                isAuthenticated={true}
-                redirectPath="/login"
-                data={userData}
-              >
+              <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
                 <EditProfile />
               </ProtectedRoute>
             }
           />
           <Route path="/games" element={<Games />} />
           {/*//TODO "/games/:title/:id" */}
-          <Route path="/game" element={<Game />} />
+          <Route
+            path="/games/:id"
+            element={
+              <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
+                <Game />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/games/publish"
             element={
-              <ProtectedRoute isAuthenticated={true} redirectPath="/login">
+              <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
                 <PublishGame />
               </ProtectedRoute>
             }
@@ -101,31 +108,17 @@ function App() {
           <Route
             path="/membership"
             element={
-              <ProtectedRoute isAuthenticated={true} redirectPath="/login">
+              <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
                 <BecomeAMember />
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/arts"
-            element={
-              <ProtectedRoute isAuthenticated={true} redirectPath="/login">
-                <Arts />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/arts/:id"
-            element={
-              <ProtectedRoute isAuthenticated={true} redirectPath="/login">
-                <Art />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/arts" element={<Arts />} />
+          <Route path="/arts/:id" element={<Art />} />
           <Route
             path="/arts/publish"
             element={
-              <ProtectedRoute isAuthenticated={true} redirectPath="/login">
+              <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
                 <PublishArt />
               </ProtectedRoute>
             }
@@ -133,16 +126,15 @@ function App() {
           <Route
             path="/jams"
             element={
-              <ProtectedRoute isAuthenticated={true} redirectPath="/login">
+              <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
                 <GameJam />
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/jams/host"
             element={
-              <ProtectedRoute isAuthenticated={true} redirectPath="/login">
+              <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
                 <HostJam />
               </ProtectedRoute>
             }

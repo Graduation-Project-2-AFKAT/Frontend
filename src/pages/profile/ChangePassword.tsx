@@ -2,7 +2,7 @@ import Input from "../../components/ui/Input";
 
 interface IProps {}
 
-const Password = ({}: IProps) => {
+const ChangePassword = ({}: IProps) => {
   return (
     <div className="space-y-10">
       <div className="flex flex-col space-y-3">
@@ -25,4 +25,4 @@ const Password = ({}: IProps) => {
   );
 };
 
-export default Password;
+export default ChangePassword;

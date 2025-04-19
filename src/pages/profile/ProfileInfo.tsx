@@ -1,13 +1,22 @@
+import { useEffect, useState } from "react";
+import { useAppSelector } from "../../redux/hooks";
 import Input from "../../components/ui/Input";
 
-interface IProps {
-  nickname: string;
-  setNickname: (nickname: string) => void;
-}
+const ProfileInfo = () => {
+  const { user } = useAppSelector((state) => state.users);
 
-const ProfileInfo = ({ nickname, setNickname }: IProps) => {
+  const [nickname, setNickname] = useState<string>(user?.username || "");
+
+  useEffect(() => {
+    if (user) {
+      setNickname(user.username);
+    }
+  }, [user]);
+
   return (
+    //TODO make a form with 'save changes' button
     <div className="relative -left-10 space-y-10 pb-25">
+      {/* Color Theme section */}
       <div className="flex flex-col space-y-3">
         <div className="flex items-center justify-between">
           <p className="font-bold">Color Theme</p>
@@ -26,6 +35,7 @@ const ProfileInfo = ({ nickname, setNickname }: IProps) => {
         </small>
       </div>
 
+      {/* Username section */}
       <div className="flex flex-col space-y-3">
         <label className="font-bold" htmlFor="username">
           Username
@@ -33,6 +43,7 @@ const ProfileInfo = ({ nickname, setNickname }: IProps) => {
         <Input
           id="username"
           placeholder="Enter your username"
+          value={nickname}
           onChange={(e) => setNickname(e.target.value)}
         />
         <p className="font-extralight tracking-wide text-white/50">
@@ -49,13 +60,13 @@ const ProfileInfo = ({ nickname, setNickname }: IProps) => {
         </small>
       </div>
 
+      {/* Display Name section */}
       <div className="flex flex-col space-y-3">
         <label className="font-bold" htmlFor="display-name">
           Display Name{" "}
           <span className="font-light text-white/50">(optional)</span>
         </label>
         <Input id="display-name" placeholder="Enter your display name" />
-
         <small className="font-extralight text-white/50">
           Your display name is an optional personal identifier (such as a
           company name or real name). Unlike usernames, display names can
@@ -63,6 +74,7 @@ const ProfileInfo = ({ nickname, setNickname }: IProps) => {
         </small>
       </div>
 
+      {/* Bio section */}
       <div className="flex flex-col space-y-3">
         <label className="font-bold" htmlFor="profile-bio">
           Profile Bio{" "}

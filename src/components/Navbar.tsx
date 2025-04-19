@@ -1,7 +1,9 @@
 import { useState } from "react";
 import Divider from "./ui/Divider";
-import { Link, NavLink, useLocation } from "react-router";
+import { Link, NavLink } from "react-router";
 import { LogOut } from "lucide-react";
+import { logout } from "../redux/modules/users";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 interface IProps {
   showSidebar: boolean;
@@ -17,9 +19,8 @@ const Navbar = ({
   setShowMiniNav,
   setExpandSidebar,
 }: IProps) => {
-  const location = useLocation();
-  const authorized =
-    location.pathname !== "/login" && location.pathname !== "/register";
+  const dispatch = useAppDispatch();
+  const { isAuth } = useAppSelector((state) => state.users);
 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [darkTheme, setDarkTheme] = useState("ON");
@@ -27,6 +28,11 @@ const Navbar = ({
   const handleMenuClick = () => {
     setShowSidebar((prev) => !prev);
     setExpandSidebar((prev) => !prev);
+  };
+
+  const userLogout = () => {
+    dispatch(logout());
+    setShowUserMenu(false);
   };
 
   return (
@@ -54,11 +60,7 @@ const Navbar = ({
             to="/"
             className="underlineNav flex h-10 w-auto cursor-pointer gap-4 after:-left-full after:scale-x-325"
           >
-            <img
-              src="/images/AFK_Buttons.svg"
-              alt="AFK Buttons Logo"
-              className=""
-            />
+            <img src="/images/AFK_Buttons.svg" alt="AFK Buttons Logo" />
 
             <img
               src="/images/logoOutlined.svg"
@@ -69,19 +71,34 @@ const Navbar = ({
         </div>
       </div>
 
-      {authorized && (
+      {isAuth && (
         <div className="hidden grow items-center gap-5 border-2 px-0 md:mx-8 md:flex">
           <ul className="hidden items-center gap-4 lg:flex">
-            <li className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300">
-              <Link to="/games">Discover</Link>
+            <li>
+              <NavLink
+                to="/games"
+                className={`underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300`}
+              >
+                Discover
+              </NavLink>
             </li>
 
-            <li className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300">
-              <Link to="/arts">Arts</Link>
+            <li>
+              <NavLink
+                to="/arts"
+                className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300"
+              >
+                Arts
+              </NavLink>
             </li>
 
-            <li className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300">
-              <Link to="/jams">Jams</Link>
+            <li>
+              <NavLink
+                to="/jams"
+                className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300"
+              >
+                Jams
+              </NavLink>
             </li>
           </ul>
 
@@ -137,6 +154,7 @@ const Navbar = ({
           <div className="mx-0 flex grow items-center rounded-md bg-[#2A2731] py-2 pl-3 text-sm">
             <i className="fa-solid fa-magnifying-glass mr-4"></i>
             <input
+              id="search-bar"
               type="text"
               placeholder="Search"
               className="w-full outline-0"
@@ -146,7 +164,7 @@ const Navbar = ({
       )}
 
       <div className="border px-5">
-        {authorized ? (
+        {isAuth ? (
           <div className="flex items-center">
             <ul className="hidden items-center gap-2 lg:flex">
               <li>
@@ -232,14 +250,13 @@ const Navbar = ({
                   <hr className="mt-0 border-white/50" />
                 </div>
 
-                <NavLink
-                  to="/logout"
-                  className="flex px-3 py-4 hover:bg-white/10"
-                  onClick={() => setShowUserMenu(false)}
+                <div
+                  className="flex cursor-pointer px-3 py-4 hover:bg-white/10"
+                  onClick={userLogout}
                 >
-                  <LogOut className="mr-2 scale-[-0.7] text-red-400" />
-                  Logout
-                </NavLink>
+                  {/* //TODO replace bg-red-400/10 with bg-transparent */}
+                  <LogOut className="mr-2 scale-[-0.7] text-red-400" /> Logout
+                </div>
               </div>
             </div>
           </div>
