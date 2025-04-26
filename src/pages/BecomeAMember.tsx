@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 import { Code, Palette, ShieldCheck, X } from "lucide-react";
-import useYupValidationResolver from "../components/form/userYupValidationResolver";
+import useYupValidationResolver from "../validation/userYupValidationResolver";
 
 export interface IMembershipFormData {
   role: "developer" | "designer" | "admin";

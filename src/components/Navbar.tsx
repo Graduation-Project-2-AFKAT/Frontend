@@ -50,7 +50,7 @@ const Navbar = ({
       />
 
       <div className="relative">
-        <div className="flex items-center gap-6 border md:gap-0">
+        <div className="flex items-center gap-6 md:gap-0">
           <i
             className="fa-solid fa-bars md:before:hidden"
             onClick={handleMenuClick}
@@ -65,19 +65,19 @@ const Navbar = ({
             <img
               src="/images/logoOutlined.svg"
               alt="AFKAT Logo"
-              className="hidden lg:inline"
+              className="hidden md:inline"
             />
           </NavLink>
         </div>
       </div>
 
       {isAuth && (
-        <div className="hidden grow items-center gap-5 border-2 px-0 md:mx-8 md:flex">
-          <ul className="hidden items-center gap-4 lg:flex">
+        <div className="hidden grow items-center gap-5 px-0 md:mx-8 md:flex">
+          <ul className="hidden items-center gap-x-5 lg:flex">
             <li>
               <NavLink
                 to="/games"
-                className={`underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300`}
+                className={`underlineNav relative cursor-pointer after:-bottom-[1.55rem] hover:text-gray-300`}
               >
                 Discover
               </NavLink>
@@ -86,7 +86,7 @@ const Navbar = ({
             <li>
               <NavLink
                 to="/arts"
-                className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300"
+                className="underlineNav relative cursor-pointer after:-bottom-[1.55rem] hover:text-gray-300"
               >
                 Arts
               </NavLink>
@@ -95,7 +95,7 @@ const Navbar = ({
             <li>
               <NavLink
                 to="/jams"
-                className="underlineNav relative cursor-pointer after:-bottom-6 hover:text-gray-300"
+                className="underlineNav relative cursor-pointer after:-bottom-[1.55rem] hover:text-gray-300"
               >
                 Jams
               </NavLink>
@@ -103,7 +103,7 @@ const Navbar = ({
           </ul>
 
           {/* mini navbar */}
-          <div className="md:block lg:hidden">
+          <div className="block lg:hidden">
             <i
               className="fa-solid fa-ellipsis-vertical cursor-pointer"
               onClick={() => setShowMiniNav((prev) => !prev)}
@@ -163,7 +163,7 @@ const Navbar = ({
         </div>
       )}
 
-      <div className="border px-5">
+      <div>
         {isAuth ? (
           <div className="flex items-center">
             <ul className="hidden items-center gap-2 lg:flex">
@@ -177,7 +177,7 @@ const Navbar = ({
               </li>
 
               <li className="relative">
-                <i className="fa-solid fa-bell underlineNav w-10 cursor-pointer text-center text-xl after:-bottom-7"></i>
+                <i className="fa-solid fa-bell underlineNav w-10 cursor-pointer text-center text-xl after:-bottom-7" />
               </li>
 
               <li>
@@ -186,16 +186,19 @@ const Navbar = ({
                   onClick={() => {
                     return setShowUserMenu((prev) => !prev);
                   }}
-                ></i>
+                />
               </li>
             </ul>
 
-            <i
-              className="fa-solid fa-circle-user hidden cursor-pointer pr-1 text-3xl lg:pr-0 lg:before:hidden"
-              onClick={() => {
-                return setShowUserMenu((prev) => !prev);
-              }}
-            ></i>
+            <div className="flex items-center gap-x-5 lg:hidden">
+              <i className="fa-solid fa-bell underlineNav w-10 cursor-pointer text-center text-2xl after:-bottom-7" />
+              <i
+                className="fa-solid fa-circle-user hidden cursor-pointer pr-1 text-3xl lg:pr-0 lg:before:hidden"
+                onClick={() => {
+                  return setShowUserMenu((prev) => !prev);
+                }}
+              />
+            </div>
 
             {/* user menu */}
             <div

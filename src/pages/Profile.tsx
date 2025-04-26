@@ -1,17 +1,18 @@
 import { EllipsisVertical, MessageSquare, Trophy } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "react-toastify";
-import { joinName } from "../utils";
+import { defaultImage, joinName } from "../utils";
 import { useAppSelector } from "../redux/hooks";
 import Tabs from "../components/Tabs";
-import { IUser } from "../interfaces";
+import { Link } from "react-router";
 
 const Profile = () => {
-  const [profileSelectedTab, setProfileSelectedTab] = useState("posts");
   const { user } = useAppSelector((state) => state.users);
+  console.log(user);
 
   const iRef = useRef<HTMLImageElement>(null);
 
+  // Intersection Observer
   useEffect(() => {
     const MSection = document.getElementById("MSection");
     const LSection = document.getElementById("LSection");
@@ -75,22 +76,28 @@ const Profile = () => {
       }
     };
   }, []);
-  console.log(user?.userProfile);
 
   return (
     <div
-      className="flex w-full flex-col items-center justify-between overflow-auto md:px-15 lg:px-10"
+      className="flex w-full flex-col items-center justify-between overflow-auto"
       id="profile"
     >
       {/* Header */}
-      <header className="bgs-[#201D27] w-full lg:pl-20">
+      <header className="w-full bg-black/10 px-10 lg:pt-5 lg:pb-5 lg:pl-20">
         <div className="hidden items-center gap-x-5 lg:flex">
-          {/* <i className="fa-solid fa-circle-user relative top-8 text-9xl" /> */}
-          <img
-            src={user?.userProfile?.profile_image || "#"}
-            alt="profile avatar"
-            className="aspect-square w-20 self-end rounded-full border object-cover"
-          />
+          <div className="relative top-8 flex aspect-square w-32 items-center justify-center self-end overflow-hidden rounded-full border bg-black text-white">
+            {user ? (
+              <img
+                src={user?.userProfile?.profile_image || "#"}
+                alt="profile avatar"
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-5xl text-white">
+                {defaultImage(user?.username)}
+              </div>
+            )}
+          </div>
 
           <div className="flex flex-col pt-10">
             <div className="text-3xl font-bold">
@@ -116,7 +123,7 @@ const Profile = () => {
           <img
             src={user?.userProfile?.profile_image || "#"}
             alt="profile avatar"
-            className="aspect-square w-20 rounded-full border object-cover"
+            className="aspect-square w-30 rounded-full border object-cover"
           />
 
           <div className="space-y- flex flex-col items-center">
@@ -145,12 +152,12 @@ const Profile = () => {
           </div>
 
           <div className="flex w-full items-center justify-between space-x-2 px-5 md:px-0">
-            <a
-              href={`${window.location.pathname}/edit`}
+            <Link
+              to={`/profile/edit`}
               className="border-primary hover:bg-primary w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black"
             >
               Edit profile
-            </a>
+            </Link>
 
             <button
               onClick={() =>
@@ -183,10 +190,10 @@ const Profile = () => {
         </div>
       </header>
 
-      <section className="grid w-full gap-x-10 lg:mt-15">
+      <section className="grid w-full gap-x-10 bg-white/5 px-10 pt-10 xl:px-15 xl:pt-12">
         {/* Left Section */}
         <div
-          className="bg-gray-60 sticky top-20 hidden h-fit translate-y-0 space-y-10 rounded-lg bg-white/5 py-10 pt-4 duration-250 xl:block"
+          className="sticky top-20 hidden h-fit translate-y-0 space-y-10 rounded-lg border bg-black/25 py-10 pt-4 duration-250 xl:block"
           id={window.innerWidth >= 1280 ? "LSection" : undefined}
         >
           <div className="flex w-full flex-col gap-x-4 px-5 text-center">
@@ -202,7 +209,7 @@ const Profile = () => {
                 src={user?.userProfile?.profile_image || "#"}
                 alt="profile avatar"
                 ref={window.innerWidth >= 1280 ? iRef : undefined}
-                className="absolute -top-28 aspect-square w-20 rounded-full border object-cover"
+                className="absolute -top-28 aspect-square w-25 rounded-full border object-cover"
               />
 
               <ul className="grid grid-cols-2 gap-x-2 text-xs">
@@ -245,8 +252,8 @@ const Profile = () => {
 
         {/* Mid Section */}
         <div className="h-screen" id="MSection">
-          <div className="flex items-center space-x-5 bg-white/5 px-5 py-5 shadow-md drop-shadow-md md:rounded-xl">
-            {/* <i className="fa-solid fa-circle-user relative w-10 text-5xl" /> */}
+          {/* //TODO */}
+          {/* <div className="flex items-center space-x-5 bg-white/5 px-5 py-5 shadow-md drop-shadow-md md:rounded-xl">
             <img
               src={user?.userProfile?.profile_image || "#"}
               alt="profile avatar"
@@ -261,7 +268,7 @@ const Profile = () => {
                 placeholder="Create a new post..."
               />
             </div>
-          </div>
+          </div> */}
 
           <Tabs
             defaultTab="Posts"
@@ -274,24 +281,24 @@ const Profile = () => {
         </div>
 
         {/* Right Section */}
-        <div className="bg-gray-60 sticky top-10 hidden h-fit lg:block">
-          <div className="space-y-8 xl:space-y-10">
+        <div className="sticky top-10 hidden h-fit lg:block">
+          <div className="space-y-8 xl:space-y-8">
             <div className="flex items-center justify-between space-x-2">
-              <a
-                href={`${window.location.pathname}/edit`}
-                className="border-primary hover:bg-primary w-full rounded border-2 py-2 text-center text-sm font-bold duration-100 hover:text-black"
+              <Link
+                to={`/profile/edit`}
+                className="border-primary hover:bg-primary w-full rounded-md border-2 py-2 text-center text-sm font-bold duration-100 hover:text-black"
               >
                 Edit profile
-              </a>
+              </Link>
 
-              <div>
-                <button className="rounded border p-1.5">
+              {/* <div>
+                <button className="rounded-md border p-1.5">
                   <EllipsisVertical />
                 </button>
-              </div>
+              </div> */}
             </div>
 
-            <div className="flex w-full flex-col space-y-3 rounded-lg bg-white/5 px-5 py-5">
+            <div className="flex w-full flex-col space-y-3 rounded-lg border bg-black/25 px-5 py-5">
               <h1 className="text-lg font-bold">Your invite link</h1>
               <div className="flex items-center gap-x-3">
                 <input

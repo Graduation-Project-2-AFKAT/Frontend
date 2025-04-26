@@ -1,18 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { showAlert } from "./alerts";
 import { AxiosError } from "axios";
-import api from "../../utils/api.ts";
+import api from "../../config/axios.config.ts";
 import { startLoading, stopLoading } from "./loading";
+import { IGame } from "../../interfaces";
 
 export const loadGames = createAsyncThunk(
-  "games/loadAllGames",
+  "games/loadAll",
   async (_, { dispatch, rejectWithValue }) => {
     try {
       dispatch(startLoading("games"));
 
       const res = await api.get("/game/games");
-
-      // console.log(res.data);
 
       return res.data;
     } catch (err: unknown) {
@@ -26,14 +25,12 @@ export const loadGames = createAsyncThunk(
 );
 
 export const loadAGame = createAsyncThunk(
-  "games/loadSingleGame",
+  "games/loadSingle",
   async (id: string, { dispatch, rejectWithValue }) => {
     try {
       dispatch(startLoading("games"));
 
       const res = await api.get(`/game/games/${id}`);
-
-      // console.log(res.data);
 
       return res.data;
     } catch (err: unknown) {
@@ -47,13 +44,13 @@ export const loadAGame = createAsyncThunk(
 );
 
 export const downloadAGame = createAsyncThunk(
-  "games/downloadGame",
+  "games/download",
   async (
     {
       id,
       gameTitle,
       gameFile,
-    }: { id: string; gameTitle: string; gameFile: string },
+    }: { id: number; gameTitle: string; gameFile: string },
     { dispatch, rejectWithValue },
   ) => {
     console.log("downloading game...");
@@ -133,8 +130,8 @@ export const downloadAGame = createAsyncThunk(
 );
 
 const initialState = {
-  Games: [],
-  Game: null,
+  Games: [] as IGame[],
+  Game: null as IGame | null,
   downloadProgress: 0,
   estimatedTime: null as number | null,
 };
@@ -151,7 +148,6 @@ export const gamesSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(loadGames.fulfilled, (state, action) => {
       state.Games = action.payload.results;
-      state.Game = null;
     });
 
     builder.addCase(loadGames.rejected, (state) => {

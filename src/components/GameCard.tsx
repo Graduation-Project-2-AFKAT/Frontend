@@ -1,8 +1,8 @@
 import { Link } from "react-router";
-import { IGames } from "../interfaces";
+import { IGame } from "../interfaces";
 
 interface IProps {
-  game: IGames;
+  game: IGame;
   className?: string;
 }
 

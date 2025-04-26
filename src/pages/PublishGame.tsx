@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import Input from "../components/form/Input";
-import useYupValidationResolver from "../components/form/userYupValidationResolver";
+import useYupValidationResolver from "../validation/userYupValidationResolver";
 import { Upload, Image, Info, Package, X } from "lucide-react";
 import { toast } from "react-toastify";
 

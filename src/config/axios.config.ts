@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const serverUrl =
-  import.meta.env.VITE_API_URL || "https://api.afkat.com/api/v1";
+  import.meta.env.VITE_API_URL || "https://afkat-a734fcb61a41.herokuapp.com";
 
 export const api = axios.create({
   baseURL: `${serverUrl}/api/v1`,

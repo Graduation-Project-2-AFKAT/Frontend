@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Component } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { loadAssets } from "../redux/modules/assets";
+import { IAsset } from "../interfaces";
 
 // Sample categories for game art assets
 const categories = [
@@ -30,107 +33,28 @@ const sampleArts = [
     downloads: 1200,
     price: "$24.99",
   },
-  {
-    id: 2,
-    title: "Sci-Fi Environment Kit",
-    thumbnail:
-      "https://cdnb.artstation.com/p/assets/images/images/023/198/393/large/pablo-munoz-gomez-sci-fi-corridor-01.jpg",
-    author: "EnviroDesigner",
-    category: "Environments",
-    license: "Free",
-    style: "Realistic",
-    fileFormat: "GLTF",
-    likes: 512,
-    downloads: 3100,
-    price: "Free",
-  },
-  {
-    id: 3,
-    title: "Low Poly Tree Collection",
-    thumbnail:
-      "https://cdna.artstation.com/p/assets/images/images/021/724/665/large/sebastian-luca-asset-render.jpg",
-    author: "3DModelMaster",
-    category: "Props",
-    license: "CC Attribution",
-    style: "Low Poly",
-    fileFormat: "OBJ",
-    likes: 189,
-    downloads: 876,
-    price: "Free",
-  },
-  {
-    id: 4,
-    title: "UI Kit for Fantasy RPG",
-    thumbnail:
-      "https://cdna.artstation.com/p/assets/images/images/029/089/277/large/ezgi-cubuk-ui-fantasy.jpg",
-    author: "UIDesignerPro",
-    category: "UI/UX",
-    license: "Paid",
-    style: "Hand-painted",
-    fileFormat: "PSD",
-    likes: 212,
-    downloads: 780,
-    price: "$19.99",
-  },
-  {
-    id: 5,
-    title: "Animated Character Rig",
-    thumbnail:
-      "https://cdnb.artstation.com/p/assets/images/images/018/019/060/large/simon-kratz-frontsmall.jpg",
-    author: "AnimationWizard",
-    category: "Animation",
-    license: "Paid",
-    style: "Stylized",
-    fileFormat: "FBX",
-    likes: 301,
-    downloads: 547,
-    price: "$34.99",
-  },
-  {
-    id: 6,
-    title: "Rock and Cliff Set",
-    thumbnail:
-      "https://cdnb.artstation.com/p/assets/images/images/016/098/329/large/simon-jones-rocks01.jpg",
-    author: "TerrainCreator",
-    category: "Props",
-    license: "CC Commercial",
-    style: "Realistic",
-    fileFormat: "OBJ",
-    likes: 97,
-    downloads: 432,
-    price: "$12.99",
-  },
 ];
 
-interface IArtAsset {
-  id: number;
-  title: string;
-  thumbnail: string;
-  author: string;
-  category: string;
-  license: string;
-  style: string;
-  fileFormat: string;
-  likes: number;
-  downloads: number;
-  price: string;
-}
-
 const Arts = () => {
+  const { isLoading } = useAppSelector((state) => state.loading);
+  const dispatch = useAppDispatch();
+
   const [activeTab, setActiveTab] = useState("All");
-  const [loading, setLoading] = useState(true);
-  const [arts, setArts] = useState<IArtAsset[]>([]);
+  const [arts, setArts] = useState<IAsset[]>([]);
 
   useEffect(() => {
     // Simulate loading data
     const loadData = async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setArts(sampleArts);
-      setLoading(false);
     };
 
     loadData();
-  }, []);
+
+    // Above is mocking load data
+
+    dispatch(loadAssets());
+  }, [dispatch]);
 
   const scrollToTop = () => {
     const main = document.getElementById("main-elem");
@@ -202,7 +126,7 @@ const Arts = () => {
         </div>
 
         {/* Gallery grid */}
-        {loading ? (
+        {isLoading ? (
           <div className="flex h-64 items-center justify-center">
             <div className="flex animate-pulse flex-col items-center">
               <svg
@@ -231,11 +155,11 @@ const Arts = () => {
         ) : (
           <>
             {arts.length > 0 ? (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {arts.map((art) => (
+              <div className="grid-games grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {arts.map((art, indx) => (
                   <Link
                     to={`/arts/${art.id}`}
-                    key={art.id}
+                    key={indx} //TODO use art.id when fetching data from backend instead of hardcoded
                     className="group"
                     onClick={scrollToTop}
                   >

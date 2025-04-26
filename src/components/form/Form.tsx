@@ -1,11 +1,11 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useLocation } from "react-router";
 import Input from "./Input";
-import { IInputs } from "../../interfaces";
-import getValidationSchema from "./validationSchema";
-import useYupValidationResolver from "./userYupValidationResolver";
+import { IForm } from "../../interfaces";
 import { loginUser, registerUser } from "../../redux/modules/users";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { loginSchema, registerSchema } from "../../validation";
 
 interface IProps {
   label: string;
@@ -17,25 +17,27 @@ const Form = ({ label, redirect }: IProps) => {
   const { isLoading } = useAppSelector((state) => state.loading);
   const dispatch = useAppDispatch();
 
-  const resolver = useYupValidationResolver(
-    getValidationSchema(location.pathname),
-  );
+  const resolver =
+    location.pathname === "/login" ? loginSchema : registerSchema;
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<IInputs>({
-    resolver,
+  } = useForm<IForm>({
+    resolver: yupResolver(resolver),
     defaultValues: {
       email: localStorage.getItem("email") || "",
       username: localStorage.getItem("username") || "",
     },
   });
 
-  const onSubmit: SubmitHandler<IInputs> = (data) => {
+  const onSubmit: SubmitHandler<IForm> = (data) => {
     const email = watch("email");
+    if (email) {
+      localStorage.setItem("email", email);
+    }
 
     if (location.pathname === "/register") {
       const username = watch("username");
@@ -43,13 +45,6 @@ const Form = ({ label, redirect }: IProps) => {
       if (username) {
         localStorage.setItem("username", username);
       }
-    }
-
-    if (email) {
-      localStorage.setItem("email", email);
-    }
-
-    if (location.pathname === "/register") {
       dispatch(registerUser(data));
     } else if (location.pathname === "/login") {
       dispatch(loginUser(data));
@@ -108,7 +103,14 @@ const Form = ({ label, redirect }: IProps) => {
           </div>
         )}
       </div>
-      <Link to={redirect} className="text-primary mt-8 text-xs duration-150">
+      <Link
+        to={redirect}
+        className="text-primary mt-8 text-xs duration-150"
+        onClick={() => {
+          localStorage.removeItem("email");
+          localStorage.removeItem("username");
+        }}
+      >
         {redirect === "/register"
           ? "Don't have an account?"
           : "Already have an account?"}
@@ -118,13 +120,31 @@ const Form = ({ label, redirect }: IProps) => {
         <button
           type="submit"
           disabled={isLoading}
-          className={`rounded-md border-2 border-gray-200 px-4 py-2 font-bold duration-300 ${
-            isLoading
-              ? "cursor-not-allowed opacity-60"
-              : "cursor-pointer hover:bg-gray-200 hover:text-[#23202A]"
-          }`}
+          className="flex items-center justify-center rounded-md border-2 border-gray-200 px-4 py-2 font-bold duration-300 hover:bg-gray-200 hover:text-[#23202A] disabled:cursor-not-allowed! disabled:opacity-60"
         >
-          {isLoading ? "Loading..." : label}
+          {isLoading && (
+            <svg
+              className="text-primary mr-3 -ml-1 size-5 animate-spin"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          )}
+          {label}
         </button>
       </div>
     </form>

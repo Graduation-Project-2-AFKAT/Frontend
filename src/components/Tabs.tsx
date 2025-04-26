@@ -20,7 +20,7 @@ const Tabs = ({ defaultTab, tabs }: IProps) => {
   }
 
   return (
-    <ul className="relative mt-10 flex items-center space-x-3 px-6 text-sm font-bold before:absolute before:bottom-0 before:left-0 before:w-full before:border-b before:border-white">
+    <ul className="relative flex items-center space-x-3 px-6 text-sm font-bold before:absolute before:bottom-0 before:left-0 before:w-full before:border-b before:border-white">
       {tabs.map((tab) => {
         return (
           <Tab
@@ -40,7 +40,7 @@ const Tab = ({ tab, title, selectedTab, handleTabClick }: ITab) => {
   return (
     <li
       className={`relative z-1 cursor-pointer rounded-t-lg border border-white ${
-        selectedTab === tab ? "border-b-transparent bg-[#23202A]" : ""
+        selectedTab === tab ? "border-b-transparent bg-[#2E2B35]" : ""
       } px-4 py-2`}
       onClick={() => handleTabClick(tab)}
     >

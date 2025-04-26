@@ -101,7 +101,7 @@ const Game = () => {
   };
 
   return (
-    <div className="game-grid grid w-full grid-cols-2 gap-x-10 overflow-y-auto px-10 py-5">
+    <div className="grid-game grid w-full grid-cols-2 gap-x-10 overflow-y-auto px-10 py-5">
       {/* Left Section */}
       <div className="col-span-2 h-fit pt-5 pb-2 xl:col-span-1 xl:py-0">
         <div className="flex items-center justify-between px-2 xl:px-0">
@@ -129,7 +129,7 @@ const Game = () => {
             <button
               onClick={handleDownload}
               disabled={isLoading && type === "games/download"}
-              className={`${isLoading && type === "games/download" ? "bg-primary/70 cursor-not-allowed!" : "bg-primary"} my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 ${!(isLoading && type === "games") && "hover:scale-95"}`}
+              className={`"disabled:bg-primary/70 bg-primary my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-not-allowed! ${!(isLoading && type === "games") && "hover:scale-95"}`}
             >
               {isLoading && type === "games/download"
                 ? `Downloading...`
@@ -174,7 +174,8 @@ const Game = () => {
               <input
                 type="text"
                 id="invite-link"
-                value={`AFK@T.com/games/${id}`}
+                // value={`AFK@T.com/games/${id}`}
+                value={window.location.href}
                 className="w-full rounded border border-white/15 px-3 py-1.5"
                 readOnly
               />
@@ -214,7 +215,7 @@ const Game = () => {
             <button
               onClick={handleDownload}
               disabled={isLoading && type === "games/download"}
-              className={`${isLoading && type === "games/download" ? "bg-primary/70 cursor-wait" : "bg-primary"} my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 ${!(isLoading && type === "games") && "hover:scale-95"}`}
+              className={`"disabled:bg-primary/70 bg-primary my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-wait ${!(isLoading && type === "games") && "hover:scale-95"}`}
             >
               {isLoading && type === "games/download"
                 ? `Downloading...`
@@ -278,11 +279,11 @@ const Game = () => {
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
-                    className="group absolute top-5 right-0 translate-x-20.5 space-x-4 rounded-l-lg border border-r-0 py-2 pr-10 pl-4 text-xs font-extrabold tracking-wider text-white duration-200 hover:-translate-x-0 hover:border-red-400 hover:bg-red-400 hover:text-black hover:shadow-md hover:shadow-black/100"
+                    className="group absolute top-5 right-0 translate-x-21 space-x-5 rounded-l-lg border border-r-0 border-red-400 bg-red-400 py-2 pr-10 pl-4 text-sm font-extrabold tracking-wider text-black duration-300 hover:translate-x-5 hover:shadow-md hover:shadow-black/100"
                     onClick={() => setShowDialog(false)}
                   >
-                    <span className="duration-50 group-hover:opacity-0">X</span>
-                    <span className="text-sm text-black">Close</span>
+                    <span>X</span>
+                    <span>Close</span>
                   </button>
 
                   <h2 className="my-5 px-5 text-lg font-bold">Add a Comment</h2>
@@ -299,9 +300,10 @@ const Game = () => {
                         target.style.height = `${target.scrollHeight}px`;
                       }}
                       style={{ overflow: "hidden", resize: "none" }}
-                    ></textarea>
+                    />
                   </div>
 
+                  {/* Mock comments */}
                   <div className="mt-5 space-y-5 py-5">
                     <hr className="w-full opacity-15" />
 
@@ -572,6 +574,7 @@ const Game = () => {
           </div>
         </div>
 
+        {/* How to Play */}
         <div>
           <h2 className="mt-5 text-xl font-bold">How to Play</h2>
 

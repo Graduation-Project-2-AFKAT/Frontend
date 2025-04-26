@@ -1,21 +1,26 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { showAlert } from "./alerts";
 import { AxiosError } from "axios";
-import api from "../../utils/api.ts";
+import api from "../../config/axios.config.ts";
+import { startLoading, stopLoading } from "./loading";
 
 export const loadAssets = createAsyncThunk(
   "assets/load",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const res = await api.get("/asset/assets");
+      dispatch(startLoading("assets"));
 
-      console.log(res.data);
+      const res = await api.get("/art/art");
+
+      // console.log(res.data);
 
       return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
       return rejectWithValue(error.response?.data); //TODO: errors should be in Error redux module
+    } finally {
+      dispatch(stopLoading());
     }
   },
 );
@@ -31,9 +36,9 @@ export const assetsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(loadAssets.fulfilled, (state, action) => {
-      console.log("Action:", action);
+      console.log("Action:", action.payload);
 
-      //   state.Games = action.payload;
+      state.Assets = action.payload.results;
       state.isLoading = false;
     });
 
@@ -41,13 +46,6 @@ export const assetsSlice = createSlice({
       state.Assets = [];
       state.isLoading = false;
     });
-
-    builder.addMatcher(
-      (action) => action.type.endsWith("/pending"),
-      (state) => {
-        state.isLoading = true;
-      },
-    );
   },
 });
 

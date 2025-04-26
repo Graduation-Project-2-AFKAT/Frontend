@@ -78,22 +78,22 @@
     grid-template-rows: 1fr;
 
     @media (max-width: 767px) {
-      &.editprofile-grid,
-      &.game-grid {
+      &.grid-editprofile,
+      &.grid-game {
         grid-template-columns: 1fr 2fr;
       }
     }
 
     @media (min-width: 768px) {
+      &.grid-editprofile {
+        grid-template-columns: 1fr 2fr;
+      }
+
       &.grid-games {
         grid-template-columns: 1fr 1fr;
       }
 
-      &.editprofile-grid {
-        grid-template-columns: 1fr 2fr;
-      }
-
-      &.game-grid {
+      &.grid-game {
         grid-template-columns: 1fr;
       }
     }
@@ -101,15 +101,15 @@
     @media (min-width: 1024px) {
       grid-template-columns: 2fr 1fr;
 
-      &.games-grid {
+      &.grid-editprofile {
+        grid-template-columns: 1fr 2fr;
+      }
+
+      &.grid-games {
         grid-template-columns: 1fr 1fr 1fr;
       }
 
-      &.editprofile-grid {
-        grid-template-columns: 0.9fr 2fr 1fr;
-      }
-
-      &.game-grid {
+      &.grid-game {
         grid-template-columns: 1fr;
       }
     }
@@ -117,11 +117,15 @@
     @media (min-width: 1280px) {
       grid-template-columns: 1fr 2fr 1fr;
 
-      &.games-grid {
+      &.grid-editprofile {
+        grid-template-columns: 1fr 2fr 1fr;
+      }
+
+      &.grid-games {
         grid-template-columns: 1fr 1fr 1fr 1fr;
       }
 
-      &.game-grid {
+      &.grid-game {
         grid-template-columns: 0.9fr 2fr 1fr;
       }
     }
@@ -129,7 +133,7 @@
 }
 
 @theme {
-  --color-primary: rgba(var(--primary));
+  --color-primary: var(--primary);
 }
 
 :root {
@@ -146,7 +150,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --primary: 0, 161, 161;
+  --primary: #00a1a1;
   --toastify-color-progress-dark: var(--color-primary);
 }
 

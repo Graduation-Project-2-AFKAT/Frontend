@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import ProfileInfo from "./ProfileInfo";
@@ -6,6 +6,7 @@ import SideTabs from "./SideTabs";
 import BlockedUsers from "./BlockedUsers";
 import EmailAddress from "./EmailAddress";
 import ChangePassword from "./ChangePassword";
+import { defaultImage } from "../../utils";
 
 const EditProfile = () => {
   const { user } = useSelector((state: RootState) => state.users);
@@ -22,14 +23,21 @@ const EditProfile = () => {
       id="profile"
     >
       {/* Header */}
-      <header className="w-full bg-[#201D27] pl-20">
+      <header className="w-full bg-black/10 pl-20">
         <div className="flex items-center gap-x-5 py-5">
-          {/* <i className="fa-solid fa-circle-user relative top-8 text-9xl" /> */}
-          <img
-            src={user?.userProfile?.profile_image || "#"}
-            alt="profile avatar"
-            className="relative top-10 aspect-square w-25 self-end rounded-full border object-cover"
-          />
+          <div className="relative top-8 flex aspect-square w-32 items-center justify-center self-end overflow-hidden rounded-full border bg-black text-white">
+            {user ? (
+              <img
+                src={user?.userProfile?.profile_image || "#"}
+                alt="profile avatar"
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-5xl text-white">
+                {defaultImage(user?.username)}
+              </div>
+            )}
+          </div>
 
           <div className="flex flex-col pt-10">
             <h1 className="text-3xl font-bold">Edit Your Profile</h1>
@@ -177,7 +185,7 @@ const EditProfile = () => {
         </div>
       </dialog> */}
 
-      <section className="editprofile-grid grid w-full flex-grow gap-x-10 bg-white/5 px-10 pt-10 text-white md:px-15 lg:px-20">
+      <section className="grid-editprofile grid w-full flex-grow gap-x-10 bg-white/5 px-10 pt-10 text-white md:px-15 lg:px-20">
         {/* Left Section */}
         <div className="rounded-lg py-10 pt-10 duration-250">
           <SideTabs
@@ -195,7 +203,7 @@ const EditProfile = () => {
 
         {/* Mid Section */}
         {/* //TODO create form for each component with PATCH request */}
-        <div className="">
+        <div>
           {profileSelectedTab === "Profile" ? (
             <ProfileInfo />
           ) : profileSelectedTab === "Blocked users" ? (
@@ -209,7 +217,7 @@ const EditProfile = () => {
 
         {/* Right Section */}
         <div
-          className={`${profileSelectedTab !== "Blocked users" && "hidden"} hidden pt-10 lg:block`}
+          className={`${profileSelectedTab !== "Blocked users" && "lg:hidden"} hidden pt-10 lg:block`}
         >
           <p className="text-sm font-extralight opacity-50">
             When you block someone, that user won't be able to follow you, send

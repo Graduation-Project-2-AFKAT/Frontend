@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { showAlert } from "./alerts";
 import { AxiosError } from "axios";
-import api from "../../utils/api.ts";
+import api from "../../config/axios.config.ts";
 
 export const loadJams = createAsyncThunk(
   "gameJams/load",

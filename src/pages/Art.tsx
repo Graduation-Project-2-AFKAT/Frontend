@@ -11,7 +11,7 @@ const Art = () => {
   const [wireframe, setWireframe] = useState(false);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const [gridPosition, setGridPosition] = useState(-2);
-  const [modelUrl, setModelUrl] = useState("/Landscape3.glb");
+  const [modelUrl] = useState("/Landscape3.glb");
   // https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf
 
   const handleDownload = () => {
@@ -352,7 +352,7 @@ const Art = () => {
 
                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
                   <span className="text-white/70">License</span>
-                  <span className="font-medium">
+                  <span className="text-end font-medium">
                     Standard Commercial License
                   </span>
                 </div>

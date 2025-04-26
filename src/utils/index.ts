@@ -1,4 +1,4 @@
-import api from "./api";
+import api from "../config/axios.config";
 
 export const setAuthToken = (token?: { access: string; refresh: string }) => {
   if (token?.access && token?.refresh) {
@@ -87,4 +87,8 @@ export const joinName = (name: string | undefined) => {
   const joinedName = name?.replace(/[^a-zA-Z0-9#]/g, "");
 
   return joinedName;
+};
+
+export const defaultImage = (username: string) => {
+  return username ? username.charAt(0).toUpperCase() : null;
 };

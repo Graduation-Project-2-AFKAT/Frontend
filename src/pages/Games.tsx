@@ -5,12 +5,10 @@ import { Link } from "react-router";
 import { Gamepad } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { loadGames } from "../redux/modules/games";
-import { IGames } from "../interfaces";
 
 const Games = () => {
-  const { Games } = useAppSelector((state) => state.games) as {
-    Games: IGames[];
-  };
+  const { isLoading } = useAppSelector((state) => state.loading);
+  const { Games } = useAppSelector((state) => state.games);
   const dispatch = useAppDispatch();
 
   const [isVisible, setIsVisible] = useState(true);
@@ -18,8 +16,8 @@ const Games = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
-    if (Games.length === 0) dispatch(loadGames());
-  }, [Games]);
+    dispatch(loadGames());
+  }, [dispatch]);
 
   const tags = [
     "Action",
@@ -125,18 +123,39 @@ const Games = () => {
           tabs={["Featured", "Newest", "Top Rated"]}
         />
 
-        <ul
-          className="games-grid mb-25 grid space-y-6 px-10 md:px-0"
-          style={
-            {
-              // gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-            }
-          }
-        >
-          {(Games || []).map((game) => {
-            return <GameCard key={game.id} game={game} />;
-          })}
-        </ul>
+        {isLoading ? (
+          <div className="flex h-64 items-center justify-center">
+            <div className="flex animate-pulse flex-col items-center">
+              <svg
+                className="text-primary mb-4 h-10 w-10 animate-spin"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <span>Loading assets...</span>
+            </div>
+          </div>
+        ) : (
+          <ul className="grid-games mb-25 grid space-y-6 px-10 md:px-0">
+            {Games.map((game) => {
+              return <GameCard key={game.id} game={game} />;
+            })}
+          </ul>
+        )}
 
         {/* <div className="absolute bottom-10 h-10 w-135 shadow-[inset_0_-20px_20px_-20px_rgba(0,0,0,0.5)]"></div> */}
       </section>
