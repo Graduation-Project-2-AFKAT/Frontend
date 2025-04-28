@@ -54,20 +54,6 @@ const RootLayout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [msgs, show]);
 
-  // useEffect(() => {
-  //   if (localStorage.getItem("access_token") && !user) {
-  //     dispatch(loadUser());
-  //     console.log("user loaded - Layout.tsx");
-  //   }
-  // }, [user, isAuth]);
-
-  // useEffect(() => {
-  //   if (user) {
-  //     localStorage.removeItem("username");
-  //     localStorage.removeItem("email");
-  //   }
-  // }, [user]);
-
   return (
     <div>
       <div>

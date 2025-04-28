@@ -15,10 +15,8 @@ const ChangePassword = () => {
 
   // Check if form is dirty
   useEffect(() => {
-    if (newPassword || confirmNewPassword) {
-      const isDirty = newPassword !== "" || confirmNewPassword !== "";
-      setIsFormDirty(isDirty);
-    }
+    const isDirty = newPassword !== "" || confirmNewPassword !== "";
+    setIsFormDirty(isDirty);
   }, [newPassword, confirmNewPassword]);
 
   // Check if passwords match
@@ -54,12 +52,11 @@ const ChangePassword = () => {
       return;
     }
 
-    await dispatch(
-      changePassword({
-        new_password1: newPassword,
-        new_password2: confirmNewPassword,
-      }),
-    );
+    const formData = new FormData();
+    formData.append("new_password1", newPassword);
+    formData.append("new_password2", confirmNewPassword);
+
+    await dispatch(changePassword(formData));
 
     // Reset form after submission
     setNewPassword("");
@@ -91,9 +88,7 @@ const ChangePassword = () => {
           id="confirm-new-password"
           value={confirmNewPassword}
           onChange={(e) => setConfirmNewPassword(e.target.value)}
-          className={
-            !passwordsMatch && confirmNewPassword ? "border-red-500" : ""
-          }
+          className="mb-5"
           required
         />
 
@@ -104,7 +99,7 @@ const ChangePassword = () => {
         {/* Form error message */}
 
         <div
-          className={`${!formError && "opacity-0"} min-h-10 rounded bg-red-500/10 px-3 py-2 text-red-500`}
+          className={`${!formError && "opacity-0"} min-h-10 rounded bg-red-500/10 px-3 py-2 text-red-500 transition-opacity`}
         >
           {formError ? formError : ""}
         </div>
@@ -116,9 +111,9 @@ const ChangePassword = () => {
           disabled={
             !isFormDirty ||
             isLoading ||
-            !passwordsMatch ||
             !newPassword ||
-            !confirmNewPassword
+            !confirmNewPassword ||
+            !passwordsMatch
           }
           className="disabled:bg-primary/50 bg-primary hover:bg-primary/70 flex items-center gap-2 rounded px-5 py-3 text-sm font-bold text-black transition-colors duration-250 disabled:cursor-not-allowed!"
         >

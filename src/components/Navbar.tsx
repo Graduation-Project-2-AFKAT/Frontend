@@ -20,7 +20,7 @@ const Navbar = ({
   setExpandSidebar,
 }: IProps) => {
   const dispatch = useAppDispatch();
-  const { isAuth } = useAppSelector((state) => state.users);
+  const { user, isAuth } = useAppSelector((state) => state.users);
 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [darkTheme, setDarkTheme] = useState("ON");
@@ -157,7 +157,7 @@ const Navbar = ({
               id="search-bar"
               type="text"
               placeholder="Search"
-              className="w-full outline-0"
+              className="w-full pr-4 outline-none"
             />
           </div>
         </div>
@@ -206,8 +206,12 @@ const Navbar = ({
             >
               <NavLink to="/profile" onClick={() => setShowUserMenu(false)}>
                 <div className="px-4 pt-4 hover:bg-white/10">
-                  <p className="text-xl font-bold">Username</p>
-                  <small className="font-medium">@username</small>
+                  <p className="text-xl font-bold">
+                    {user?.username || "Username"}
+                  </p>
+                  <small className="font-medium">
+                    @{user?.username || "Username"}
+                  </small>
 
                   <hr className="mt-4 border-white/50" />
                 </div>

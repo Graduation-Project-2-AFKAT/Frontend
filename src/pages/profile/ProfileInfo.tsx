@@ -43,11 +43,10 @@ const ProfileInfo = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    await dispatch(
-      updateUserProfile({
-        username: nickname,
-      }),
-    );
+    const formData = new FormData();
+    formData.append("username", nickname);
+
+    await dispatch(updateUserProfile(formData));
 
     setIsFormDirty(false);
   };
@@ -98,8 +97,9 @@ const ProfileInfo = () => {
           pattern="[a-zA-Z0-9_]+"
           title="Username can only contain letters, numbers and underscores"
           required
+          autoComplete="username"
         />
-        <p className="font-extralight tracking-wide text-white/50">
+        <p className="font-extralight text-white/50">
           Profile URL:{" "}
           <span className="rounded-full bg-black/20 px-2 py-1 text-sm">
             https://AFKAT.com/@

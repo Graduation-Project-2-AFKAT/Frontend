@@ -40,7 +40,7 @@ const Tab = ({ tab, title, selectedTab, handleTabClick }: ITab) => {
   return (
     <li
       className={`relative z-1 cursor-pointer rounded-t-lg border border-white ${
-        selectedTab === tab ? "border-b-transparent bg-[#2E2B35]" : ""
+        selectedTab === tab ? "border-b-transparent bg-[#23202A]" : ""
       } px-4 py-2`}
       onClick={() => handleTabClick(tab)}
     >

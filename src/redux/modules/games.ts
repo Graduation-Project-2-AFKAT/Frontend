@@ -144,6 +144,9 @@ export const gamesSlice = createSlice({
       state.downloadProgress = action.payload.downloadProgress;
       state.estimatedTime = action.payload.estimatedTime;
     },
+    resetGame: (state) => {
+      state.Game = null;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadGames.fulfilled, (state, action) => {
@@ -164,6 +167,6 @@ export const gamesSlice = createSlice({
   },
 });
 
-export const { setDownloadProgress } = gamesSlice.actions;
+export const { setDownloadProgress, resetGame } = gamesSlice.actions;
 
 export default gamesSlice.reducer;

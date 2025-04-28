@@ -68,7 +68,7 @@ function App() {
       dispatch(loadMyUser());
       console.log("user loaded - Layout.tsx");
     }
-  }, [user, isAuth]);
+  }, [user, isAuth, dispatch]);
 
   useEffect(() => {
     if (user) {

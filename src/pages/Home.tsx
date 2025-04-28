@@ -19,7 +19,7 @@ const Home = () => {
       />
 
       {/* Main */}
-      <section className="space-y-6 scroll-smooth border md:mx-auto md:w-[75%] lg:w-full lg:px-0">
+      <section className="space-y-6 md:mx-auto md:w-[75%] lg:w-full lg:px-0">
         <div className="lg:border-primary flex h-25 items-center justify-between bg-[#2A2731] px-8 shadow-md drop-shadow-md md:rounded-lg">
           <i className="fa-solid fa-circle-user mr-6 text-4xl" />
           <Input

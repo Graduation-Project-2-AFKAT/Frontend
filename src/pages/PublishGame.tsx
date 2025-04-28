@@ -1,19 +1,19 @@
 import { useState, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import Input from "../components/form/Input";
-import useYupValidationResolver from "../validation/userYupValidationResolver";
 import { Upload, Image, Info, Package, X } from "lucide-react";
 import { toast } from "react-toastify";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 interface IAddGameFormData {
   title: string;
   description: string;
-  releaseDate: string;
+  releaseDate: string | undefined;
   version: string;
   price: string;
   tags: string[];
-  isMultiplayer: boolean;
+  isMultiplayer: boolean | undefined;
 }
 
 const validationSchema = yup.object({
@@ -22,7 +22,11 @@ const validationSchema = yup.object({
     .string()
     .required("Description is required")
     .min(20, "Description must be at least 20 characters"),
-  tags: yup.array().min(1, "Select at least one tag"),
+  tags: yup
+    .array()
+    .min(1, "Select at least one tag")
+    .defined()
+    .of(yup.string()),
   releaseDate: yup.string(),
   version: yup.string().required("Version is required"),
   price: yup.string().required("Price is required"),
@@ -30,8 +34,6 @@ const validationSchema = yup.object({
 });
 
 const PublishGame = () => {
-  const resolver = useYupValidationResolver(validationSchema);
-
   const {
     register,
     handleSubmit,
@@ -39,7 +41,7 @@ const PublishGame = () => {
     getValues,
     setValue,
   } = useForm<IAddGameFormData>({
-    resolver,
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -173,7 +175,7 @@ const PublishGame = () => {
         file.type.startsWith("image/") &&
         (file.type === "image/jpeg" ||
           file.type === "image/png" ||
-          file.type === "image/gif"),
+          file.type === "image/webp"),
     );
 
     if (imageFile) {
@@ -190,7 +192,7 @@ const PublishGame = () => {
       };
       reader.readAsDataURL(imageFile);
     } else {
-      toast.error("Please upload a valid image file (JPG, PNG, GIF)");
+      toast.error("Please upload a valid image file (JPG, PNG, WebP)");
     }
   };
 
@@ -222,7 +224,7 @@ const PublishGame = () => {
     setValue("tags", newTags);
   };
 
-  const onSubmit = (data: IAddGameFormData) => {
+  const onSubmit = handleSubmit((data) => {
     if (activeStep === 3) {
       if (!uploadedWebGLFiles) {
         toast.error("Please make sure to upload game files (WebGl)");
@@ -247,9 +249,12 @@ const PublishGame = () => {
       "Game uploaded successfully! Our team will review it shortly.",
     );
     // Here you would typically send the data to your backend
-  };
+  });
 
-  const nextStep = () => {
+  const nextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     const errors: string[] = [];
     // For step 1, validate title, description, version
     if (activeStep === 1) {
@@ -314,7 +319,8 @@ const PublishGame = () => {
   return (
     <form
       className="border-primary relative mx-auto my-10 flex h-fit w-[90%] max-w-5xl flex-col items-start rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={onSubmit}
+      noValidate
     >
       {/* Header */}
       <div className="w-full border-b border-white/10 p-6">
@@ -511,7 +517,7 @@ const PublishGame = () => {
                       Click or drop an image here
                     </p>
                     <p className="text-xs text-white/50">
-                      PNG, JPG, GIF up to 5MB
+                      PNG, JPG, WebP up to 5MB
                     </p>
                   </div>
                 )}
@@ -520,9 +526,14 @@ const PublishGame = () => {
                 type="file"
                 ref={imageInputRef}
                 className="hidden"
-                accept=".jpg,.jpeg,.png,.gif"
+                accept=".jpg,.jpeg,.png,.webp"
                 multiple={false}
-                onChange={handleImageUpload}
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    handleImageUpload(e);
+                    e.target.value = "";
+                  }
+                }}
               />
             </div>
 
@@ -760,9 +771,8 @@ const PublishGame = () => {
             </button>
           ) : (
             <button
-              type="button"
+              type="submit"
               className="bg-primary rounded px-6 py-2 font-bold text-black hover:bg-teal-400"
-              onClick={() => handleSubmit(onSubmit)()}
             >
               Submit Game
             </button>

@@ -7,14 +7,12 @@ import { IForm, IUser } from "../../interfaces";
 import { startLoading, stopLoading } from "./loading.ts";
 
 export const loadMyUser = createAsyncThunk(
-  "user/load",
+  "user/loadMyUser",
   async (_, { dispatch, rejectWithValue }) => {
-    dispatch(startLoading("user"));
+    dispatch(startLoading("loadMyUser"));
 
     try {
       const res = await api.get(`/auth/user`);
-
-      // console.log(res);
 
       return res.data;
     } catch (err: unknown) {
@@ -28,15 +26,13 @@ export const loadMyUser = createAsyncThunk(
   },
 );
 
-export const loadUser = createAsyncThunk(
-  "user/loadSingle",
+export const loadUserById = createAsyncThunk(
+  "user/loadUserById",
   async (id, { dispatch, rejectWithValue }) => {
-    dispatch(startLoading("user"));
+    dispatch(startLoading("loadUserById"));
 
     try {
       const res = await api.get(`/auth/users${id}`);
-
-      // console.log(res);
 
       return res.data;
     } catch (err: unknown) {
@@ -54,12 +50,11 @@ export const registerUser = createAsyncThunk(
   "user/register",
   async (userData: IForm, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("user"));
+      dispatch(startLoading("register"));
 
       const res = await api.post("/auth/register/", userData);
 
-      // console.log(res);
-
+      // await dispatch(loadMyUser());
       dispatch(showAlert({ msg: "Registration successful", type: "success" }));
 
       return res.data;
@@ -77,11 +72,11 @@ export const loginUser = createAsyncThunk(
   "user/login",
   async (userData: IForm, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("user"));
+      dispatch(startLoading("login"));
 
       const res = await api.post("/auth/login", userData);
 
-      // await dispatch(loadUser());
+      // await dispatch(loadMyUser());
       dispatch(showAlert({ msg: "Login successful", type: "success" }));
 
       return res.data;
@@ -97,16 +92,15 @@ export const loginUser = createAsyncThunk(
 
 export const updateUserProfile = createAsyncThunk(
   "user/updateUserProfile",
-  async (
-    userData: { username?: string; email?: string },
-    { dispatch, rejectWithValue },
-  ) => {
+  async (userData: FormData | null, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("user"));
+      dispatch(startLoading("updateUserProfile"));
 
-      const res = await api.patch("/auth/user", userData);
+      const res = await api.patch("/auth/user", userData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-      await dispatch(loadMyUser());
+      // await dispatch(loadMyUser());
       dispatch(showAlert({ msg: "Changes Saved!", type: "success" }));
 
       return res.data;
@@ -122,16 +116,15 @@ export const updateUserProfile = createAsyncThunk(
 
 export const changePassword = createAsyncThunk(
   "user/changePassword",
-  async (
-    userData: { new_password1: string; new_password2: string },
-    { dispatch, rejectWithValue },
-  ) => {
+  async (userData: FormData | null, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("user"));
+      dispatch(startLoading("changePassword"));
 
-      const res = await api.post("/auth/password/change", userData);
+      const res = await api.post("/auth/password/change", userData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-      await dispatch(loadMyUser());
+      // await dispatch(loadMyUser());
       dispatch(showAlert({ msg: res.data.detail, type: "success" }));
 
       console.log(res);
@@ -173,10 +166,13 @@ export const userSlice = createSlice({
     logout: resetAuthState,
   },
   extraReducers: (builder) => {
-    builder.addCase(loadMyUser.fulfilled, (state, action) => {
-      state.isAuth = true;
-      state.user = action.payload;
-    });
+    builder.addMatcher(
+      isAnyOf(loadMyUser.fulfilled, updateUserProfile.fulfilled),
+      (state, action) => {
+        state.isAuth = true;
+        state.user = action.payload;
+      },
+    );
 
     builder.addMatcher(
       isAnyOf(loginUser.fulfilled, registerUser.fulfilled),
@@ -193,7 +189,12 @@ export const userSlice = createSlice({
     );
 
     builder.addMatcher(
-      isAnyOf(loginUser.rejected, registerUser.rejected, loadMyUser.rejected),
+      isAnyOf(
+        loginUser.rejected,
+        registerUser.rejected,
+        loadMyUser.rejected,
+        updateUserProfile.rejected,
+      ),
       (state) => {
         resetAuthState(state);
       },

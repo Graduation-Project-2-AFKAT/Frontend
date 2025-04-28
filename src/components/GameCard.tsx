@@ -19,7 +19,7 @@ const GameCard = ({ game, className }: IProps) => {
         <img
           src={thumbnail}
           alt="title"
-          className="h-[70%] rounded-t-xl object-cover" //TODO object-cover
+          className="h-full rounded-t-lg object-cover"
         />
 
         <div className="space-y-5 px-3 py-5">

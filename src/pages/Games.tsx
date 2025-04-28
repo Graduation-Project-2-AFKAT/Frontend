@@ -73,8 +73,8 @@ const Games = () => {
   return (
     <main className="w-full overflow-y-auto pt-0 lg:gap-10">
       <header
-        className={`sticky top-0 z-2 flex items-center justify-between bg-[#2E2B35] px-10 py-6 transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
+        className={`border-b-primary sticky top-0 z-2 flex items-center justify-between border-b-2 bg-black/50 px-10 py-6 backdrop-blur-3xl transition-transform duration-300 ${
+          isVisible ? "translate-y-0" : "-translate-y-[110%]"
         }`}
       >
         <p>Share Your Games With The World!</p>

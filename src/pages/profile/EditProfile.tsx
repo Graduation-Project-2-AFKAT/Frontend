@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import ProfileInfo from "./ProfileInfo";
@@ -7,14 +7,110 @@ import BlockedUsers from "./BlockedUsers";
 import EmailAddress from "./EmailAddress";
 import ChangePassword from "./ChangePassword";
 import { defaultImage } from "../../utils";
+import { Pencil, Upload, X } from "lucide-react";
+import { toast } from "react-toastify";
+import { useAppDispatch } from "../../redux/hooks";
+import { updateUserProfile } from "../../redux/modules/users";
 
 const EditProfile = () => {
+  const dispatch = useAppDispatch();
+
   const { user } = useSelector((state: RootState) => state.users);
 
-  const [profileSelectedTab, setProfileSelectedTab] = useState("Profile"); //TODO create content based on this state
+  const profileImageInputRef = useRef<HTMLInputElement>(null);
+
+  const [activeProfileTab, setActiveProfileTab] = useState("Profile");
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profilePreview, setProfilePreview] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleTabClick = (tab: string) => {
-    setProfileSelectedTab(tab);
+    setActiveProfileTab(tab);
+  };
+
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB");
+      return;
+    }
+
+    setProfileImage(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setProfilePreview(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const files = Array.from(e.dataTransfer.files);
+
+    if (files.length === 0) return;
+
+    const file = files[0];
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+
+    // Check file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB");
+      return;
+    }
+
+    // Save the actual file for upload
+    setProfileImage(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setProfilePreview(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleProfileImageSubmit = () => {
+    if (!profileImage) {
+      toast.error("No image selected");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("userProfile.profile_image", profileImage);
+
+    try {
+      dispatch(updateUserProfile(formData));
+
+      setProfileModalOpen(false);
+      // Reset preview
+      setProfileImage(null);
+      setProfilePreview(null);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      toast.error("Failed to update profile picture");
+    }
   };
 
   return (
@@ -26,17 +122,23 @@ const EditProfile = () => {
       <header className="w-full bg-black/10 pl-20">
         <div className="flex items-center gap-x-5 py-5">
           <div className="relative top-8 flex aspect-square w-32 items-center justify-center self-end overflow-hidden rounded-full border bg-black text-white">
-            {user ? (
+            {user?.userProfile?.profile_image ? (
               <img
-                src={user?.userProfile?.profile_image || "#"}
+                src={user?.userProfile?.profile_image}
                 alt="profile avatar"
                 className="object-cover"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-5xl text-white">
-                {defaultImage(user?.username)}
+                {user?.username ? defaultImage(user.username) : ""}
               </div>
             )}
+            <div
+              className="absolute flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-black/50 transition-colors hover:bg-black/65"
+              onClick={() => setProfileModalOpen(true)}
+            >
+              <Pencil size={20} />
+            </div>
           </div>
 
           <div className="flex flex-col pt-10">
@@ -48,148 +150,108 @@ const EditProfile = () => {
         </div>
       </header>
 
-      {/* header image (profile banner) */}
-      {/* <section className="min-h-50 w-full bg-red-400">
-        <div
-          className="flex h-full cursor-pointer items-center justify-center bg-black/50 text-white hover:bg-black/60"
-          onClick={() => {
-            const dialog = document.getElementById(
-              "header-image-dialog",
-            ) as HTMLDialogElement;
-            dialog?.showModal();
-          }}
-        >
-          <div className="flex flex-col items-center justify-center space-y-5">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-pen-icon lucide-pen"
-            >
-              <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
-            </svg>
-            <p className="font-bold">Change profile header</p>
-          </div>
-        </div>
-      </section>
-
-      <dialog id="header-image-dialog" className="place-self-center rounded-lg bg-[#2A2731] p-6 text-white backdrop:bg-black/50">
-        <div className="mb-4 flex max-w-150 flex-col items-center justify-between">
-          <form method="dialog" className="self-end">
-            <button className="rounded-full p-1 hover:bg-white/10">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-x"
+      {/* Profile Image Upload Modal */}
+      {profileModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+          <div className="w-full max-w-xl rounded-lg bg-[#2A2731] p-6 shadow-xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold">Update Profile Picture</h2>
+              <button
+                className="rounded-full p-1 hover:bg-white/10"
+                onClick={() => {
+                  setProfileModalOpen(false);
+                  setProfilePreview(null);
+                }}
               >
-                <path d="M18 6 6 18" />
-                <path d="m6 6 12 12" />
-              </svg>
-            </button>
-          </form>
-          <div className="space-y-5">
-            <h2 className="text-base font-bold">Upload New Header</h2>
-            <div className="space-y-5 text-sm font-extralight text-white/50">
-              <p>
-                Headers are the big, banner-like images that adorn the tops of
-                pages. For your header to look its best on all devices, make
-                sure anything important is located near the center of the image.
-              </p>
+                <X size={24} />
+              </button>
+            </div>
 
-              <div className="flex flex-col space-y-5">
-                <p className="flex flex-col">
-                  Your image must be a PNG or JPG.
-                  <span className="font-medium">
-                    PNGs are highly recommended as they produce a lossless
-                    image.
-                  </span>
-                </p>
-                <span className="font-bold">
-                  The recommended size for a header image is{" "}
-                  <span className="rounded-lg bg-black/20 p-0.5 text-xs text-white">
-                    2000×500
-                  </span>{" "}
-                  (ratio of 4 ÷ 1).
-                </span>
+            <div className="mb-6">
+              <div className="flex items-center justify-center">
+                {/* Preview current or new image */}
+                <div className="relative h-40 w-40 overflow-hidden rounded-full border-2 border-white/20">
+                  {profilePreview ? (
+                    <img
+                      src={profilePreview}
+                      alt="Preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : user?.userProfile?.profile_image ? (
+                    <img
+                      src={user.userProfile.profile_image}
+                      alt="Current profile"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-black text-5xl">
+                      {user?.username ? defaultImage(user.username) : ""}
+                    </div>
+                  )}
+                </div>
               </div>
+
+              <div
+                className={`hover:border-primary mt-5 flex items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors ${
+                  isDragging
+                    ? "border-primary bg-primary/10"
+                    : "hover:border-primary border-white/20"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onDragEnd={() => setIsDragging(false)}
+              >
+                <input
+                  type="file"
+                  id="profile-image-upload"
+                  ref={profileImageInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleProfileImageChange}
+                />
+                <label
+                  htmlFor="profile-image-upload"
+                  className="flex cursor-pointer flex-col items-center justify-center gap-2"
+                >
+                  <Upload size={32} className="text-primary" />
+                  <span className="text-center">
+                    Click to upload or drag and drop
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    PNG, JPG, GIF up to 5MB
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div className="flex justify-between">
+              <button
+                className="rounded border border-white/30 px-4 py-2 hover:bg-white/10"
+                onClick={() => {
+                  setProfileModalOpen(false);
+                  setProfilePreview(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-primary hover:bg-primary/90 rounded px-4 py-2 text-black disabled:opacity-50"
+                onClick={handleProfileImageSubmit}
+                disabled={!profilePreview}
+              >
+                Save Changes
+              </button>
             </div>
           </div>
         </div>
-
-        <div className="mb-4 space-y-4">
-          <div className="rounded-2xl border-2 border-dashed border-white/15 p-8 text-center">
-            <input
-              type="file"
-              id="header-image-upload"
-              className="hidden"
-              accept="image/*"
-            />
-            <label htmlFor="header-image-upload" className="cursor-pointer">
-              <div className="flex flex-col items-center space-y-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="36"
-                  height="36"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-upload"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="17 8 12 3 7 8" />
-                  <line x1="12" x2="12" y1="3" y2="15" />
-                </svg>
-                <span className="text-sm">
-                  Click to upload image or drag and drop
-                </span>
-                <span className="text-xs text-gray-400">
-                  PNG, JPG, GIF up to 5MB
-                </span>
-              </div>
-            </label>
-          </div>
-
-          <div className="flex justify-between">
-            <button
-              className="rounded border border-white/30 px-4 py-2 hover:bg-white/10"
-              onClick={() => {
-                (
-                  document.getElementById(
-                    "header-image-dialog",
-                  ) as HTMLDialogElement
-                )?.close();
-              }}
-            >
-              Cancel
-            </button>
-            <button className="rounded bg-[#3ec28f] px-4 py-2 text-black hover:bg-[#3ec28f]/90">
-              Upload
-            </button>
-          </div>
-        </div>
-      </dialog> */}
+      )}
 
       <section className="grid-editprofile grid w-full flex-grow gap-x-10 bg-white/5 px-10 pt-10 text-white md:px-15 lg:px-20">
         {/* Left Section */}
         <div className="rounded-lg py-10 pt-10 duration-250">
           <SideTabs
-            activeTab={profileSelectedTab}
+            activeTab={activeProfileTab}
             handleTabClick={handleTabClick}
             tabs={[
               "Profile",
@@ -203,21 +265,21 @@ const EditProfile = () => {
 
         {/* Mid Section */}
         {/* //TODO create form for each component with PATCH request */}
-        <div>
-          {profileSelectedTab === "Profile" ? (
+        <div className="tracking-wide">
+          {activeProfileTab === "Profile" ? (
             <ProfileInfo />
-          ) : profileSelectedTab === "Blocked users" ? (
+          ) : activeProfileTab === "Blocked users" ? (
             <BlockedUsers />
-          ) : profileSelectedTab === "Email Address" ? (
+          ) : activeProfileTab === "Email Address" ? (
             <EmailAddress />
-          ) : profileSelectedTab === "Password" ? (
+          ) : activeProfileTab === "Password" ? (
             <ChangePassword />
           ) : null}
         </div>
 
         {/* Right Section */}
         <div
-          className={`${profileSelectedTab !== "Blocked users" && "lg:hidden"} hidden pt-10 lg:block`}
+          className={`${activeProfileTab !== "Blocked users" && "lg:hidden"} hidden pt-10 lg:block`}
         >
           <p className="text-sm font-extralight opacity-50">
             When you block someone, that user won't be able to follow you, send

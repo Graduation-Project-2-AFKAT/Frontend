@@ -2,9 +2,9 @@ import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import Input from "../components/form/Input";
-import useYupValidationResolver from "../validation/userYupValidationResolver";
 import { Image, Info, X, FileText, Box } from "lucide-react";
 import { toast } from "react-toastify";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 interface IAddArtFormData {
   title: string;
@@ -29,15 +29,13 @@ const validationSchema = yup.object({
 });
 
 const PublishArt = () => {
-  const resolver = useYupValidationResolver(validationSchema);
-
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
   } = useForm<IAddArtFormData>({
-    resolver,
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -138,7 +136,7 @@ const PublishArt = () => {
       return;
     }
 
-    const validFileExtensions = [".gltf", ".glb"];
+    const validFileExtensions = [".gltf", ".glb", ".zip", ".rar"];
 
     const extension = file.name
       .substring(file.name.lastIndexOf("."))
@@ -150,7 +148,7 @@ const PublishArt = () => {
           <h1 className="mb-2 font-bold">Invalid file format</h1>
           <p className="font-light">
             Please upload a valid 3D model file or compressed archive (GLTF,
-            GLB, FBX, OBJ, STL, ZIP, etc.)
+            GLB, ZIP, etc.)
           </p>
         </div>,
       );
@@ -222,7 +220,7 @@ const PublishArt = () => {
     setValue("category", newTags);
   };
 
-  const onSubmit = (data: IAddArtFormData) => {
+  const onSubmit = handleSubmit((data) => {
     if (activeStep === 3) {
       if (!uploadedModelFile) {
         toast.error("Please upload a 3D model file");
@@ -239,9 +237,12 @@ const PublishArt = () => {
       "3D model uploaded successfully! Our team will review it shortly.",
     );
     // Here you would typically send the data to your backend
-  };
+  });
 
-  const nextStep = () => {
+  const nextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     const errors: string[] = [];
     // For step 1, validate title, description
     if (activeStep === 1) {
@@ -305,7 +306,7 @@ const PublishArt = () => {
   return (
     <form
       className="border-primary relative mx-auto my-10 flex h-fit w-[90%] max-w-5xl flex-col items-start rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={onSubmit}
     >
       {/* Header */}
       <div className="w-full border-b border-white/10 p-6">
@@ -510,9 +511,14 @@ const PublishArt = () => {
                 type="file"
                 ref={imageInputRef}
                 className="hidden"
-                accept=".jpg,.jpeg,.png"
+                accept=".jpg,.jpeg,.png,.webp"
                 multiple={false}
-                onChange={handleImageUpload}
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    handleImageUpload(e);
+                    e.target.value = "";
+                  }
+                }}
               />
             </div>
 
@@ -579,7 +585,7 @@ const PublishArt = () => {
               type="file"
               ref={modelFileInputRef}
               className="hidden"
-              accept=".gltf,.glb,.fbx,.obj,.stl,.blend,.max,.c4d,.usd,.zip,.rar"
+              accept=".gltf,.glb,.zip"
               multiple={false}
               onChange={(e) => {
                 if (e.target.files) {
@@ -668,16 +674,15 @@ const PublishArt = () => {
           {activeStep < 3 ? (
             <button
               type="button"
-              className="rounded bg-teal-500 px-6 py-2 font-bold text-black hover:bg-teal-400"
+              className="bg-primary hover:bg-primary rounded px-6 py-2 font-bold text-black"
               onClick={nextStep}
             >
               Next
             </button>
           ) : (
             <button
-              type="button"
-              className="bg-primary rounded px-6 py-2 font-bold text-black hover:bg-teal-400"
-              onClick={() => handleSubmit(onSubmit)()}
+              type="submit"
+              className="bg-primary hover:bg-primary rounded px-6 py-2 font-bold text-black"
             >
               Submit 3D Asset
             </button>

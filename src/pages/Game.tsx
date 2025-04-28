@@ -1,11 +1,9 @@
 import Board from "../components/ui/Board";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { downloadAGame, loadAGame } from "../redux/modules/games";
+import { downloadAGame, loadAGame, resetGame } from "../redux/modules/games";
 import {
   Download,
   Heart,
@@ -18,7 +16,8 @@ import {
 
 const Game = () => {
   const location = useLocation();
-  const Game = useSelector((state: RootState) => state.games.Game);
+  const dispatch = useAppDispatch();
+  const { Game } = useAppSelector((state) => state.games);
   const { isLoading, type } = useAppSelector((state) => state.loading);
   const { downloadProgress, estimatedTime } = useAppSelector(
     (state) => state.games,
@@ -35,60 +34,30 @@ const Game = () => {
     user_rating = 0,
     download_count = 0,
   } = Game || {};
-  const dispatch = useAppDispatch();
 
   const [favorite, setFavorite] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
-  const [stars, setStars] = useState({
-    one: false,
-    two: false,
-    three: false,
-    four: false,
-    five: false,
-  });
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [userRating, setUserRating] = useState<number>(0);
 
   useEffect(() => {
     if (!Game) {
       const pathParts = location.pathname.split("/");
       const gameId = pathParts[pathParts.length - 1];
       dispatch(loadAGame(gameId));
+    } else if (id) {
+      dispatch(loadAGame(id.toString()));
     }
-  }, [Game]);
 
-  const handleRating = (rate: keyof typeof stars) => {
-    const index = Object.keys(stars).indexOf(rate);
+    return () => {
+      dispatch(resetGame());
+    };
+  }, []);
 
-    if (stars[rate]) {
-      const hasHigherRatedStars = Object.keys(stars).some((s, indx) => {
-        return stars[s as keyof typeof stars] === true && indx > index;
-      });
-
-      if (hasHigherRatedStars) {
-        const updatedStars = { ...stars };
-        Object.keys(stars).forEach((s, indx) => {
-          if (indx > index) {
-            updatedStars[s as keyof typeof stars] = false;
-          }
-        });
-        setStars(updatedStars);
-        return;
-      }
-
-      setStars({
-        one: false,
-        two: false,
-        three: false,
-        four: false,
-        five: false,
-      });
+  const handleRating = (value: number) => {
+    if (userRating === value) {
+      setUserRating(0);
     } else {
-      const updatedStars = { ...stars };
-      Object.keys(stars).forEach((s, indx) => {
-        if (indx <= index) {
-          updatedStars[s as keyof typeof stars] = true;
-        }
-      });
-      setStars(updatedStars);
+      setUserRating(value);
     }
   };
 
@@ -243,7 +212,11 @@ const Game = () => {
 
         <div className="aspect-video rounded-lg border">
           {thumbnail ? (
-            <img src={thumbnail} alt={title} />
+            <img
+              src={thumbnail}
+              alt={title}
+              className="aspect-video w-full rounded-lg object-cover"
+            />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-[#1A191F]">
               <div className="border-primary h-10 w-10 animate-spin rounded-full border-t-2 border-b-2" />
@@ -538,38 +511,16 @@ const Game = () => {
 
           {/* Rating */}
           <div className="flex items-end gap-x-5">
-            <p className="text-sm">( {rating} / 5 )</p>
+            <p className="text-sm">( {userRating} / 5 )</p>
             <div className="flex">
-              <Star
-                id="one"
-                fill={`${stars.one ? "white" : "transparent"}`}
-                className="cursor-pointer duration-50 hover:opacity-80"
-                onClick={() => handleRating("one")}
-              />
-              <Star
-                id="two"
-                fill={`${stars.two ? "white" : "transparent"}`}
-                className="cursor-pointer duration-50 hover:opacity-80"
-                onClick={() => handleRating("two")}
-              />
-              <Star
-                id="three"
-                fill={`${stars.three ? "white" : "transparent"}`}
-                className="cursor-pointer duration-50 hover:opacity-80"
-                onClick={() => handleRating("three")}
-              />
-              <Star
-                id="four"
-                fill={`${stars.four ? "white" : "transparent"}`}
-                className="cursor-pointer duration-50 hover:opacity-80"
-                onClick={() => handleRating("four")}
-              />
-              <Star
-                id="five"
-                fill={`${stars.five ? "white" : "transparent"}`}
-                className="cursor-pointer duration-50 hover:opacity-80"
-                onClick={() => handleRating("five")}
-              />
+              {[1, 2, 3, 4, 5].map((value) => (
+                <Star
+                  key={value}
+                  fill={value <= userRating ? "white" : "transparent"}
+                  className="cursor-pointer duration-50 hover:opacity-80"
+                  onClick={() => handleRating(value)}
+                />
+              ))}
             </div>
           </div>
         </div>

@@ -4,11 +4,13 @@ import {
   TransitionChild,
   DialogPanel,
 } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { X, Plus } from "lucide-react";
 import ProgressBar from "./ProgressBar";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { createPost } from "../../redux/modules/posts";
+import PostTheme from "./PostTheme";
+import { toast } from "react-toastify";
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -16,6 +18,8 @@ interface CreatePostModalProps {
 }
 
 const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
+  const postImageRef = useRef<HTMLInputElement>(null);
+
   const [postTheme, setPostTheme] = useState("");
   const [bgZoom, setBgZoom] = useState(110);
 
@@ -27,27 +31,84 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // Handle image upload
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
   };
 
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     setContent("");
-  //     setImageFile(null);
-  //     setshowImageArea(false);
-  //     setPreviewUrl(null);
-  //   }
-  // }, [isOpen]);
+  const handleImageDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const images = Array.from(e.dataTransfer.files);
+
+    if (images.length > 1) {
+      toast.error(
+        <div>
+          <p>Only one image is allowed.</p>
+        </div>,
+      );
+      return;
+    }
+
+    handleImageUpload(images[0]);
+  };
+
+  const handleImageUpload = (image: File) => {
+    if (!image) return;
+
+    const imageSize = image.size / 1024 / 1024; // Convert to MB
+    if (imageSize > 5) {
+      toast.error(
+        <div>
+          <p>Maximum image size is 5MB</p>
+        </div>,
+      );
+      return;
+    }
+
+    const isValidType =
+      image.type.startsWith("image/") ||
+      /\.(jpe?g|png|gif|webp)$/i.test(image.name);
+
+    if (!isValidType) {
+      toast.error(
+        <div className="flex items-start gap-2">
+          <div>
+            <p className="font-bold">Invalid image format</p>
+            <p className="text-xs opacity-90">
+              Only JPG, PNG, GIF, and WEBP files are supported
+            </p>
+          </div>
+        </div>,
+      );
+    }
+
+    handleImageChange(image);
+  };
+
+  // Handle image upload
+  const handleImageChange = (image: File) => {
+    setImageFile(image);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewUrl(reader.result as string);
+    };
+    reader.readAsDataURL(image);
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setPreviewUrl(null);
+  };
+
+  //* reset post on each open
+  useEffect(() => {
+    if (isOpen) {
+      setContent("");
+      setPostTheme("");
+      setImageFile(null);
+      setPreviewUrl(null);
+      setshowImageArea(false);
+    }
+  }, [isOpen]);
 
   // Handle post submission
   const handleSubmit = async () => {
@@ -76,7 +137,17 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog
+        as="div"
+        className="relative z-50"
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        onClose={(open) => {
+          // Only close modal on Escape key, not outside clicks
+          if (event?.type === "keydown") {
+            onClose();
+          }
+        }}
+      >
         {/* Backdrop */}
         <TransitionChild
           as={Fragment}
@@ -103,20 +174,23 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
               leaveTo="opacity-0 scale-95"
             >
               <DialogPanel
-                className={`${postTheme && `bg-[url(/patterns/${postTheme}.jpg)]`} my-20 w-full max-w-2xl transform overflow-hidden rounded-lg border bg-[#2A2731] bg-cover bg-center bg-no-repeat py-6 shadow-xl`}
+                className={`my-20 w-full max-w-2xl transform overflow-hidden rounded-lg border bg-[#2A2731] bg-cover bg-center shadow-xl`}
                 style={{
+                  backgroundImage: postTheme
+                    ? `url('/patterns/${postTheme}.webp')`
+                    : "none",
                   backgroundSize: `${bgZoom}%`,
-                  backgroundPosition: "center center",
+                  backgroundPosition: "top center",
                 }}
               >
-                <div className="">
+                <div className="bg-black/25 py-6">
                   {/* Background controls */}
                   {postTheme && (
                     <div className="absolute top-4 left-4 flex gap-2">
                       <button
-                        className="rounded-md border border-white/50 bg-black/50 p-1"
+                        className="rounded-md border border-white/50 bg-black/50 p-1 backdrop-blur-xs"
                         onClick={() =>
-                          setBgZoom((prev) => Math.min(prev + 10, 300))
+                          setBgZoom((prev) => Math.min(prev + 25, 300))
                         }
                         title="Zoom in"
                       >
@@ -138,9 +212,9 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                         </svg>
                       </button>
                       <button
-                        className="rounded-md border border-white/50 bg-black/50 p-1"
+                        className="rounded-md border border-white/50 bg-black/50 p-1 backdrop-blur-xs"
                         onClick={() =>
-                          setBgZoom((prev) => Math.max(prev - 10, 110))
+                          setBgZoom((prev) => Math.max(prev - 25, 100))
                         }
                         title="Zoom out"
                       >
@@ -166,7 +240,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                   {/* Modal header */}
                   <div>
                     <button
-                      className="group absolute top-4 right-0 translate-x-21 space-x-5 rounded-l-lg border border-r-0 border-red-400 bg-red-400 py-2 pr-10 pl-4 text-sm font-extrabold tracking-wider text-black duration-300 hover:translate-x-5 hover:shadow-md hover:shadow-black/100"
+                      className="group absolute top-4 right-0 translate-x-21 space-x-5 rounded-l-lg border border-r-0 border-black bg-red-400 py-2 pr-10 pl-4 text-sm font-extrabold tracking-wider text-black duration-300 hover:translate-x-5 hover:shadow-md hover:shadow-black/100"
                       onClick={onClose}
                     >
                       <span>X</span>
@@ -177,12 +251,14 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                   {/* Image upload */}
                   <div className="mt-12 mb-5 flex items-center justify-start">
                     {showImageArea ? (
-                      <div className="w-full bg-black/25 px-8 py-6">
+                      <div
+                        className={`${postTheme ? "bg-black/75 backdrop-blur-md duration-0" : "bg-black/50"} w-full p-3 px-8 py-6 text-white`}
+                      >
                         <div className="mb-5 flex items-center gap-x-5">
                           <span className="text-xl font-bold text-nowrap">
                             Select Image
                           </span>
-                          <div className="h-0.5 w-full bg-white/20" />
+                          <div className="h-0.5 w-full bg-[#8B8B8E]" />
 
                           <button
                             className="hover:bg-primary hover:border-primary rounded-full border p-2 hover:text-black"
@@ -194,55 +270,65 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
 
                         <div className="mb-5 flex flex-col gap-y-1 text-xs">
                           <p className="font-light">
-                            Your image must be a PNG, JPG, or GIF.
+                            Your image must be a PNG, JPG, WebP or GIF.
                           </p>
                           <p className="font-bold">
                             Animated GIFs are supported.
                           </p>
                         </div>
 
-                        <div className="flex items-center gap-x-5">
+                        <div className="flex flex-col items-center justify-between">
                           <div
-                            className="text-primary hover:border-primary flex aspect-square h-35 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/20 font-bold transition-colors"
-                            onClick={() =>
-                              document
-                                .getElementById("file-upload-input")
-                                ?.click()
-                            }
+                            className="text-primary hover:border-primary flex aspect-square w-100 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-white/20 transition-colors"
+                            onClick={() => postImageRef.current?.click()}
+                            onDragOver={handleDragOver}
+                            onDrop={(e) => handleImageDrop(e)}
                           >
-                            <Plus size={40} />
-                            <p>Image / GIF</p>
-                            <input
-                              id="file-upload-input"
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={handleImageChange}
-                              multiple={false}
-                            />
+                            {previewUrl ? (
+                              <div className="relative h-full w-full">
+                                <img
+                                  src={previewUrl}
+                                  alt="Post Thumbnail"
+                                  className="aspect-video h-full w-full rounded object-cover"
+                                />
+                                <button
+                                  type="button"
+                                  className="absolute top-2 right-2 rounded-full bg-black/70 p-1 text-white hover:bg-black"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveImage();
+                                  }}
+                                >
+                                  <X size={16} />
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex flex-col items-center justify-center p-6">
+                                <Plus size={48} className="mb-2" />
+                                <p className="text-center text-xl font-bold">
+                                  Image / GIF
+                                </p>
+                                <p className="text-center">
+                                  Click to upload or drag and drop your image
+                                </p>
+                              </div>
+                            )}
                           </div>
-
-                          {/* Image preview */}
-                          {previewUrl && (
-                            <div className="relative overflow-hidden rounded-lg">
-                              <img
-                                src={previewUrl}
-                                alt="Preview"
-                                className="aspect-video max-h-35 w-full object-cover"
-                                loading="lazy"
-                              />
-                              <button
-                                onClick={() => {
-                                  setImageFile(null);
-                                  setPreviewUrl(null);
-                                }}
-                                className="absolute top-2 right-2 rounded-full bg-black/60 p-1"
-                              >
-                                <X size={16} />
-                              </button>
-                            </div>
-                          )}
                         </div>
+
+                        <input
+                          type="file"
+                          ref={postImageRef}
+                          className="hidden"
+                          accept=".jpg,.jpeg,.png,.gif, webp"
+                          multiple={false}
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              handleImageUpload(e.target.files[0]);
+                              e.target.value = "";
+                            }
+                          }}
+                        />
                       </div>
                     ) : (
                       <div
@@ -261,7 +347,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
                       placeholder="What's on your mind?"
-                      className="focus:border-primary field-sizing-content min-h-30 w-full resize-none rounded-lg border border-white/50 bg-[#2A2731]/99 p-3 text-white transition-colors outline-none focus:ring-0"
+                      className={`${postTheme && "bg-black/75 backdrop-blur-sm duration-0"} focus:border-primary field-sizing-content min-h-30 w-full resize-none rounded-lg border-2 border-white/25 p-3 text-white transition-colors outline-none focus:ring-0`}
                     />
                   </div>
 
@@ -280,48 +366,37 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                     >
                       <hr className="group-hover:border-primary absolute top-0 right-0 w-[140%] origin-top-right -rotate-45 border transition-colors" />
                     </div>
-                    <div
-                      className={`${postTheme === "p1" && "border-primary"} group aspect-square w-20 cursor-pointer overflow-hidden rounded-lg border-2 hover:border-2`}
-                      onClick={() => setPostTheme("p1")}
-                    >
-                      <img
-                        src="/patterns/p1.jpg"
-                        alt="pattern 1"
-                        className="scale-250 transition-transform group-hover:scale-200"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div
-                      className={`${postTheme === "p2" && "border-primary"} group aspect-square w-20 cursor-pointer overflow-hidden rounded-lg border-2 hover:border-2`}
-                      onClick={() => setPostTheme("p2")}
-                    >
-                      <img
-                        src="/patterns/p2.jpg"
-                        alt="pattern 2"
-                        className="scale-250 transition-transform group-hover:scale-200"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div
-                      className={`${postTheme === "p3" && "border-primary"} group aspect-square w-20 cursor-pointer overflow-hidden rounded-lg border-2 hover:border-2`}
-                      onClick={() => setPostTheme("p3")}
-                    >
-                      <img
-                        src="/patterns/p3.jpg"
-                        alt="pattern 3"
-                        className="scale-250 transition-transform group-hover:scale-200"
-                        loading="lazy"
-                      />
-                    </div>
+                    <PostTheme
+                      postTheme={postTheme}
+                      ChangeTheme={setPostTheme}
+                      themeImage={"p1.webp"}
+                    />
+                    <PostTheme
+                      postTheme={postTheme}
+                      ChangeTheme={setPostTheme}
+                      themeImage={"p2.webp"}
+                    />
+                    <PostTheme
+                      postTheme={postTheme}
+                      ChangeTheme={setPostTheme}
+                      themeImage={"p3.webp"}
+                    />
+                    <PostTheme
+                      postTheme={postTheme}
+                      ChangeTheme={setPostTheme}
+                      themeImage={"p4.webp"}
+                    />
                   </div>
 
                   {/* Actions */}
                   <div className="mt-4 flex items-center justify-end px-8">
                     <button
                       onClick={handleSubmit}
-                      disabled={isLoading || (!content.trim() && !imageFile)}
-                      className={`bg-primary rounded-lg border border-black px-5 py-2 font-medium text-black shadow-md shadow-black/50 transition-transform hover:-translate-y-0.5 active:scale-95 disabled:opacity-70 ${
-                        isLoading ? "cursor-not-allowed" : ""
+                      disabled={isLoading || !content.trim()}
+                      className={`bg-primary rounded-lg border border-black px-5 py-2 font-medium text-black shadow-md shadow-black/50 transition-transform disabled:opacity-70 ${
+                        isLoading || !content.trim()
+                          ? "cursor-not-allowed!"
+                          : "hover:-translate-y-0.5 active:scale-95"
                       }`}
                     >
                       {isLoading ? (
