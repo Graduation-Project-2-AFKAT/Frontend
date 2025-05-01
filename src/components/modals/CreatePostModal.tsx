@@ -11,13 +11,39 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { createPost } from "../../redux/modules/posts";
 import PostTheme from "./PostTheme";
 import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { IPost } from "../../interfaces";
 
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const validationSchema = yup.object({
+  title: yup.string().trim().required("Post title is required").max(100),
+  content: yup.string().trim().required("Post content is required").max(256),
+});
+
 const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<Partial<IPost>>({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      title: "",
+      content: "",
+    },
+  });
+
+  // Watch content field for character count
+  const content = watch("content") || "";
+
   const postImageRef = useRef<HTMLInputElement>(null);
 
   const [postTheme, setPostTheme] = useState("");
@@ -26,7 +52,6 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((state) => state.loading);
 
-  const [content, setContent] = useState("");
   const [showImageArea, setshowImageArea] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -79,12 +104,12 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
           </div>
         </div>,
       );
+      return;
     }
 
     handleImageChange(image);
   };
 
-  // Handle image upload
   const handleImageChange = (image: File) => {
     setImageFile(image);
     const reader = new FileReader();
@@ -102,38 +127,42 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
   //* reset post on each open
   useEffect(() => {
     if (isOpen) {
-      setContent("");
+      reset({ title: "", content: "" });
       setPostTheme("");
       setImageFile(null);
       setPreviewUrl(null);
       setshowImageArea(false);
     }
-  }, [isOpen]);
+  }, [isOpen, reset]);
 
   // Handle post submission
-  const handleSubmit = async () => {
-    if (!content.trim()) return;
-
+  const onSubmit = handleSubmit(async (data) => {
     try {
       // Create form data for post submission
       const formData = new FormData();
-      formData.append("content", content);
+      formData.append("title", data.title || "");
+      formData.append("content", data.content || "");
+      formData.append("published_at", new Date().toISOString());
       if (imageFile) {
         formData.append("attachment", imageFile);
       }
+      if (postTheme) {
+        formData.append("theme", postTheme);
+        formData.append("bgZoom", bgZoom.toString());
+      }
 
       // Dispatch post creation action
-      //   await dispatch(createPost(formData)).unwrap();
+      await dispatch(createPost(formData));
 
       // Reset form and close modal
-      setContent("");
+      reset();
       setImageFile(null);
       setPreviewUrl(null);
       onClose();
     } catch (error) {
       console.error("Failed to create post:", error);
     }
-  };
+  });
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -183,11 +212,12 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                   backgroundPosition: "top center",
                 }}
               >
-                <div className="bg-black/25 py-6">
+                <form className="bg-black/25 py-6" onSubmit={onSubmit}>
                   {/* Background controls */}
                   {postTheme && (
                     <div className="absolute top-4 left-4 flex gap-2">
                       <button
+                        type="button"
                         className="rounded-md border border-white/50 bg-black/50 p-1 backdrop-blur-xs"
                         onClick={() =>
                           setBgZoom((prev) => Math.min(prev + 25, 300))
@@ -212,6 +242,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                         </svg>
                       </button>
                       <button
+                        type="button"
                         className="rounded-md border border-white/50 bg-black/50 p-1 backdrop-blur-xs"
                         onClick={() =>
                           setBgZoom((prev) => Math.max(prev - 25, 100))
@@ -240,6 +271,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                   {/* Modal header */}
                   <div>
                     <button
+                      type="button"
                       className="group absolute top-4 right-0 translate-x-21 space-x-5 rounded-l-lg border border-r-0 border-black bg-red-400 py-2 pr-10 pl-4 text-sm font-extrabold tracking-wider text-black duration-300 hover:translate-x-5 hover:shadow-md hover:shadow-black/100"
                       onClick={onClose}
                     >
@@ -261,6 +293,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                           <div className="h-0.5 w-full bg-[#8B8B8E]" />
 
                           <button
+                            type="button"
                             className="hover:bg-primary hover:border-primary rounded-full border p-2 hover:text-black"
                             onClick={() => setshowImageArea(false)}
                           >
@@ -320,7 +353,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                           type="file"
                           ref={postImageRef}
                           className="hidden"
-                          accept=".jpg,.jpeg,.png,.gif, webp"
+                          accept=".jpg,.jpeg,.png,.gif,.webp"
                           multiple={false}
                           onChange={(e) => {
                             if (e.target.files && e.target.files[0]) {
@@ -341,14 +374,32 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                     )}
                   </div>
 
+                  {/* Post title */}
+                  <div className="mb-3 px-8">
+                    <input
+                      placeholder="Game Title..."
+                      className={`${postTheme && "bg-black/75 backdrop-blur-sm duration-0"} focus:border-primary w-full rounded-lg border-2 border-white/25 px-3 py-2 text-white transition-colors outline-none focus:ring-0 ${errors.title ? "border-red-500" : ""}`}
+                      {...register("title")}
+                    />
+                    {errors.title && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.title.message}
+                      </p>
+                    )}
+                  </div>
+
                   {/* Post content */}
                   <div className="px-8">
                     <textarea
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
                       placeholder="What's on your mind?"
-                      className={`${postTheme && "bg-black/75 backdrop-blur-sm duration-0"} focus:border-primary field-sizing-content min-h-30 w-full resize-none rounded-lg border-2 border-white/25 p-3 text-white transition-colors outline-none focus:ring-0`}
+                      className={`${postTheme && "bg-black/75 backdrop-blur-sm duration-0"} focus:border-primary field-sizing-content min-h-30 w-full resize-none rounded-lg border-2 border-white/25 p-3 text-white transition-colors outline-none focus:ring-0 ${errors.content ? "border-red-500" : ""}`}
+                      {...register("content")}
                     />
+                    {errors.content && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {errors.content.message}
+                      </p>
+                    )}
                   </div>
 
                   <div className="mb-5">
@@ -391,11 +442,17 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                   {/* Actions */}
                   <div className="mt-4 flex items-center justify-end px-8">
                     <button
-                      onClick={handleSubmit}
-                      disabled={isLoading || !content.trim()}
-                      className={`bg-primary rounded-lg border border-black px-5 py-2 font-medium text-black shadow-md shadow-black/50 transition-transform disabled:opacity-70 ${
-                        isLoading || !content.trim()
-                          ? "cursor-not-allowed!"
+                      type="submit"
+                      disabled={
+                        isLoading ||
+                        content.length === 0 ||
+                        content.length > 256
+                      }
+                      className={`bg-primary rounded-lg border border-black px-5 py-2 font-medium text-black shadow-md shadow-black/50 transition-transform disabled:cursor-not-allowed disabled:opacity-70 ${
+                        isLoading ||
+                        content.length === 0 ||
+                        content.length > 256
+                          ? ""
                           : "hover:-translate-y-0.5 active:scale-95"
                       }`}
                     >
@@ -409,7 +466,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                       )}
                     </button>
                   </div>
-                </div>
+                </form>
               </DialogPanel>
             </TransitionChild>
           </div>

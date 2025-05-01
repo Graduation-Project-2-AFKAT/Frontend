@@ -1,3 +1,4 @@
+import { Boxes, Gamepad2 } from "lucide-react";
 import { useState } from "react";
 
 interface IProps {
@@ -18,7 +19,7 @@ const Sidebar = ({
     //TODO change first true to be the one which match the current page
     home: false,
     games: false,
-    arts: false,
+    assets: false,
     gameJams: false,
     create: false,
     language: false,
@@ -77,7 +78,7 @@ const Sidebar = ({
     const newSelected = {
       home: false,
       games: false,
-      arts: false,
+      assets: false,
       gameJams: false,
       create: false,
       language: false,
@@ -115,7 +116,7 @@ const Sidebar = ({
       />
 
       <div
-        className={`absolute ${expandSidebar ? "md:left-20" : "md:-left-59.5"} ${showSidebar ? "left-20" : "-left-80"} border-r-primary top-0 z-10 h-full w-80 border-r-2 bg-[#2A2731] py-15 pt-30 pl-10 backdrop-blur-[2px] duration-300`}
+        className={`absolute ${expandSidebar ? "md:left-20" : "md:-left-60"} ${showSidebar ? "left-20" : "-left-80"} border-r-primary top-0 z-10 h-full w-80 border-r-2 bg-[#2A2731] py-15 pt-30 pl-10 backdrop-blur-[2px] duration-300`}
       >
         <h1>Hi {selectedTab}</h1>
       </div>
@@ -130,32 +131,32 @@ const Sidebar = ({
             className="group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:content-['Home']"
             onClick={() => handleClick("home")}
           >
-            <i className="fa-solid fa-house"></i>
+            <i className="fa-solid fa-house" />
           </div>
           <div
             className="group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:content-['Games']"
             onClick={() => handleClick("games")}
           >
-            <i className="fa-solid fa-gamepad"></i>
+            <Gamepad2 size={25} />
           </div>
           <div
-            className="group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:content-['Arts']"
-            onClick={() => handleClick("arts")}
+            className="group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:content-['Assets']"
+            onClick={() => handleClick("assets")}
           >
-            <i className="fa-solid fa-paintbrush"></i>
+            <Boxes size={25} />
           </div>
           <div
             className="group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:content-['Game_Jams']"
             onClick={() => handleClick("gameJams")}
           >
-            <i className="fa-solid fa-award"></i>
+            <i className="fa-solid fa-award" />
           </div>
           <hr className="mx-2" />
           <div
             className="group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:content-['Create_a_community']"
             onClick={() => handleClick("create")}
           >
-            <i className="fa-solid fa-plus"></i>
+            <i className="fa-solid fa-plus" />
           </div>
         </div>
 
@@ -164,14 +165,14 @@ const Sidebar = ({
             className="tooltips w-10 cursor-pointer before:content-['Language']"
             onClick={() => handleClick("language")}
           >
-            <i className="fa-solid fa-earth-americas"></i>
+            <i className="fa-solid fa-earth-americas" />
           </div>
 
           <div
             className="tooltips w-10 cursor-pointer before:content-['Settings']"
             onClick={() => handleClick("settings")}
           >
-            <i className="fa-solid fa-gear"></i>
+            <i className="fa-solid fa-gear" />
           </div>
         </div>
       </aside>

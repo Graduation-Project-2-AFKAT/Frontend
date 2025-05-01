@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import Input from "../components/form/Input";
 import { Upload, Image, Info, Package, X } from "lucide-react";
@@ -37,9 +37,9 @@ const PublishGame = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
     getValues,
     setValue,
+    formState: { errors },
   } = useForm<IAddGameFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -248,7 +248,6 @@ const PublishGame = () => {
     toast.success(
       "Game uploaded successfully! Our team will review it shortly.",
     );
-    // Here you would typically send the data to your backend
   });
 
   const nextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -320,7 +319,6 @@ const PublishGame = () => {
     <form
       className="border-primary relative mx-auto my-10 flex h-fit w-[90%] max-w-5xl flex-col items-start rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
       onSubmit={onSubmit}
-      noValidate
     >
       {/* Header */}
       <div className="w-full border-b border-white/10 p-6">

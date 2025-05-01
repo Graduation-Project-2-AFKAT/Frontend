@@ -18,16 +18,16 @@ export interface IUser {
 }
 
 export interface IPost {
-  id: string;
+  id: number;
+  user_id: number;
+  username: string;
   title: string;
   slug: string;
   summary: string;
   content: string;
   image: string;
-  author: {
-    username: string;
-    profile_url: string;
-  };
+  theme: string;
+  zoom: string | number; //TODO check backend type string or number??
   tags: string[];
   created_at: string;
   modified_at: string;
@@ -35,7 +35,7 @@ export interface IPost {
 }
 
 export interface IGame {
-  id: number | null;
+  id: number;
   title: string;
   description: string;
   creator: string;
@@ -49,16 +49,16 @@ export interface IGame {
 
 export interface IAsset {
   id: number;
-  title: string;
-  thumbnail: string;
+  user_id: number;
   author: string;
-  category: string;
-  license: string;
-  style: string;
-  fileFormat: string;
-  likes: number;
-  downloads: number;
-  price: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  model_file: string;
+  download_count: number;
+  tags: string[];
+  created_at: string;
+  preview_image: string;
 }
 
 export interface AlertMessages {

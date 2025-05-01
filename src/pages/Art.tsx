@@ -3,24 +3,54 @@ import { Download, Heart, Share2, Flag } from "lucide-react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Stage, useGLTF, Html, Grid } from "@react-three/drei";
 import * as THREE from "three";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { Link, useLocation } from "react-router";
+import { downloadAsset, loadAsset } from "../redux/modules/assets";
+import moment from "moment";
 
 const Art = () => {
+  const { Asset, downloadProgress, estimatedTime } = useAppSelector(
+    (state) => state.assets,
+  );
+  const { isLoading, type } = useAppSelector((state) => state.loading);
+  const dispatch = useAppDispatch();
+
+  const {
+    id,
+    title,
+    description,
+    author,
+    tags,
+    created_at,
+    download_count,
+    model_file,
+  } = Asset || {};
+
+  const location = useLocation();
+
   const [activeTab, setActiveTab] = useState<"details" | "comments">("details");
   const [liked, setLiked] = useState(false);
   const [autoRotate, setAutoRotate] = useState(false);
   const [wireframe, setWireframe] = useState(false);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const [gridPosition, setGridPosition] = useState(-2);
-  const [modelUrl] = useState("/Landscape3.glb");
-  // https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf
+
+  useEffect(() => {
+    if (!Asset) {
+      const id = location.pathname.split("/").pop();
+
+      dispatch(loadAsset(id!));
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDownload = () => {
-    // If your model URL is already directly downloadable
-    const a = document.createElement("a");
-    a.href = modelUrl;
-    a.download = modelUrl.split("/").pop() || "model.gltf";
-    // a.target = "_blank";
-    a.click();
+    if (id) {
+      dispatch(
+        downloadAsset({ id: id, assetTitle: title!, assetFile: model_file! }),
+      );
+    }
   };
 
   function Loader() {
@@ -161,13 +191,11 @@ const Art = () => {
 
   return (
     <div className="w-full">
-      <div className="space-y-8 px-10 py-8 pb-20">
+      <div className="space-y-8 px-15 pt-8 pb-20">
         {/* Header */}
         <header className="flex items-center justify-between">
           <div className="flex flex-col space-y-2">
-            <h1 className="text-3xl font-bold">
-              Sci-Fi Modular Environment Kit
-            </h1>
+            <h1 className="text-3xl font-bold">{title}</h1>
             <div className="flex">
               <img
                 src="https://randomuser.me/api/portraits/men/32.jpg"
@@ -176,30 +204,55 @@ const Art = () => {
               />
 
               <span className="text-white/70">by</span>
-              <a href={``} className="hover:text-primary ml-1 font-medium">
-                Pablo Gomez
-              </a>
+              {/* //TODO redirect to profile page with author id to load their data, in profile page check if there is id on url load their data else keep your data there */}
+              <Link to={`#`} className="hover:text-primary ml-1 font-medium">
+                {author}
+              </Link>
             </div>
           </div>
 
           <div className="flex gap-x-3">
-            <button
-              id="download-button"
-              className="bg-primary flex items-center gap-x-2 rounded px-6 py-2 font-medium text-black"
-              onClick={handleDownload}
-            >
-              <Download size={18} />
-              Download
-            </button>
-            <button
-              className={`${liked ? "border-primary text-primary" : "border-white/20 hover:border-white/50"} rounded border px-3 py-2 duration-100`}
-              onClick={handleLike}
-            >
-              <Heart size={20} className={liked ? "fill-primary" : ""} />
-            </button>
-            <button className="rounded border border-white/20 px-3 py-2 hover:border-white/50">
-              <Share2 size={20} />
-            </button>
+            <div className="relative flex flex-col items-end">
+              <button
+                onClick={handleDownload}
+                disabled={isLoading && type === "download-asset"}
+                className={`"disabled:bg-primary/70 bg-primary mb-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-not-allowed! ${!(isLoading && type === "download-asset") && "hover:scale-95"}`}
+              >
+                {isLoading && type === "download-asset"
+                  ? `Downloading...`
+                  : `Download`}
+                <Download width={18} />
+              </button>
+
+              {/* Progress bar - only show when downloading */}
+              {isLoading &&
+                type === "download-asset" &&
+                downloadProgress > 0 && (
+                  <div className="absolute bottom-0 mt-2 w-full max-w-[150px] translate-y-8 xl:hidden">
+                    <div className="h-1.5 w-full rounded-full bg-gray-700">
+                      <div
+                        className="bg-primary h-1.5 rounded-full transition-all duration-300 ease-out"
+                        style={{ width: `${downloadProgress}%` }}
+                      />
+                    </div>
+                    <div className="mt-1 flex justify-between text-xs">
+                      <p>~{estimatedTime || 0}s left</p>
+                      <p>{downloadProgress}%</p>
+                    </div>
+                  </div>
+                )}
+            </div>
+            <div className="space-x-2">
+              <button
+                className={`${liked ? "border-primary text-primary" : "border-white/20 hover:border-white/50"} rounded border px-3 py-2 duration-100`}
+                onClick={handleLike}
+              >
+                <Heart size={20} className={liked ? "fill-primary" : ""} />
+              </button>
+              <button className="rounded border border-white/20 px-3 py-2 hover:border-white/50">
+                <Share2 size={20} />
+              </button>
+            </div>
           </div>
         </header>
 
@@ -228,7 +281,7 @@ const Art = () => {
                   <group>
                     {/* <directionalLight
                       position={[0, 10, 5]}
-                      intensity={0.7}
+                      intensity={0.2}
                       color="#ffffff"
                       castShadow
                       shadow-mapSize={[2048, 2048]}
@@ -239,7 +292,7 @@ const Art = () => {
                       color="#e1eaff"
                     />
                     <ambientLight intensity={0.2} color="#e6e6e6" /> */}
-                    <Model url={modelUrl} wireframe={wireframe} />
+                    <Model url={model_file!} wireframe={wireframe} />
                   </group>
                 </Stage>
               </Suspense>
@@ -304,34 +357,24 @@ const Art = () => {
         {activeTab === "details" ? (
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <h2 className="mb-4 text-xl font-semibold">Description</h2>
-              <p className="mb-6 leading-relaxed text-white/80">
-                A high-quality modular sci-fi environment kit, perfect for game
-                development. Includes various wall sections, floor tiles, props,
-                and decorative elements that can be combined to create unique
-                sci-fi interiors. All assets are optimized for real-time
-                rendering with PBR textures.
+              <h2 className="mb-3 text-xl font-semibold">Description</h2>
+              <p className="mb-10 pl-3 leading-relaxed text-white/80">
+                {description}
               </p>
 
-              <div className="mb-8">
+              <div>
                 <h3 className="mb-3 text-lg font-medium">Tags</h3>
                 <div className="flex flex-wrap gap-2">
-                  {[
-                    "sci-fi",
-                    "modular",
-                    "environment",
-                    "PBR",
-                    "space",
-                    "futuristic",
-                  ].map((tag) => (
-                    <a
-                      key={tag}
-                      href={`/arts?tag=${tag}`}
-                      className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm hover:border-teal-400/50"
-                    >
-                      {tag}
-                    </a>
-                  ))}
+                  {tags &&
+                    tags.map((tag) => (
+                      <a
+                        key={tag}
+                        href={`/arts?tag=${tag}`}
+                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm transition-colors hover:border-teal-400/50"
+                      >
+                        {tag}
+                      </a>
+                    ))}
                 </div>
               </div>
             </div>
@@ -341,13 +384,10 @@ const Art = () => {
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                  <span className="text-white/70">Category</span>
-                  <span className="font-medium">Environments</span>
-                </div>
-
-                <div className="flex items-center justify-between border-b border-white/10 pb-3">
                   <span className="text-white/70">File Format</span>
-                  <span className="font-medium">GLTF</span>
+                  <span className="font-medium">
+                    {model_file?.split(".").pop()?.toUpperCase()}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
@@ -358,25 +398,21 @@ const Art = () => {
                 </div>
 
                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                  <span className="text-white/70">Likes</span>
-                  <span className="font-medium">521</span>
-                </div>
-
-                <div className="flex items-center justify-between border-b border-white/10 pb-3">
                   <span className="text-white/70">Downloads</span>
-                  <span className="font-medium">789</span>
+                  <span className="font-medium">{`${download_count ? download_count + "+" : 0}`}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-white/70">Published</span>
                   <span className="font-medium">
-                    {new Date().toLocaleDateString()}
+                    {moment(created_at).format("l")}
                   </span>
                 </div>
               </div>
 
               <div className="mt-6 border-t border-white/10 pt-6">
                 <button className="flex w-full items-center justify-center gap-2 rounded border border-white/10 bg-white/5 py-2 text-white/70 hover:bg-white/10">
+                  {/* //TODO press report asset to send email to support service or admin */}
                   <Flag size={16} />
                   Report Asset
                 </button>

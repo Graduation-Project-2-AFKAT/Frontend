@@ -3,14 +3,15 @@ import { showAlert } from "./alerts";
 import { AxiosError } from "axios";
 import api from "../../config/axios.config.ts";
 import { startLoading, stopLoading } from "./loading";
+import { IAsset } from "../../interfaces";
 
 export const loadAssets = createAsyncThunk(
-  "assets/load",
+  "assets/loadAll",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("assets"));
+      dispatch(startLoading("load-assets"));
 
-      const res = await api.get("/art/art");
+      const res = await api.get("/art");
 
       // console.log(res.data);
 
@@ -25,30 +26,154 @@ export const loadAssets = createAsyncThunk(
   },
 );
 
+export const loadAsset = createAsyncThunk(
+  "assets/view",
+  async (id: number | string, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("load-asset"));
+
+      const res = await api.get(`/art/${id}`);
+
+      // console.log(res.data);
+
+      return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data); //TODO: errors should be in Error redux module
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
+export const downloadAsset = createAsyncThunk(
+  "assets/download",
+  async (
+    {
+      id,
+      assetTitle,
+      assetFile,
+    }: { id: number; assetTitle: string; assetFile: string },
+    { dispatch, rejectWithValue },
+  ) => {
+    console.log("downloading asset...");
+    dispatch(startLoading("download-asset"));
+
+    // Add progress state to your slice
+    dispatch(setDownloadProgress({ downloadProgress: 0, estimatedTime: null }));
+
+    try {
+      const res = await api.get(`/art/${id}/download`, {
+        responseType: "blob",
+        onDownloadProgress: (progressEvent) => {
+          const progress =
+            progressEvent.progress ??
+            (progressEvent.loaded && progressEvent.total
+              ? progressEvent.loaded / progressEvent.total
+              : 0);
+
+          const roundedProgress = Math.round(progress * 100);
+
+          const estimatedTime = progressEvent.estimated
+            ? Math.round(progressEvent.estimated * 10)
+            : null;
+
+          dispatch(
+            setDownloadProgress({
+              downloadProgress: roundedProgress,
+              estimatedTime,
+            }),
+          );
+        },
+      });
+
+      console.log("Downloading asset file...");
+
+      // Get filename by using default asset title
+      const fileName = assetTitle.replace(" ", "-");
+
+      const assetFilePathParts = assetFile.split(".");
+      const assetExtension = assetFilePathParts[assetFilePathParts.length - 1];
+
+      const filename = `${fileName}.${assetExtension}`;
+
+      // Create a blob from the binary data
+      const blob = new Blob([res.data]);
+
+      // Create a download link and trigger download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      dispatch(
+        showAlert({ msg: "Download completed successfully", type: "success" }),
+      );
+
+      // Reset progress after complete
+      dispatch(
+        setDownloadProgress({ downloadProgress: 0, estimatedTime: null }),
+      );
+
+      return { id, filename };
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      // Reset progress on error
+      dispatch(
+        setDownloadProgress({ downloadProgress: 0, estimatedTime: null }),
+      );
+      return rejectWithValue(
+        error.response?.data || "Failed to download asset",
+      );
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
 const initialState = {
-  Assets: [],
-  isLoading: false,
+  Assets: [] as IAsset[],
+  Asset: null as IAsset | null,
+  downloadProgress: 0,
+  estimatedTime: null as number | null,
 };
 
 export const assetsSlice = createSlice({
   name: "assets",
   initialState,
-  reducers: {},
+  reducers: {
+    setDownloadProgress: (state, action) => {
+      state.downloadProgress = action.payload.downloadProgress;
+      state.estimatedTime = action.payload.estimatedTime;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(loadAssets.fulfilled, (state, action) => {
-      console.log("Action:", action.payload);
-
       state.Assets = action.payload.results;
-      state.isLoading = false;
     });
 
     builder.addCase(loadAssets.rejected, (state) => {
       state.Assets = [];
-      state.isLoading = false;
+    });
+
+    builder.addCase(loadAsset.fulfilled, (state, action) => {
+      state.Asset = action.payload;
+    });
+
+    builder.addCase(loadAsset.rejected, (state) => {
+      state.Asset = null;
     });
   },
 });
 
-// export const { showAlert } = assetsSlice.actions;
+export const { setDownloadProgress } = assetsSlice.actions;
 
 export default assetsSlice.reducer;

@@ -332,21 +332,20 @@ const BecomeAMember = () => {
                 <span className="ml-1 text-red-400">*</span>
               </label>
               <div className="mb-4 flex flex-wrap gap-2">
-                {selectedRole &&
-                  skillsByRole[selectedRole].map((skill) => (
-                    <button
-                      key={skill}
-                      type="button"
-                      className={`rounded-full px-3 py-1 text-sm transition-colors ${
-                        selectedSkills.includes(skill)
-                          ? "bg-primary text-black"
-                          : "border border-white/30 bg-white/5 hover:border-teal-400/50"
-                      }`}
-                      onClick={() => handleSkillToggle(skill)}
-                    >
-                      {skill}
-                    </button>
-                  ))}
+                {skillsByRole[selectedRole].map((skill) => (
+                  <button
+                    key={skill}
+                    type="button"
+                    className={`rounded-full px-3 py-1 text-sm transition-colors ${
+                      selectedSkills.includes(skill)
+                        ? "bg-primary text-black"
+                        : "border border-white/30 bg-white/5 hover:border-teal-400/50"
+                    }`}
+                    onClick={() => handleSkillToggle(skill)}
+                  >
+                    {skill}
+                  </button>
+                ))}
               </div>
 
               {/* Custom Skill Input */}

@@ -1,4 +1,4 @@
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { useEffect, useState } from "react";
@@ -8,6 +8,9 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { resetAlertMsg } from "../redux/modules/alerts";
 
 const RootLayout = () => {
+  const location = useLocation();
+  const isAuthRoute =
+    location.pathname === "/login" || location.pathname === "/register";
   const { isAuth } = useAppSelector((state) => state.users);
 
   const { show, msgs, type } = useAppSelector((state) => state.alerts);
@@ -74,9 +77,19 @@ const RootLayout = () => {
           />
         )}
         <div
-          className={`${isAuth && "md:ml-20"} flex h-screen justify-center overflow-y-auto pt-18`}
+          className={`${isAuth ? "md:ml-20" : ""} flex h-screen justify-center overflow-y-auto pt-18`}
           id="main-elem"
         >
+          {isAuthRoute && (
+            <div className="absolute inset-0 bg-black/70">
+              <img
+                src="/images/retro-blue1.webp"
+                alt="Background"
+                loading="eager"
+                className="absolute inset-0 -z-10 h-full w-full object-cover"
+              />
+            </div>
+          )}
           <Outlet />
         </div>
       </div>

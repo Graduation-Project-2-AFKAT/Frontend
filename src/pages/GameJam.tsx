@@ -631,7 +631,7 @@ const GameJam = () => {
                   </div>
 
                   {/* Registration Status */}
-                  {selectedJam && selectedJam.status === "active" && (
+                  {selectedJam.status === "active" && (
                     <div className="border-primary/20 mb-6 flex items-start rounded-lg border bg-[#1A191F] p-5">
                       <AlertCircle
                         size={20}
@@ -652,7 +652,7 @@ const GameJam = () => {
 
                   {/* Action Buttons */}
                   <div className="flex flex-col gap-4 sm:flex-row">
-                    {selectedJam && selectedJam.status === "past" ? (
+                    {selectedJam.status === "past" ? (
                       <Link
                         to={`/jam/${selectedJam.id}/results`}
                         className="rounded-md bg-[#1A191F] px-6 py-3 text-center transition-colors hover:bg-[#24222A]"
@@ -661,7 +661,7 @@ const GameJam = () => {
                       </Link>
                     ) : (
                       <button className="bg-primary hover:bg-primary/90 rounded-md px-6 py-3 text-center font-bold text-black transition-colors">
-                        {selectedJam && selectedJam.status === "active"
+                        {selectedJam.status === "active"
                           ? "Join Now"
                           : "Register"}
                       </button>
@@ -679,7 +679,7 @@ const GameJam = () => {
                     </button>
 
                     {/* //TODO might be removed */}
-                    {selectedJam && selectedJam.status !== "past" && (
+                    {selectedJam.status !== "past" && (
                       <a
                         href="#"
                         className="rounded-md bg-[#1A191F] px-6 py-3 text-center transition-colors hover:bg-[#24222A]"

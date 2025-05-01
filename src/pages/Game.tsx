@@ -1,18 +1,16 @@
 import Board from "../components/ui/Board";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { downloadAGame, loadAGame, resetGame } from "../redux/modules/games";
-import {
-  Download,
-  Heart,
-  MessageSquare,
-  Star,
-  ThumbsDown,
-  ThumbsUp,
-  Undo2,
-} from "lucide-react";
+import { downloadAGame, loadGame, resetGame } from "../redux/modules/games";
+import { Download, Heart, MessageSquare, Star, Undo2 } from "lucide-react";
+import { lazy, Suspense } from "react";
+
+// Lazy load the comments dialog
+const GameCommentDialog = lazy(
+  () => import("../components/game/GameCommentDialog"), //TODO this is only mocking comments, replace it with comment fetched from server
+);
 
 const Game = () => {
   const location = useLocation();
@@ -27,7 +25,7 @@ const Game = () => {
     title = "",
     description = "",
     creator = "",
-    rating = 0,
+    rating = 3.3,
     game_file = "",
     thumbnail = "",
     tags = [],
@@ -37,15 +35,16 @@ const Game = () => {
 
   const [favorite, setFavorite] = useState(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [userRating, setUserRating] = useState<number>(0);
+  const [userRating, setUserRating] = useState<number>(rating);
+  const [isGameLoaded, setIsGameLoaded] = useState(false);
 
   useEffect(() => {
     if (!Game) {
       const pathParts = location.pathname.split("/");
       const gameId = pathParts[pathParts.length - 1];
-      dispatch(loadAGame(gameId));
+      dispatch(loadGame(gameId));
     } else if (id) {
-      dispatch(loadAGame(id.toString()));
+      dispatch(loadGame(id.toString()));
     }
 
     return () => {
@@ -53,13 +52,16 @@ const Game = () => {
     };
   }, []);
 
-  const handleRating = (value: number) => {
-    if (userRating === value) {
-      setUserRating(0);
-    } else {
-      setUserRating(value);
-    }
-  };
+  const handleRating = useCallback(
+    (value: number) => {
+      if (userRating === value) {
+        setUserRating(0);
+      } else {
+        setUserRating(value);
+      }
+    },
+    [userRating],
+  );
 
   const handleDownload = () => {
     if (id) {
@@ -98,7 +100,7 @@ const Game = () => {
             <button
               onClick={handleDownload}
               disabled={isLoading && type === "games/download"}
-              className={`"disabled:bg-primary/70 bg-primary my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-not-allowed! ${!(isLoading && type === "games") && "hover:scale-95"}`}
+              className={`"disabled:bg-primary/70 bg-primary my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-not-allowed! ${!(isLoading && type === "games/download") && "hover:scale-95"}`}
             >
               {isLoading && type === "games/download"
                 ? `Downloading...`
@@ -210,317 +212,136 @@ const Game = () => {
           </div>
         </div>
 
-        <div className="aspect-video rounded-lg border">
-          {thumbnail ? (
-            <img
-              src={thumbnail}
-              alt={title}
-              className="aspect-video w-full rounded-lg object-cover"
-            />
+        <div className="relative aspect-video w-full rounded-lg border">
+          {!isGameLoaded ? (
+            <div
+              className="flex h-full w-full flex-col items-center justify-center rounded-lg bg-[#1A191F]"
+              style={{
+                backgroundImage: thumbnail ? `url(${thumbnail})` : "none",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50">
+                <button
+                  onClick={() => setIsGameLoaded(true)}
+                  className="group flex flex-col items-center gap-2 transition-transform duration-200 hover:scale-105"
+                >
+                  <div className="bg-primary hover:bg-primary/90 shadow-primary/30 flex h-20 w-20 items-center justify-center rounded-full shadow-lg">
+                    <i className="fa-solid fa-play translate-x-0.5 text-4xl text-gray-300 transition-colors" />
+                  </div>
+                  <span className="group-hover:text-primary text-2xl font-medium text-white transition-colors">
+                    Play Game
+                  </span>
+                </button>
+              </div>
+            </div>
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-[#1A191F]">
-              <div className="border-primary h-10 w-10 animate-spin rounded-full border-t-2 border-b-2" />
+            <div className="h-full w-full">
+              <iframe
+                src="https://afkat-bucket.s3.amazonaws.com/games/18/index.html"
+                className="h-full w-full rounded-lg"
+                title={title || "Game view"}
+                loading="lazy"
+                allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                sandbox="allow-scripts allow-same-origin"
+              />
             </div>
           )}
+
+          {/* //TODO Full screen button */}
+          {/* <button
+            className="absolute border"
+            onClick={() => {
+              const iframe = document.querySelector("iframe");
+
+              if (iframe) {
+                if (!document.fullscreenElement) {
+                  iframe.requestFullscreen();
+                } else {
+                  document.exitFullscreen();
+                }
+              }
+            }}
+          >
+            Full screen
+          </button> */}
         </div>
 
-        <div className="my-5 flex justify-between border px-5">
+        <div className="my-2 flex justify-between rounded-md border border-white/10 bg-[#2E2B35] px-5 py-2.5">
           <div className="flex gap-x-5">
             <div
-              className="flex cursor-pointer gap-2"
+              className="flex cursor-pointer gap-2 transition-opacity hover:opacity-80"
               onClick={() => setFavorite((prev) => !prev)}
             >
+              {/* //TODO call favorite api when clicked */}
               <Heart fill={`${favorite ? "white" : "transparent"}`} />
               Favorite
             </div>
 
             <div
-              className="flex cursor-pointer gap-2"
+              className="flex cursor-pointer gap-2 transition-opacity hover:opacity-80"
               onClick={() => setShowDialog(true)}
             >
               <MessageSquare />
               Comment
             </div>
 
+            {/* Replace the dialog with lazy-loaded component */}
             {showDialog && (
-              <div
-                className="absolute inset-0 top-0 z-50 items-center justify-center overflow-y-auto bg-black/50"
-                onClick={() => setShowDialog(false)}
+              <Suspense
+                fallback={
+                  <div className="absolute inset-0 top-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="flex items-center gap-2">
+                      <div className="border-primary h-6 w-6 animate-spin rounded-full border-t-2 border-b-2"></div>
+                      <span>Loading comments...</span>
+                    </div>
+                  </div>
+                }
               >
-                <div
-                  className="relative mx-auto w-full overflow-hidden bg-[#29282D] py-5 shadow-lg sm:my-20 sm:w-[38rem] sm:rounded-lg"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button
-                    className="group absolute top-5 right-0 translate-x-21 space-x-5 rounded-l-lg border border-r-0 border-red-400 bg-red-400 py-2 pr-10 pl-4 text-sm font-extrabold tracking-wider text-black duration-300 hover:translate-x-5 hover:shadow-md hover:shadow-black/100"
-                    onClick={() => setShowDialog(false)}
-                  >
-                    <span>X</span>
-                    <span>Close</span>
-                  </button>
-
-                  <h2 className="my-5 px-5 text-lg font-bold">Add a Comment</h2>
-
-                  <div className="flex h-fit items-center gap-x-5 px-5">
-                    <i className="fa-solid fa-circle-user text-5xl" />
-                    <textarea
-                      className="w-full rounded-md border border-white/25 p-3 text-sm duration-300 outline-none focus-within:border-white/100"
-                      rows={1}
-                      placeholder="Leave a comment..."
-                      onInput={(e) => {
-                        const target = e.target as HTMLTextAreaElement;
-                        target.style.height = "auto";
-                        target.style.height = `${target.scrollHeight}px`;
-                      }}
-                      style={{ overflow: "hidden", resize: "none" }}
-                    />
-                  </div>
-
-                  {/* Mock comments */}
-                  <div className="mt-5 space-y-5 py-5">
-                    <hr className="w-full opacity-15" />
-
-                    <div className="flex gap-x-2 rounded px-10 py-3">
-                      <i className="fa-solid fa-circle-user text-4xl" />
-
-                      <div className="flex flex-col justify-between gap-y-5">
-                        <div>
-                          <p className="text-sm font-bold">
-                            User1{" "}
-                            <span className="font-extralight opacity-50">
-                              @user
-                            </span>
-                          </p>
-                          <small className="text-xs opacity-50">
-                            almost 2 years ago
-                          </small>
-                        </div>
-
-                        <p className="text-sm">This is a great game!</p>
-
-                        <div className="flex items-center gap-x-5">
-                          <div className="flex gap-x-2">
-                            <ThumbsUp
-                              size={25}
-                              className="relative origin-left duration-250 hover:-rotate-10"
-                              style={{
-                                transitionTimingFunction:
-                                  "cubic-bezier(0.438, 3, 0.64, 1)",
-                              }}
-                            />
-                            <span>15</span>
-                          </div>
-                          <ThumbsDown
-                            size={25}
-                            className="relative top-0.5 origin-right duration-250 hover:-rotate-10"
-                            style={{
-                              transitionTimingFunction:
-                                "cubic-bezier(0.438, 3, 0.64, 1)",
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <hr className="w-full opacity-15" />
-
-                    <div className="flex gap-x-2 rounded px-10 py-3">
-                      <i className="fa-solid fa-circle-user text-4xl" />
-
-                      <div className="flex flex-col justify-between gap-y-5">
-                        <div>
-                          <p className="text-sm font-bold">
-                            User2{" "}
-                            <span className="font-extralight opacity-50">
-                              @user
-                            </span>
-                          </p>
-                          <small className="text-xs opacity-50">
-                            almost 2 years ago
-                          </small>
-                        </div>
-
-                        <p className="text-sm">I really enjoyed playing it.</p>
-
-                        <div className="flex items-center gap-x-5">
-                          <div className="flex gap-x-2">
-                            <ThumbsUp
-                              size={25}
-                              className="relative origin-left duration-250 hover:-rotate-10"
-                              style={{
-                                transitionTimingFunction:
-                                  "cubic-bezier(0.438, 3, 0.64, 1)",
-                              }}
-                            />
-                            <span>10</span>
-                          </div>
-                          <ThumbsDown
-                            size={25}
-                            className="relative top-0.5 origin-right duration-250 hover:-rotate-10"
-                            style={{
-                              transitionTimingFunction:
-                                "cubic-bezier(0.438, 3, 0.64, 1)",
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <hr className="w-full opacity-15" />
-
-                    <div className="flex gap-x-2 rounded px-10 py-3">
-                      <i className="fa-solid fa-circle-user text-4xl" />
-
-                      <div className="flex flex-col justify-between gap-y-5">
-                        <div>
-                          <p className="text-sm font-bold">
-                            User3{" "}
-                            <span className="font-extralight opacity-50">
-                              @user
-                            </span>
-                          </p>
-                          <small className="text-xs opacity-50">
-                            almost 2 years ago
-                          </small>
-                        </div>
-
-                        <p className="text-sm">
-                          Looking forward to more updates!
-                        </p>
-
-                        <div className="flex items-center gap-x-5">
-                          <div className="flex gap-x-2">
-                            <ThumbsUp
-                              size={25}
-                              className="relative origin-left duration-250 hover:-rotate-10"
-                              style={{
-                                transitionTimingFunction:
-                                  "cubic-bezier(0.438, 3, 0.64, 1)",
-                              }}
-                            />
-                            <span>8</span>
-                          </div>
-                          <ThumbsDown
-                            size={25}
-                            className="relative top-0.5 origin-right duration-250 hover:-rotate-10"
-                            style={{
-                              transitionTimingFunction:
-                                "cubic-bezier(0.438, 3, 0.64, 1)",
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <hr className="w-full opacity-15" />
-
-                    <div className="flex gap-x-2 rounded px-10 py-3">
-                      <i className="fa-solid fa-circle-user text-4xl" />
-
-                      <div className="flex flex-col justify-between gap-y-5">
-                        <div>
-                          <p className="text-sm font-bold">
-                            User3{" "}
-                            <span className="font-extralight opacity-50">
-                              @user
-                            </span>
-                          </p>
-                          <small className="text-xs opacity-50">
-                            almost 2 years ago
-                          </small>
-                        </div>
-
-                        <p className="text-sm">
-                          Looking forward to more updates!
-                        </p>
-
-                        <div className="flex items-center gap-x-5">
-                          <div className="flex gap-x-2">
-                            <ThumbsUp
-                              size={25}
-                              className="relative origin-left duration-250 hover:-rotate-10"
-                              style={{
-                                transitionTimingFunction:
-                                  "cubic-bezier(0.438, 3, 0.64, 1)",
-                              }}
-                            />
-                            <span>8</span>
-                          </div>
-                          <ThumbsDown
-                            size={25}
-                            className="relative top-0.5 origin-right duration-250 hover:-rotate-10"
-                            style={{
-                              transitionTimingFunction:
-                                "cubic-bezier(0.438, 3, 0.64, 1)",
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <hr className="w-full opacity-15" />
-
-                    <div className="flex gap-x-2 rounded px-10 py-3">
-                      <i className="fa-solid fa-circle-user text-4xl" />
-
-                      <div className="flex flex-col justify-between gap-y-5">
-                        <div>
-                          <p className="text-sm font-bold">
-                            User3{" "}
-                            <span className="font-extralight opacity-50">
-                              @user
-                            </span>
-                          </p>
-                          <small className="text-xs opacity-50">
-                            almost 2 years ago
-                          </small>
-                        </div>
-
-                        <p className="text-sm">
-                          Looking forward to more updates!
-                        </p>
-
-                        <div className="flex items-center gap-x-5">
-                          <div className="flex gap-x-2">
-                            <ThumbsUp
-                              size={25}
-                              className="relative origin-left duration-250 hover:-rotate-10"
-                              style={{
-                                transitionTimingFunction:
-                                  "cubic-bezier(0.438, 3, 0.64, 1)",
-                              }}
-                            />
-                            <span>8</span>
-                          </div>
-                          <ThumbsDown
-                            size={25}
-                            className="relative top-0.5 origin-right duration-250 hover:-rotate-10"
-                            style={{
-                              transitionTimingFunction:
-                                "cubic-bezier(0.438, 3, 0.64, 1)",
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                <GameCommentDialog
+                  onClose={() => setShowDialog(false)}
+                  gameId={id?.toString()}
+                />
+              </Suspense>
             )}
           </div>
 
           {/* Rating */}
           <div className="flex items-end gap-x-5">
             <p className="text-sm">( {userRating} / 5 )</p>
-            <div className="flex">
+            <div className="relative flex">
+              {/* Empty/background stars */}
               {[1, 2, 3, 4, 5].map((value) => (
                 <Star
                   key={value}
-                  fill={value <= userRating ? "white" : "transparent"}
+                  fill={"transparent"}
                   className="cursor-pointer duration-50 hover:opacity-80"
                   onClick={() => handleRating(value)}
                 />
               ))}
+
+              {/* Optimized filled stars with clipping */}
+              <div
+                className="pointer-events-none absolute flex overflow-hidden"
+                style={{
+                  width: `${(userRating / 5) * 100}%`,
+                  willChange: "width",
+                  transition: "width 0.2s ease-out",
+                }}
+              >
+                {[1, 2, 3, 4, 5].map((value) => (
+                  <Star
+                    key={value}
+                    fill={"white"}
+                    className="min-w-6" // Ensure consistent width
+                    style={{
+                      width: "24px", // Explicit width for consistency
+                      height: "24px", // Explicit height for consistency
+                    }}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>

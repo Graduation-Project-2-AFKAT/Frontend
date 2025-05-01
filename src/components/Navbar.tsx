@@ -77,7 +77,7 @@ const Navbar = ({
             <li>
               <NavLink
                 to="/games"
-                className={`underlineNav relative cursor-pointer after:-bottom-[1.55rem] hover:text-gray-300`}
+                className={`underlineNav relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300`}
               >
                 Discover
               </NavLink>
@@ -86,7 +86,7 @@ const Navbar = ({
             <li>
               <NavLink
                 to="/arts"
-                className="underlineNav relative cursor-pointer after:-bottom-[1.55rem] hover:text-gray-300"
+                className="underlineNav relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300"
               >
                 Arts
               </NavLink>
@@ -95,7 +95,7 @@ const Navbar = ({
             <li>
               <NavLink
                 to="/jams"
-                className="underlineNav relative cursor-pointer after:-bottom-[1.55rem] hover:text-gray-300"
+                className="underlineNav relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300"
               >
                 Jams
               </NavLink>
@@ -110,7 +110,7 @@ const Navbar = ({
             />
             {showMiniNav && (
               <>
-                <div className="absolute top-full left-29 z-10 mt-2 w-48 rounded-md bg-[#3B3842] py-2 shadow-lg before:absolute before:-top-full before:bottom-full before:left-6 before:-z-1 before:border-r-10 before:border-b-15 before:border-l-10 before:border-[#3B3842] before:border-r-transparent before:border-l-transparent">
+                <div className="absolute top-full left-57.5 z-10 mt-2 w-48 rounded-md bg-[#3B3842] py-2 shadow-lg before:absolute before:-top-full before:bottom-full before:left-6 before:-z-1 before:border-r-10 before:border-b-15 before:border-l-10 before:border-[#3B3842] before:border-r-transparent before:border-l-transparent">
                   <ul className="text-sm">
                     <li className="cursor-pointer hover:bg-[#1f1c24]">
                       <Link
@@ -182,7 +182,7 @@ const Navbar = ({
 
               <li>
                 <i
-                  className="fa-solid fa-circle-user underlineNav relative w-10 cursor-pointer text-center text-3xl after:-bottom-5.5"
+                  className="fa-solid fa-circle-user underlineNav relative w-10 cursor-pointer text-center text-3xl after:-bottom-[1.41rem]"
                   onClick={() => {
                     return setShowUserMenu((prev) => !prev);
                   }}
@@ -273,7 +273,7 @@ const Navbar = ({
               <li>
                 <NavLink
                   to="/login"
-                  className={`underlineNav rounded-lg border-2 px-3 py-1 duration-150 after:-bottom-5.5`}
+                  className={`underlineNav rounded-lg border-2 px-3 py-1 duration-150 after:-bottom-[1.44rem]`}
                 >
                   Login
                 </NavLink>
@@ -282,7 +282,7 @@ const Navbar = ({
               <li>
                 <NavLink
                   to="/register"
-                  className={`underlineNav duration-150 after:-bottom-6.5`}
+                  className={`underlineNav duration-150 after:-bottom-[1.69rem]`}
                 >
                   Register
                 </NavLink>

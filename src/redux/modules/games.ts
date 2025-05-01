@@ -9,9 +9,9 @@ export const loadGames = createAsyncThunk(
   "games/loadAll",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("games"));
+      dispatch(startLoading("load-games"));
 
-      const res = await api.get("/game/games");
+      const res = await api.get("/games");
 
       return res.data;
     } catch (err: unknown) {
@@ -24,13 +24,13 @@ export const loadGames = createAsyncThunk(
   },
 );
 
-export const loadAGame = createAsyncThunk(
-  "games/loadSingle",
+export const loadGame = createAsyncThunk(
+  "games/view",
   async (id: string, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("games"));
+      dispatch(startLoading("load-game"));
 
-      const res = await api.get(`/game/games/${id}`);
+      const res = await api.get(`/games/${id}`);
 
       return res.data;
     } catch (err: unknown) {
@@ -57,10 +57,10 @@ export const downloadAGame = createAsyncThunk(
     dispatch(startLoading("games/download"));
 
     // Add progress state to your slice
-    dispatch(setDownloadProgress(0));
+    dispatch(setDownloadProgress({ downloadProgress: 0, estimatedTime: null }));
 
     try {
-      const res = await api.get(`/game/games/${id}/download/`, {
+      const res = await api.get(`/games/${id}/download`, {
         responseType: "blob",
         onDownloadProgress: (progressEvent) => {
           const progress =
@@ -114,14 +114,18 @@ export const downloadAGame = createAsyncThunk(
       );
 
       // Reset progress after complete
-      dispatch(setDownloadProgress(0));
+      dispatch(
+        setDownloadProgress({ downloadProgress: 0, estimatedTime: null }),
+      );
 
       return { id, filename };
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
       // Reset progress on error
-      dispatch(setDownloadProgress(0));
+      dispatch(
+        setDownloadProgress({ downloadProgress: 0, estimatedTime: null }),
+      );
       return rejectWithValue(error.response?.data || "Failed to download game");
     } finally {
       dispatch(stopLoading());
@@ -157,11 +161,11 @@ export const gamesSlice = createSlice({
       state.Games = [];
     });
 
-    builder.addCase(loadAGame.fulfilled, (state, action) => {
+    builder.addCase(loadGame.fulfilled, (state, action) => {
       state.Game = action.payload;
     });
 
-    builder.addCase(loadAGame.rejected, (state) => {
+    builder.addCase(loadGame.rejected, (state) => {
       state.Game = null;
     });
   },

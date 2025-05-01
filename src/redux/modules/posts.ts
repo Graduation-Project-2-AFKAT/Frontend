@@ -53,18 +53,18 @@ export const createPost = createAsyncThunk(
     try {
       dispatch(startLoading("create-post"));
 
-      const res = await api.post(`/home/posts`, postData, {
+      const res = await api.post(`/home/posts/`, postData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      console.log(res.data);
+      // console.log(res.data);
       dispatch(
         showAlert({ msg: "Post created successfully!", type: "success" }),
       );
 
-      // return res.data;
+      return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(
