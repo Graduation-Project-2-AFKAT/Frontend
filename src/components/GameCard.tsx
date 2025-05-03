@@ -12,15 +12,17 @@ const GameCard = ({ game, className }: IProps) => {
   return (
     <Link
       to={`${window.location.href}/${id}`}
-      className={`${className} outline-primary m-5 h-[70%] rounded-2xl bg-[#2A2731] shadow-md drop-shadow-md duration-50 md:rounded-lg lg:hover:outline-2 lg:hover:outline-dashed`}
+      className={`${className} outline-primary aspect-[4/5] rounded-2xl border border-white/25 bg-[#2A2731] shadow-md drop-shadow-md duration-50 md:rounded-lg lg:hover:outline-2 lg:hover:outline-dashed`}
       key={id}
     >
       <div className="flex h-full flex-col justify-between">
-        <img
-          src={thumbnail}
-          alt="title"
-          className="h-[60%] rounded-t-lg object-cover"
-        />
+        <div className="h-full overflow-hidden">
+          <img
+            src={thumbnail}
+            alt="title"
+            className="h-full w-full rounded-t-lg object-cover"
+          />
+        </div>
 
         <div className="space-y-5 px-3 py-5">
           <div className="flex items-center justify-between">
@@ -87,7 +89,7 @@ const GameCard = ({ game, className }: IProps) => {
               //   window.location.pathname +
               //   `?tag=${tag}`
               // } //TODO tag button filter games
-              className={`rounded-full border border-white/30 bg-white/5 px-4 py-1 text-sm transition-colors hover:border-teal-400/50`}
+              className={`rounded-full border border-white/75 bg-white/5 px-4 py-1 text-sm transition-colors hover:border-teal-400/50`}
             >
               {tags[0]}
             </button>

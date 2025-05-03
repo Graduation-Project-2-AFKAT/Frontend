@@ -9,7 +9,7 @@ import { lazy, Suspense } from "react";
 
 // Lazy load the comments dialog
 const GameCommentDialog = lazy(
-  () => import("../components/game/GameCommentDialog"), //TODO this is only mocking comments, replace it with comment fetched from server
+  () => import("../components/games/GameCommentDialog"), //TODO this is only mocking comments, replace it with comment fetched from server
 );
 
 const Game = () => {
@@ -245,15 +245,6 @@ const Game = () => {
                 loading="lazy"
                 allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 sandbox="allow-scripts allow-same-origin"
-                onLoad={() => {
-                  const iframe = document.querySelector("iframe");
-                  const msg = "hiii";
-                  console.log("loaded game");
-                  iframe?.contentWindow?.postMessage(
-                    { type: "AUTH_TOKEN", msg },
-                    `https://afkat-bucket.s3.amazonaws.com/games/`, // Target origin for security
-                  );
-                }}
               />
             </div>
           )}

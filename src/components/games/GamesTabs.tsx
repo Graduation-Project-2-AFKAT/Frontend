@@ -1,26 +1,22 @@
 import { lazy, Suspense, useState } from "react";
-const Posts = lazy(() => import("./Posts"));
+const Posts = lazy(() => import("../Posts"));
 
 interface IProps {
-  defaultTab: "Posts" | "Likes" | "Draft Posts" | "Scheduled Posts";
-  tabs: ("Posts" | "Likes" | "Draft Posts" | "Scheduled Posts")[];
+  defaultTab: "Featured" | "Newest" | "Top Rated";
+  tabs: ("Featured" | "Newest" | "Top Rated")[];
 }
 
 interface ITab {
-  tab: "Posts" | "Likes" | "Draft Posts" | "Scheduled Posts";
+  tab: "Featured" | "Newest" | "Top Rated";
   title: string;
-  selectedTab: "Posts" | "Likes" | "Draft Posts" | "Scheduled Posts";
-  handleTabClick: (
-    tab: "Posts" | "Likes" | "Draft Posts" | "Scheduled Posts",
-  ) => void;
+  selectedTab: "Featured" | "Newest" | "Top Rated";
+  handleTabClick: (tab: "Featured" | "Newest" | "Top Rated") => void;
 }
 
-const Tabs = ({ defaultTab, tabs }: IProps) => {
+const GamesTabs = ({ defaultTab, tabs }: IProps) => {
   const [profileSelectedTab, setProfileSelectedTab] = useState(defaultTab);
 
-  function handleTabClick(
-    tab: "Posts" | "Likes" | "Draft Posts" | "Scheduled Posts",
-  ) {
+  function handleTabClick(tab: "Featured" | "Newest" | "Top Rated") {
     setProfileSelectedTab(tab);
   }
 
@@ -40,7 +36,7 @@ const Tabs = ({ defaultTab, tabs }: IProps) => {
         })}
       </ul>
 
-      <div className="mt-5">
+      {/* <div className="mt-5">
         {profileSelectedTab === "Posts" ? (
           <Suspense
             fallback={
@@ -54,7 +50,7 @@ const Tabs = ({ defaultTab, tabs }: IProps) => {
         ) : (
           <div>bye</div>
         )}
-      </div>
+      </div> */}
     </>
   );
 };
@@ -63,7 +59,7 @@ const Tab = ({ tab, title, selectedTab, handleTabClick }: ITab) => {
   return (
     <li
       className={`relative z-1 cursor-pointer rounded-t-lg border border-white ${
-        selectedTab === tab ? "border-b-transparent bg-[#2E2B35]" : ""
+        selectedTab === tab ? "border-b-transparent bg-[#23202A]" : ""
       } px-5 py-2.5`}
       onClick={() => handleTabClick(tab)}
     >
@@ -76,4 +72,4 @@ const Tab = ({ tab, title, selectedTab, handleTabClick }: ITab) => {
   );
 };
 
-export default Tabs;
+export default GamesTabs;

@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { Link, useLocation } from "react-router";
 import { loadUserById } from "../redux/modules/users";
 import { IUser } from "../interfaces";
-import Tabs from "../components/Tabs";
+import Tabs from "../components/profile/ProfileTabs";
 
 const Profile = () => {
   const dispatch = useAppDispatch();

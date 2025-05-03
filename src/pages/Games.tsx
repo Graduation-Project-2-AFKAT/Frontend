@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import GameCard from "../components/GameCard";
-import Tabs from "../components/Tabs";
 import { Link } from "react-router";
 import { Gamepad } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { loadGames } from "../redux/modules/games";
+import GameCard from "../components/GameCard";
+import Tabs from "../components/games/GamesTabs";
 
 const Games = () => {
   const { isLoading } = useAppSelector((state) => state.loading);
@@ -73,7 +73,7 @@ const Games = () => {
   return (
     <main className="w-full overflow-y-auto pt-0 lg:gap-10">
       <header
-        className={`border-b-primary sticky top-0 z-2 flex items-center justify-between border-b-2 bg-black/50 px-10 py-6 backdrop-blur-3xl transition-transform duration-300 ${
+        className={`border-b-primary sticky top-0 z-2 flex items-center justify-between border-b-2 bg-[#1d1a25] px-10 py-6 backdrop-blur-3xl transition-transform duration-300 ${
           isVisible ? "translate-y-0" : "-translate-y-[110%]"
         }`}
       >
@@ -88,7 +88,7 @@ const Games = () => {
 
       <div className="flex flex-col space-y-10 py-10 text-center font-bold lg:px-10">
         <span className="text-3xl">Browse Games</span>
-        <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 px-5">
+        <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-5 px-15 lg:px-0">
           {/* //TODO make selected "text-primary" */}
           {tags.length > 0 &&
             tags.map((tag) => (
@@ -115,7 +115,7 @@ const Games = () => {
       </div>
 
       <section className="col-span-2 space-y-6 scroll-smooth md:mx-auto md:w-[85%] lg:w-full lg:px-10">
-        <div className="flex flex-col space-y-10 border-b border-white/20 shadow-md drop-shadow-md md:rounded-lg"></div>
+        <div className="border-b border-white/20" />
 
         {/* sub-tabs */}
         <Tabs
@@ -150,7 +150,7 @@ const Games = () => {
             </div>
           </div>
         ) : (
-          <ul className="grid-games mb-25 grid space-y-6 px-10 md:px-0">
+          <ul className="grid-games my-10 grid gap-10 px-10 md:px-0">
             {Games.map((game) => {
               return <GameCard key={game.id} game={game} />;
             })}
