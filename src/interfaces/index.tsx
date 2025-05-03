@@ -6,6 +6,7 @@ export interface IForm {
 }
 
 export interface IUser {
+  id: number;
   username: string;
   email: string;
   userProfile: {
@@ -21,6 +22,7 @@ export interface IPost {
   id: number;
   user_id: number;
   username: string;
+  user_profile_image: string;
   title: string;
   slug: string;
   summary: string;

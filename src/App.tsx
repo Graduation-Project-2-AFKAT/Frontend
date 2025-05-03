@@ -141,6 +141,14 @@ function App() {
               }
             />
             <Route
+              path="/profile/:id"
+              element={
+                <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/profile/edit"
               element={
                 <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">

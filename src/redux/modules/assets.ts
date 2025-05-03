@@ -9,7 +9,7 @@ export const loadAssets = createAsyncThunk(
   "assets/loadAll",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("load-assets"));
+      dispatch(startLoading("assets/load"));
 
       const res = await api.get("/art");
 
@@ -30,7 +30,7 @@ export const loadAsset = createAsyncThunk(
   "assets/view",
   async (id: number | string, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("load-asset"));
+      dispatch(startLoading("assets/view"));
 
       const res = await api.get(`/art/${id}`);
 
@@ -58,7 +58,7 @@ export const downloadAsset = createAsyncThunk(
     { dispatch, rejectWithValue },
   ) => {
     console.log("downloading asset...");
-    dispatch(startLoading("download-asset"));
+    dispatch(startLoading("assets/download"));
 
     // Add progress state to your slice
     dispatch(setDownloadProgress({ downloadProgress: 0, estimatedTime: null }));

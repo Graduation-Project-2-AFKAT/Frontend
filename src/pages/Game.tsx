@@ -239,12 +239,21 @@ const Game = () => {
           ) : (
             <div className="h-full w-full">
               <iframe
-                src="https://afkat-bucket.s3.amazonaws.com/games/18/index.html"
+                src={`https://afkat-bucket.s3.amazonaws.com/games/${id}/index.html`}
                 className="h-full w-full rounded-lg"
                 title={title || "Game view"}
                 loading="lazy"
                 allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 sandbox="allow-scripts allow-same-origin"
+                onLoad={() => {
+                  const iframe = document.querySelector("iframe");
+                  const msg = "hiii";
+                  console.log("loaded game");
+                  iframe?.contentWindow?.postMessage(
+                    { type: "AUTH_TOKEN", msg },
+                    `https://afkat-bucket.s3.amazonaws.com/games/`, // Target origin for security
+                  );
+                }}
               />
             </div>
           )}

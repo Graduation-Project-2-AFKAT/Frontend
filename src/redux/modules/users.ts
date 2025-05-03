@@ -6,51 +6,11 @@ import { AxiosError } from "axios";
 import { IForm, IUser } from "../../interfaces";
 import { startLoading, stopLoading } from "./loading.ts";
 
-export const loadMyUser = createAsyncThunk(
-  "user/loadMyUser",
-  async (_, { dispatch, rejectWithValue }) => {
-    dispatch(startLoading("loadMyUser"));
-
-    try {
-      const res = await api.get(`/auth/user`);
-
-      return res.data;
-    } catch (err: unknown) {
-      const error = err as AxiosError;
-      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
-      console.log("ERROR:", error.response);
-      return rejectWithValue(error.response?.data);
-    } finally {
-      dispatch(stopLoading());
-    }
-  },
-);
-
-export const loadUserById = createAsyncThunk(
-  "user/loadUserById",
-  async (id, { dispatch, rejectWithValue }) => {
-    dispatch(startLoading("loadUserById"));
-
-    try {
-      const res = await api.get(`/auth/users${id}`);
-
-      return res.data;
-    } catch (err: unknown) {
-      const error = err as AxiosError;
-      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
-      console.log("ERROR:", error.response);
-      return rejectWithValue(error.response?.data);
-    } finally {
-      dispatch(stopLoading());
-    }
-  },
-);
-
 export const registerUser = createAsyncThunk(
   "user/register",
   async (userData: IForm, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("register"));
+      dispatch(startLoading("users/register"));
 
       const res = await api.post("/auth/register/", userData);
 
@@ -72,7 +32,7 @@ export const loginUser = createAsyncThunk(
   "user/login",
   async (userData: IForm, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("login"));
+      dispatch(startLoading("users/login"));
 
       const res = await api.post("/auth/login", userData);
 
@@ -90,11 +50,53 @@ export const loginUser = createAsyncThunk(
   },
 );
 
+export const loadMyUser = createAsyncThunk(
+  "user/loadMyUser",
+  async (_, { dispatch, rejectWithValue }) => {
+    dispatch(startLoading("users/me"));
+
+    try {
+      const res = await api.get(`/auth/user`);
+
+      return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      console.log("ERROR:", error.response);
+      return rejectWithValue(error.response?.data);
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
+export const loadUserById = createAsyncThunk(
+  "user/loadUserById",
+  async (id: string, { dispatch, rejectWithValue }) => {
+    dispatch(startLoading("users/view"));
+
+    try {
+      const res = await api.get(`/auth/users/${id}`);
+
+      // console.log(res);
+
+      return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      console.log("ERROR:", error.response);
+      return rejectWithValue(error.response?.data);
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
 export const updateUserProfile = createAsyncThunk(
   "user/updateUserProfile",
   async (userData: FormData | null, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("updateUserProfile"));
+      dispatch(startLoading("users/update"));
 
       const res = await api.patch("/auth/user", userData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -118,7 +120,7 @@ export const changePassword = createAsyncThunk(
   "user/changePassword",
   async (userData: FormData | null, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("changePassword"));
+      dispatch(startLoading("users/changePassword"));
 
       const res = await api.post("/auth/password/change", userData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -154,7 +156,7 @@ const initialState = {
     access: null as string | null,
     refresh: null as string | null,
   },
-  // author: null as IUser | null,
+  author: null as IUser | null,
   user: null as IUser | null,
   isAuth: false,
 };
@@ -166,6 +168,10 @@ export const userSlice = createSlice({
     logout: resetAuthState,
   },
   extraReducers: (builder) => {
+    builder.addCase(loadUserById.fulfilled, (state, action) => {
+      state.author = action.payload;
+    });
+
     builder.addMatcher(
       isAnyOf(loadMyUser.fulfilled, updateUserProfile.fulfilled),
       (state, action) => {

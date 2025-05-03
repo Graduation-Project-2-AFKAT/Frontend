@@ -22,7 +22,7 @@ const Input = ({
   <>
     <input
       {...(register ? register(placeholder, rules) : {})}
-      className={`w-[250px] rounded-md border-1 border-gray-200 p-2 text-sm duration-300 focus:px-3 ${className}`}
+      className={`w-[250px] rounded-md border-1 border-gray-200 p-2 text-sm transition-colors ${className}`}
       placeholder={placeholder}
       type={type}
       {...rest}

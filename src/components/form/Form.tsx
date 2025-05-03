@@ -60,7 +60,7 @@ const Form = ({ label, redirect }: IProps) => {
         <img
           src="/images/AFK_Buttons.svg"
           alt="AFK Buttons Logo"
-          className="mt-10 h-24 w-auto duration-300 group-focus-within:mt-8 group-focus-within:h-27"
+          className="mt-10 h-24 w-auto duration-300 group-focus-within:scale-110"
         />
       </div>
 

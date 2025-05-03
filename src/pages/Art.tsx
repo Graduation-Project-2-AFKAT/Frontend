@@ -215,10 +215,10 @@ const Art = () => {
             <div className="relative flex flex-col items-end">
               <button
                 onClick={handleDownload}
-                disabled={isLoading && type === "download-asset"}
-                className={`"disabled:bg-primary/70 bg-primary mb-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-not-allowed! ${!(isLoading && type === "download-asset") && "hover:scale-95"}`}
+                disabled={isLoading && type === "assets/download"}
+                className={`"disabled:bg-primary/70 bg-primary mb-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-not-allowed! ${!(isLoading && type === "assets/download") && "hover:scale-95"}`}
               >
-                {isLoading && type === "download-asset"
+                {isLoading && type === "assets/download"
                   ? `Downloading...`
                   : `Download`}
                 <Download width={18} />
@@ -226,7 +226,7 @@ const Art = () => {
 
               {/* Progress bar - only show when downloading */}
               {isLoading &&
-                type === "download-asset" &&
+                type === "assets/download" &&
                 downloadProgress > 0 && (
                   <div className="absolute bottom-0 mt-2 w-full max-w-[150px] translate-y-8 xl:hidden">
                     <div className="h-1.5 w-full rounded-full bg-gray-700">

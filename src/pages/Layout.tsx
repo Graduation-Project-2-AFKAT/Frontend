@@ -11,6 +11,7 @@ const RootLayout = () => {
   const location = useLocation();
   const isAuthRoute =
     location.pathname === "/login" || location.pathname === "/register";
+
   const { isAuth } = useAppSelector((state) => state.users);
 
   const { show, msgs, type } = useAppSelector((state) => state.alerts);
@@ -58,7 +59,7 @@ const RootLayout = () => {
   }, [msgs, show]);
 
   return (
-    <div>
+    <div className="relative">
       <div>
         <Navbar
           showSidebar={showSidebar}

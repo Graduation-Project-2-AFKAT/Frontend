@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { showAlert } from "./alerts";
 import { AxiosError } from "axios";
 import api from "../../config/axios.config.ts";
@@ -6,14 +6,14 @@ import { startLoading, stopLoading } from "./loading";
 import { IPost } from "../../interfaces";
 
 export const loadPosts = createAsyncThunk(
-  "games/load",
+  "posts/load",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("load-posts"));
+      dispatch(startLoading("posts/load"));
 
       const res = await api.get("/home/posts");
 
-      console.log(res.data);
+      // console.log(res.data);
 
       return res.data;
     } catch (err: unknown) {
@@ -26,17 +26,38 @@ export const loadPosts = createAsyncThunk(
   },
 );
 
-export const loadAPost = createAsyncThunk(
+export const loadMyPosts = createAsyncThunk(
+  "posts/loadMy",
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("posts/mine"));
+
+      const res = await api.get("/home/posts/mine");
+
+      // console.log(res.data);
+
+      return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data || "Failed to load posts");
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
+export const loadPostsById = createAsyncThunk(
   "posts/view",
   async (id: string, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("load-post"));
+      dispatch(startLoading("posts/view"));
 
       const res = await api.get(`/home/posts/${id}`);
 
       console.log(res.data);
 
-      return res.data;
+      // return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
@@ -51,7 +72,7 @@ export const createPost = createAsyncThunk(
   "posts/create",
   async (postData: FormData, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("create-post"));
+      dispatch(startLoading("posts/create"));
 
       const res = await api.post(`/home/posts/`, postData, {
         headers: {
@@ -83,6 +104,7 @@ export const createPost = createAsyncThunk(
 const initialState = {
   Posts: [] as IPost[],
   Post: null as IPost | null,
+  type: "" as "all" | "mine" | "",
 };
 
 export const postsSlice = createSlice({
@@ -90,20 +112,21 @@ export const postsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder.addCase(loadMyPosts.fulfilled, (state, action) => {
+      state.Posts = action.payload.results;
+      state.type = "mine";
+    });
+
     builder.addCase(loadPosts.fulfilled, (state, action) => {
       state.Posts = action.payload.results;
-      //   state.Post = null;
+      state.type = "all";
     });
 
-    builder.addCase(loadPosts.rejected, (state) => {
-      state.Posts = [];
-    });
-
-    builder.addCase(loadAPost.fulfilled, (state, action) => {
+    builder.addCase(loadPostsById.fulfilled, (state, action) => {
       state.Post = action.payload;
     });
 
-    builder.addCase(loadAPost.rejected, (state) => {
+    builder.addCase(loadPostsById.rejected, (state) => {
       state.Post = null;
     });
 
@@ -112,6 +135,14 @@ export const postsSlice = createSlice({
         state.Posts = [action.payload, ...state.Posts];
       }
     });
+
+    builder.addMatcher(
+      isAnyOf(loadPosts.rejected, loadMyPosts.rejected),
+      (state) => {
+        state.Posts = [];
+        state.type = "";
+      },
+    );
   },
 });
 

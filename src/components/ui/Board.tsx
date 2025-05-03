@@ -11,7 +11,7 @@ const Board = ({
   className = "",
   headerSize,
   itemsDirection,
-  itemsCount = 4,
+  itemsCount = 6, //TODO after fix, back to 4, not 6
 }: IProps) => {
   return (
     <aside

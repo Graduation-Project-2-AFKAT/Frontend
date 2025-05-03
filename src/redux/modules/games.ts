@@ -9,7 +9,7 @@ export const loadGames = createAsyncThunk(
   "games/loadAll",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("load-games"));
+      dispatch(startLoading("games/load"));
 
       const res = await api.get("/games");
 
@@ -28,7 +28,7 @@ export const loadGame = createAsyncThunk(
   "games/view",
   async (id: string, { dispatch, rejectWithValue }) => {
     try {
-      dispatch(startLoading("load-game"));
+      dispatch(startLoading("games/view"));
 
       const res = await api.get(`/games/${id}`);
 
