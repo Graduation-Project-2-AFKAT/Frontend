@@ -83,16 +83,18 @@ const GameCard = ({ game, className }: IProps) => {
                 <line x1="3" x2="5" y1="19" y2="21" />
               </svg>
             </div>
-            <button
-              // href={
-              //   window.location.origin +
-              //   window.location.pathname +
-              //   `?tag=${tag}`
-              // } //TODO tag button filter games
-              className={`rounded-full border border-white/75 bg-white/5 px-4 py-1 text-sm transition-colors hover:border-teal-400/50`}
-            >
-              {tags[0]}
-            </button>
+            {tags.length > 0 && (
+              <button
+                // href={
+                //   window.location.origin +
+                //   window.location.pathname +
+                //   `?tag=${tag}`
+                // } //TODO tag button filter games
+                className={`rounded-full border border-white/75 bg-white/5 px-4 py-1 text-sm transition-colors hover:border-teal-400/50`}
+              >
+                {tags[0]}
+              </button>
+            )}
           </div>
         </div>
       </div>
