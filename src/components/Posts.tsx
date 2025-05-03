@@ -34,7 +34,7 @@ const Posts = ({ type = "all" }: IProps) => {
   }, []);
 
   return (
-    <ul className="mb-25 space-y-6">
+    <ul className="mb-25 space-y-10">
       {isLoading && loadingType.startsWith("posts") ? (
         <div className="flex flex-col items-center justify-center space-y-10 pb-12">
           {[1, 2, 3].map((item) => (

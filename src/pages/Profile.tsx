@@ -115,8 +115,9 @@ const Profile = () => {
       }
     }
   }, [location.pathname, isLoading, author, user]);
+
   return (
-    <div className="" id="profile">
+    <div className="w-full overflow-auto" id="profile">
       {isLoading && !type.startsWith("posts") ? (
         <div className="absolute inset-0 top-0 z-50 flex items-center justify-center bg-black/50">
           <div className="flex flex-col items-center justify-center gap-2">
@@ -127,7 +128,7 @@ const Profile = () => {
       ) : (
         <>
           {/* Header */}
-          <header className="w-full bg-black/10 px-10 lg:pt-5 lg:pb-5 lg:pl-20">
+          <header className="bg-primary/25 w-full px-10 lg:pt-5 lg:pb-5 lg:pl-20">
             <div className="hidden items-center gap-x-5 lg:flex">
               <div className="relative top-8 flex aspect-square w-32 items-center justify-center self-end overflow-hidden rounded-full border-2 bg-black text-white">
                 {userData ? (
@@ -255,10 +256,10 @@ const Profile = () => {
             </div>
           </header>
 
-          <section className="grid min-h-screen w-full gap-x-10 bg-white/5 px-10 pt-10 xl:px-15 xl:pt-12">
+          <section className="grid min-h-screen w-full gap-x-10 bg-[#23202A] px-10 pt-10 xl:px-15 xl:pt-12">
             {/* Left Section */}
             <div
-              className="sticky top-20 hidden h-fit translate-y-0 space-y-10 rounded-lg border border-white/25 bg-black/25 py-10 pt-4 duration-250 xl:block"
+              className="sticky top-20 hidden h-fit translate-y-0 space-y-10 rounded-lg border border-white/25 bg-[#222028] py-10 pt-4 duration-250 xl:block"
               id={window.innerWidth >= 1280 ? "LSection" : undefined}
             >
               <div className="flex w-full flex-col gap-x-4 px-5 text-center">
@@ -354,7 +355,7 @@ const Profile = () => {
               </div> */}
                 </div>
 
-                <div className="flex w-full flex-col space-y-3 rounded-lg border border-white/25 bg-black/25 px-5 py-5">
+                <div className="flex w-full flex-col space-y-3 rounded-lg border border-white/25 bg-[#222028] px-5 py-5">
                   <h1 className="text-lg font-bold">Your invite link</h1>
                   <div className="flex items-center gap-x-2">
                     <input
@@ -388,7 +389,7 @@ const Profile = () => {
 
                 {/* left section to right on smaller screens */}
                 <div
-                  className="sticky top-20 h-fit translate-y-0 space-y-5 rounded-lg border border-white/25 bg-black/25 py-5 pt-0 duration-300 xl:hidden"
+                  className="sticky top-20 h-fit translate-y-0 space-y-5 rounded-lg border border-white/25 bg-[#222028] py-5 pt-0 duration-300 xl:hidden"
                   id={window.innerWidth < 1280 ? "LSection" : undefined}
                 >
                   <div className="flex w-full flex-col gap-x-4 px-5 text-center">

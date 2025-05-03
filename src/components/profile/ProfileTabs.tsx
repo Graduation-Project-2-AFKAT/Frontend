@@ -40,7 +40,7 @@ const Tabs = ({ defaultTab, tabs }: IProps) => {
         })}
       </ul>
 
-      <div className="mt-5">
+      <div className="mt-10 px-2">
         {profileSelectedTab === "Posts" ? (
           <Suspense
             fallback={
@@ -63,7 +63,7 @@ const Tab = ({ tab, title, selectedTab, handleTabClick }: ITab) => {
   return (
     <li
       className={`relative z-1 cursor-pointer rounded-t-lg border border-white ${
-        selectedTab === tab ? "border-b-transparent bg-[#2E2B35]" : ""
+        selectedTab === tab ? "border-b-0 bg-[#23202A]" : ""
       } px-5 py-2.5`}
       onClick={() => handleTabClick(tab)}
     >
