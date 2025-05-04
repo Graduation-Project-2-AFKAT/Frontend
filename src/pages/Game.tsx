@@ -74,7 +74,7 @@ const Game = () => {
   return (
     <div className="grid-game grid w-full grid-cols-2 gap-x-10 overflow-y-auto px-10 py-5">
       {/* Left Section */}
-      <div className="col-span-2 h-fit pt-5 pb-2 xl:col-span-1 xl:py-0">
+      <div className="col-span-2 mt-3 h-fit pt-5 pb-2 xl:col-span-1 xl:py-0">
         <div className="flex items-center justify-between px-2 xl:px-0">
           <button
             onClick={() => window.history.back()}

@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IPost } from "../../interfaces";
+import api from "../../config/axios.config";
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -40,21 +41,54 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
       content: "",
     },
   });
-
-  // Watch content field for character count
   const content = watch("content") || "";
+
+  const dispatch = useAppDispatch();
+  const { isLoading } = useAppSelector((state) => state.loading);
 
   const postImageRef = useRef<HTMLInputElement>(null);
 
   const [postTheme, setPostTheme] = useState("");
   const [bgZoom, setBgZoom] = useState(110);
-
-  const dispatch = useAppDispatch();
-  const { isLoading } = useAppSelector((state) => state.loading);
-
   const [showImageArea, setshowImageArea] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const [themes, setThemes] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    async function fetchThemes() {
+      const token = localStorage.getItem("access_token");
+
+      if (token) {
+        const { data } = await api.get(
+          "https://afkat-a734fcb61a41.herokuapp.com/api/v1/home/posts/themes",
+          {
+            headers: {
+              Authorization: `bearer ${token}`,
+            },
+          },
+        );
+
+        setThemes(data);
+      }
+    }
+
+    fetchThemes();
+  }, []);
+
+  const LoadThemes = () => {
+    return Object.keys(themes).map((theme) => {
+      return (
+        <PostTheme
+          key={theme}
+          postTheme={postTheme}
+          ChangeTheme={setPostTheme}
+          themeImage={themes[theme]}
+        />
+      );
+    });
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -205,9 +239,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
               <DialogPanel
                 className={`my-20 w-full max-w-2xl transform overflow-hidden rounded-lg border bg-[#2A2731] bg-cover bg-center shadow-xl`}
                 style={{
-                  backgroundImage: postTheme
-                    ? `url('/patterns/${postTheme}.webp')`
-                    : "none",
+                  backgroundImage: postTheme ? `url('${postTheme}')` : "none",
                   backgroundSize: `${bgZoom}%`,
                   backgroundPosition: "top center",
                 }}
@@ -417,26 +449,8 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                     >
                       <hr className="group-hover:border-primary absolute top-0 right-0 w-[140%] origin-top-right -rotate-45 border transition-colors" />
                     </div>
-                    <PostTheme
-                      postTheme={postTheme}
-                      ChangeTheme={setPostTheme}
-                      themeImage={"p1.webp"}
-                    />
-                    <PostTheme
-                      postTheme={postTheme}
-                      ChangeTheme={setPostTheme}
-                      themeImage={"p2.webp"}
-                    />
-                    <PostTheme
-                      postTheme={postTheme}
-                      ChangeTheme={setPostTheme}
-                      themeImage={"p3.webp"}
-                    />
-                    <PostTheme
-                      postTheme={postTheme}
-                      ChangeTheme={setPostTheme}
-                      themeImage={"p4.webp"}
-                    />
+
+                    {Object.keys(themes).length && <LoadThemes />}
                   </div>
 
                   {/* Actions */}

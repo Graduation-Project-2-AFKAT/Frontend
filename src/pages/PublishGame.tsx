@@ -224,31 +224,9 @@ const PublishGame = () => {
     setValue("tags", newTags);
   };
 
-  const onSubmit = handleSubmit((data) => {
-    if (activeStep === 3) {
-      if (!uploadedWebGLFiles) {
-        toast.error("Please make sure to upload game files (WebGl)");
-        return;
-      }
-    }
-
-    const releaseDate = getValues("releaseDate");
-    if (releaseDate === "") {
-      setValue("releaseDate", new Date().toISOString().split("T")[0]);
-    }
-
-    console.log({
-      ...data,
-      files: {
-        WebGL: uploadedWebGLFiles,
-        Windows: uploadedWindowsFiles,
-      },
-      coverImage: uploadedImage,
-    });
-    toast.success(
-      "Game uploaded successfully! Our team will review it shortly.",
-    );
-  });
+  const prevStep = () => {
+    if (activeStep > 1) setActiveStep(activeStep - 1);
+  };
 
   const nextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -311,14 +289,36 @@ const PublishGame = () => {
     }
   };
 
-  const prevStep = () => {
-    if (activeStep > 1) setActiveStep(activeStep - 1);
-  };
+  const onSubmit = handleSubmit((data) => {
+    if (activeStep === 3) {
+      if (!uploadedWebGLFiles) {
+        toast.error("Please make sure to upload game files (WebGl)");
+        return;
+      }
+    }
+
+    const releaseDate = getValues("releaseDate");
+    if (releaseDate === "") {
+      setValue("releaseDate", new Date().toISOString().split("T")[0]);
+    }
+
+    console.log({
+      ...data,
+      files: {
+        WebGL: uploadedWebGLFiles,
+        Windows: uploadedWindowsFiles,
+      },
+      coverImage: uploadedImage,
+    });
+    toast.success(
+      "Game uploaded successfully! Our team will review it shortly.",
+    );
+  });
 
   return (
     <form
       className="border-primary relative mx-auto my-10 flex h-fit w-[90%] max-w-5xl flex-col items-start rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit(onSubmit)}
     >
       {/* Header */}
       <div className="w-full border-b border-white/10 p-6">

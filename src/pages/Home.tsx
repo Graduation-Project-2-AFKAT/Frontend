@@ -1,9 +1,12 @@
+import { lazy, Suspense, useState } from "react";
+import { useAppSelector } from "../redux/hooks";
 import Input from "../components/form/Input";
 import Board from "../components/ui/Board";
 import Posts from "../components/Posts";
-import CreatePostModal from "../components/modals/CreatePostModal";
-import { useState } from "react";
-import { useAppSelector } from "../redux/hooks";
+
+const CreatePostModal = lazy(
+  () => import("../components/modals/CreatePostModal"),
+);
 
 const Home = () => {
   const { user } = useAppSelector((state) => state.users);
@@ -44,10 +47,28 @@ const Home = () => {
             />
           </div>
 
-          <CreatePostModal
+          {isCreateModalOpen && (
+            <Suspense
+              fallback={
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="border-t-primary h-10 w-10 animate-spin rounded-full border-4 border-r-transparent border-b-white/30 border-l-white/30"></div>
+                    <p className="text-lg">Loading...</p>
+                  </div>
+                </div>
+              }
+            >
+              <CreatePostModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+              />
+            </Suspense>
+          )}
+
+          {/* <CreatePostModal
             isOpen={isCreateModalOpen}
             onClose={() => setIsCreateModalOpen(false)}
-          />
+          /> */}
         </div>
 
         <div className="text-md flex items-center justify-between space-x-6 px-[4%] font-bold md:px-0 lg:px-[30%] lg:text-base lg:font-medium">

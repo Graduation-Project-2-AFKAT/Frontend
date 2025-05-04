@@ -1,7 +1,7 @@
 import { Heart, MessageSquare } from "lucide-react";
 import { IPost } from "../interfaces";
-import moment from "moment";
 import { Link } from "react-router";
+import moment from "moment";
 
 interface IProps {
   post: IPost;
@@ -19,8 +19,14 @@ const Post = ({ post }: IProps) => {
       className="outline-primary grid aspect-[9/10] border border-white/10 bg-[#2A2731] bg-cover shadow-md drop-shadow-md duration-50 md:rounded-xl lg:hover:outline-2 lg:hover:outline-dashed"
       style={{
         gridTemplate: "auto auto 1fr auto auto / 1fr 1fr 1fr",
+        backgroundImage: post.theme ? `url('${post.theme}')` : "none",
+        backgroundPosition: "top center",
+        // backgroundSize: `${bgZoom}%`,
       }}
     >
+      <div
+        className={`${post.theme ? "bg-black/25" : ""} pointer-events-none fixed inset-0 -z-1 rounded-xl`}
+      />
       <div className="col-span-3 flex h-fit justify-between px-5 pt-5">
         <div className="group flex items-center duration-150">
           {/*  //TODO add user pfp */}
