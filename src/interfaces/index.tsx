@@ -29,7 +29,7 @@ export interface IPost {
   content: string;
   image: string;
   theme: string;
-  zoom: string | number; //TODO check backend type string or number??
+  theme_zoom_number: number;
   tags: string[];
   created_at: string;
   modified_at: string;
@@ -47,6 +47,20 @@ export interface IGame {
   rating: number;
   game_file: string;
   thumbnail: string;
+}
+
+export interface IJam {
+  id: number;
+  title: string;
+  description: string;
+  created_by: string;
+  start_date: string;
+  end_date: string;
+  theme: string;
+  prizes: string;
+  participants: string[];
+  participants_count: number;
+  is_active: boolean;
 }
 
 export interface IAsset {

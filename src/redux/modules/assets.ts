@@ -139,6 +139,42 @@ export const downloadAsset = createAsyncThunk(
   },
 );
 
+export const createAsset = createAsyncThunk(
+  "assets/create",
+  async (assetData: FormData, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("assets/create"));
+
+      const res = await api.post(`/art/`, assetData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(res.data);
+      dispatch(
+        showAlert({
+          msg: "3D model uploaded successfully! Our team will review it shortly.",
+          type: "success",
+        }),
+      );
+
+      // return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(
+        showAlert({
+          msg: error.response?.data || "Failed to create post",
+          type: "error",
+        }),
+      );
+      return rejectWithValue(error.response?.data);
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
 const initialState = {
   Assets: [] as IAsset[],
   Asset: null as IAsset | null,

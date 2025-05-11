@@ -133,6 +133,42 @@ export const downloadAGame = createAsyncThunk(
   },
 );
 
+export const createGame = createAsyncThunk(
+  "games/create",
+  async (gameData: FormData, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("games/create"));
+
+      const res = await api.post(`/games/`, gameData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(res.data);
+      dispatch(
+        showAlert({
+          msg: "Game uploaded successfully! Our team will review it shortly.",
+          type: "success",
+        }),
+      );
+
+      // return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(
+        showAlert({
+          msg: error.response?.data || "Failed to create post",
+          type: "error",
+        }),
+      );
+      return rejectWithValue(error.response?.data);
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
 const initialState = {
   Games: [] as IGame[],
   Game: null as IGame | null,

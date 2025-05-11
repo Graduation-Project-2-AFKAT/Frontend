@@ -2,27 +2,35 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { showAlert } from "./alerts";
 import { AxiosError } from "axios";
 import api from "../../config/axios.config.ts";
+import { IJam } from "../../interfaces/index.tsx";
+import { startLoading, stopLoading } from "./loading.ts";
 
 export const loadJams = createAsyncThunk(
   "gameJams/load",
-  async (_, { dispatch, rejectWithValue }) => {
+  async (
+    status: "active" | "upcoming" | "past",
+    { dispatch, rejectWithValue },
+  ) => {
     try {
-      const res = await api.get("/game/game-jams");
+      dispatch(startLoading("gameJams/load"));
 
-      console.log(res.data);
+      const res = await api.get(`/games/jams?status=${status}`);
+
+      // console.log(res.data);
 
       return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
       return rejectWithValue(error.response?.data); //TODO: errors should be in Error redux module
+    } finally {
+      dispatch(stopLoading());
     }
   },
 );
 
 const initialState = {
-  Assets: [],
-  isLoading: false,
+  Jams: [] as IJam[],
 };
 
 export const gameJamsSlice = createSlice({
@@ -31,24 +39,12 @@ export const gameJamsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(loadJams.fulfilled, (state, action) => {
-      console.log("Action:", action);
-
-      state.isLoading = false;
-      //   state.Games = action.payload;
+      state.Jams = action.payload.results;
     });
 
     builder.addCase(loadJams.rejected, (state) => {
-      state.Assets = [];
-      state.isLoading = false;
+      state.Jams = [];
     });
-
-    builder.addMatcher(
-      (action) =>
-        action.type.endsWith("/pending") && action.type.endsWith("gameJams"),
-      (state) => {
-        state.isLoading = true;
-      },
-    );
   },
 });
 

@@ -5,15 +5,19 @@ import Input from "../components/form/Input";
 import { Image, Info, X, FileText, Box } from "lucide-react";
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { createAsset } from "../redux/modules/assets";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 interface IAddArtFormData {
+  author: string;
   title: string;
   description: string;
-  category: string[];
-  fileFormat: string;
-  license: string;
-  price: string;
+  thumbnail: File | null;
+  model_file: File | null;
   tags: string[];
+  // price: string;
+  // fileFormat: string;
+  // license: string;
 }
 
 const validationSchema = yup.object({
@@ -22,10 +26,10 @@ const validationSchema = yup.object({
     .string()
     .required("Description is required")
     .min(20, "Description must be at least 20 characters"),
-  tag: yup.array().min(1, "Select at least one category"),
-  fileFormat: yup.string().required("File format is required"),
-  license: yup.string().required("License is required"),
-  price: yup.string().required("Price is required"),
+  tag: yup.array().min(1, "Select at least one tag"),
+  // fileFormat: yup.string().required("File format is required"),
+  // license: yup.string().required("License is required"),
+  // price: yup.string().required("Price is required"),
 });
 
 const PublishArt = () => {
@@ -33,18 +37,25 @@ const PublishArt = () => {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
     setValue,
   } = useForm<IAddArtFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
+      author: "",
       title: "",
       description: "",
+      thumbnail: null,
+      model_file: null,
       tags: [],
-      fileFormat: "GLTF",
-      license: "Standard Commercial License",
-      price: "Free",
+      // license: "Standard Commercial License",
+      // price: "Free",
+      // fileFormat: "GLTF",
     },
   });
+
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.users);
 
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -54,23 +65,20 @@ const PublishArt = () => {
   const modelFileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
-  const tags = [
-    "Characters",
-    "Environments",
-    "Props",
-    "Vehicles",
-    "Weapons",
-    "Furniture",
-    "Architecture",
-    "Nature",
-    "Sci-Fi",
-    "Fantasy",
-    "Industrial",
-    "Anatomy",
-    "VFX",
-  ];
-
   const fileFormats = ["GLTF", "GLB"];
+
+  const tags = [
+    "Unity",
+    "Blender",
+    "Krita",
+    "Pixel Art",
+    "Aseprite",
+    "Photoshop",
+    "Unreal Engine",
+    "Maya",
+    "Illustrator",
+    "Substance 3D Modeler",
+  ];
 
   const licenses = [
     "Standard Commercial License",
@@ -114,6 +122,7 @@ const PublishArt = () => {
       );
       return;
     }
+
     handleFileUpload(files);
   };
 
@@ -181,6 +190,8 @@ const PublishArt = () => {
         return;
       }
 
+      setValue("thumbnail", imageFile);
+
       // Process the image
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -201,6 +212,8 @@ const PublishArt = () => {
         return;
       }
 
+      setValue("thumbnail", file);
+
       const reader = new FileReader();
       reader.onload = (event) => {
         setUploadedImage(event.target?.result as string);
@@ -210,14 +223,11 @@ const PublishArt = () => {
   };
 
   const handleTagToggle = (tag: string) => {
-    // Calculate the new tags array directly
     const newTags = selectedTags.includes(tag)
       ? selectedTags.filter((t) => t !== tag)
       : [...selectedTags, tag];
 
-    // Update both the state and form value with the same new value
     setSelectedTags(newTags);
-    setValue("category", newTags);
   };
 
   const onSubmit = handleSubmit((data) => {
@@ -228,15 +238,18 @@ const PublishArt = () => {
       }
     }
 
-    console.log({
-      ...data,
-      modelFile: uploadedModelFile,
-      coverImage: uploadedImage,
-    });
-    toast.success(
-      "3D model uploaded successfully! Our team will review it shortly.",
-    );
-    // Here you would typically send the data to your backend
+    const formData = new FormData();
+    const fileFormat = uploadedModelFile?.name.split(".").pop();
+
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("thumbnail", data.thumbnail);
+    formData.append("tags", selectedTags.join(","));
+    formData.append("model_file", uploadedModelFile!);
+    formData.append("fileFormat", fileFormat || "");
+
+    // TODO
+    // dispatch(createAsset(formData));
   });
 
   const nextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -544,9 +557,9 @@ const PublishArt = () => {
                   </button>
                 ))}
               </div>
-              {errors.category && (
+              {errors.tags && (
                 <p className="mt-1 text-xs text-red-400">
-                  {errors.category.message}
+                  {errors.tags.message}
                 </p>
               )}
             </div>

@@ -32,11 +32,11 @@ const Post = ({ post }: IProps) => {
           {/*  //TODO add user pfp */}
           <img
             src={user_profile_image}
-            className={`${post.theme ? "drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""} fa-solid fa-circle-user aspect-square w-10 rounded-full border border-white/50 object-cover`}
+            className={`${post.theme ? "drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""} fa-solid fa-circle-user aspect-square w-12 rounded-full border border-white object-cover`}
           />
           <Link to={`/profile/${user_id}`}>
             <span
-              className={`${post.theme ? "drop-shadow-[1px_1px_1px_rgba(0,0,0,1)]" : ""} ml-2 cursor-pointer text-sm font-bold hover:underline`}
+              className={`${post.theme ? "drop-shadow-[1px_1px_1px_rgba(0,0,0,1)]" : ""} ml-3 cursor-pointer text-sm font-bold hover:underline`}
             >
               @{username}
             </span>

@@ -1,9 +1,9 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Code, Palette, ShieldCheck, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import * as yup from "yup";
 import { toast } from "react-toastify";
-import { Code, Palette, ShieldCheck, X } from "lucide-react";
-import useYupValidationResolver from "../validation/userYupValidationResolver";
+import * as yup from "yup";
 
 export interface IMembershipFormData {
   role: "developer" | "designer" | "admin";
@@ -40,8 +40,6 @@ const BecomeAMember = () => {
     references: yup.string(),
   });
 
-  const resolver = useYupValidationResolver(validationSchema);
-
   const {
     register,
     handleSubmit,
@@ -51,7 +49,7 @@ const BecomeAMember = () => {
     setError,
     clearErrors,
   } = useForm<IMembershipFormData>({
-    resolver,
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       role: undefined,
       experience: "",

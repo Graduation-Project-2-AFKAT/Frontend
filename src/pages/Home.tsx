@@ -1,8 +1,8 @@
 import { lazy, Suspense, useState } from "react";
-import { useAppSelector } from "../redux/hooks";
 import Input from "../components/form/Input";
-import Board from "../components/ui/Board";
 import Posts from "../components/Posts";
+import Board from "../components/ui/Board";
+import { useAppSelector } from "../redux/hooks";
 
 const CreatePostModal = lazy(
   () => import("../components/modals/CreatePostModal"),
@@ -31,7 +31,7 @@ const Home = () => {
           <img
             src={user?.userProfile.profile_image}
             alt="profile pfp"
-            className="w-15 rounded-full"
+            className="aspect-square w-15 rounded-full border text-xs"
           />
 
           <div className="ml-5 w-full">

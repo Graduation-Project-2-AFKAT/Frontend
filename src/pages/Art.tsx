@@ -1,12 +1,17 @@
-import { useState, Suspense, useEffect, useRef } from "react";
-import { Download, Heart, Share2, Flag } from "lucide-react";
+import { Grid, Html, OrbitControls, Stage, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Stage, useGLTF, Html, Grid } from "@react-three/drei";
+import { Download, Flag, Heart, Share2 } from "lucide-react";
+import moment from "moment";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router";
+import { toast } from "react-toastify";
 import * as THREE from "three";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { Link, useLocation } from "react-router";
 import { downloadAsset, loadAsset } from "../redux/modules/assets";
-import moment from "moment";
+
+const ArtComments = lazy(
+  () => import("../components/Arts/ArtComments"), //TODO this is only mocking comments, replace it with comment fetched from server
+);
 
 const Art = () => {
   const { Asset, downloadProgress, estimatedTime } = useAppSelector(
@@ -34,6 +39,7 @@ const Art = () => {
   const [wireframe, setWireframe] = useState(false);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const [gridPosition, setGridPosition] = useState(-2);
+  const [isReportLoading, setIsReportLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!Asset) {
@@ -121,6 +127,7 @@ const Art = () => {
 
   function Model({ url, wireframe }: { url: string; wireframe: boolean }) {
     const { scene } = useGLTF(url);
+    if (!scene) throw Error("Error: model file is not available");
     const modelRef = useRef<THREE.Object3D>(null);
 
     useEffect(() => {
@@ -187,6 +194,14 @@ const Art = () => {
 
   const handleLike = () => {
     setLiked(!liked);
+  };
+
+  const handleReport = () => {
+    setIsReportLoading(true);
+    setTimeout(() => {
+      toast.info("Your report has been sent successfully");
+      setIsReportLoading(false);
+    }, 1000);
   };
 
   return (
@@ -279,20 +294,16 @@ const Art = () => {
               <Suspense fallback={<Loader />}>
                 <Stage intensity={0.6} adjustCamera={false}>
                   <group>
-                    {/* <directionalLight
-                      position={[0, 10, 5]}
-                      intensity={0.2}
-                      color="#ffffff"
-                      castShadow
-                      shadow-mapSize={[2048, 2048]}
-                    />
-                    <directionalLight
-                      position={[0, 1, 8]}
-                      intensity={0.3}
-                      color="#e1eaff"
-                    />
-                    <ambientLight intensity={0.2} color="#e6e6e6" /> */}
-                    <Model url={model_file!} wireframe={wireframe} />
+                    {model_file && !isLoading ? (
+                      <Model url={model_file} wireframe={wireframe} />
+                    ) : (
+                      <Html center>
+                        <div className="flex flex-col items-center gap-2 rounded-md bg-black/50 p-4 text-nowrap backdrop-blur-sm">
+                          <div className="text-warning h-8 w-8">⚠️</div>
+                          <p>Model file not available</p>
+                        </div>
+                      </Html>
+                    )}
                   </group>
                 </Stage>
               </Suspense>
@@ -411,7 +422,33 @@ const Art = () => {
               </div>
 
               <div className="mt-6 border-t border-white/10 pt-6">
-                <button className="flex w-full items-center justify-center gap-2 rounded border border-white/10 bg-white/5 py-2 text-white/70 hover:bg-white/10">
+                <button
+                  className="flex w-full items-center justify-center gap-2 rounded border border-white/10 bg-white/5 py-2 text-white/70 hover:bg-white/10"
+                  onClick={handleReport}
+                  disabled={isReportLoading}
+                >
+                  {isReportLoading && (
+                    <svg
+                      className="mr-3 -ml-1 size-5 animate-spin text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                  )}
                   {/* //TODO press report asset to send email to support service or admin */}
                   <Flag size={16} />
                   Report Asset
@@ -434,246 +471,21 @@ const Art = () => {
               </div>
             </form>
 
-            <div className="space-y-6">
-              {[
-                {
-                  id: 1,
-                  author: {
-                    name: "Alex Johnson",
-                    avatar: "https://randomuser.me/api/portraits/men/41.jpg",
-                    username: "alex_gamedev",
-                  },
-                  date: "2024-04-01",
-                  content:
-                    "This environment kit saved me so much time on my latest project! The modular pieces fit together perfectly and the textures are incredibly detailed. Would definitely recommend for any sci-fi game.",
-                  likes: 12,
-                },
-                {
-                  id: 2,
-                  author: {
-                    name: "Sarah Chen",
-                    avatar: "https://randomuser.me/api/portraits/women/33.jpg",
-                    username: "sarahgameartist",
-                  },
-                  date: "2024-03-28",
-                  content:
-                    "The PBR materials are excellent quality. I'm using these assets in my VR game and they look fantastic even under different lighting conditions. Great work!",
-                  likes: 8,
-                },
-                {
-                  id: 3,
-                  author: {
-                    name: "Michael Torres",
-                    avatar: "https://randomuser.me/api/portraits/men/22.jpg",
-                    username: "mtorres_3d",
-                  },
-                  date: "2024-03-25",
-                  content:
-                    "Question - does this kit include source files for Blender? I'd love to make some custom modifications.",
-                  likes: 3,
-                  replies: [
-                    {
-                      id: 31,
-                      author: {
-                        name: "Pablo Gomez",
-                        avatar:
-                          "https://randomuser.me/api/portraits/men/32.jpg",
-                        username: "environment_designer",
-                      },
-                      date: "2024-03-26",
-                      content:
-                        "Yes! The package includes Blender source files (.blend) as well as the exported GLTF and FBX formats. Let me know if you need any help with modifications.",
-                    },
-                  ],
-                },
-                {
-                  id: 4,
-                  author: {
-                    name: "Emma Wright",
-                    avatar: "https://randomuser.me/api/portraits/women/65.jpg",
-                    username: "emmaw",
-                  },
-                  date: "2024-03-22",
-                  content:
-                    "Just curious about the polycount? I'm working on a mobile game and wondering if these would be suitable or too heavy for mobile.",
-                  likes: 5,
-                },
-              ].length > 0 ? (
-                [
-                  {
-                    id: 1,
-                    author: {
-                      name: "Alex Johnson",
-                      avatar: "https://randomuser.me/api/portraits/men/41.jpg",
-                      username: "alex_gamedev",
-                    },
-                    date: "2024-04-01",
-                    content:
-                      "This environment kit saved me so much time on my latest project! The modular pieces fit together perfectly and the textures are incredibly detailed. Would definitely recommend for any sci-fi game.",
-                    likes: 12,
-                  },
-                  {
-                    id: 2,
-                    author: {
-                      name: "Sarah Chen",
-                      avatar:
-                        "https://randomuser.me/api/portraits/women/33.jpg",
-                      username: "sarahgameartist",
-                    },
-                    date: "2024-03-28",
-                    content:
-                      "The PBR materials are excellent quality. I'm using these assets in my VR game and they look fantastic even under different lighting conditions. Great work!",
-                    likes: 8,
-                  },
-                  {
-                    id: 3,
-                    author: {
-                      name: "Michael Torres",
-                      avatar: "https://randomuser.me/api/portraits/men/22.jpg",
-                      username: "mtorres_3d",
-                    },
-                    date: "2024-03-25",
-                    content:
-                      "Question - does this kit include source files for Blender? I'd love to make some custom modifications.",
-                    likes: 3,
-                    replies: [
-                      {
-                        id: 31,
-                        author: {
-                          name: "Pablo Gomez",
-                          avatar:
-                            "https://randomuser.me/api/portraits/men/32.jpg",
-                          username: "environment_designer",
-                        },
-                        date: "2024-03-26",
-                        content:
-                          "Yes! The package includes Blender source files (.blend) as well as the exported GLTF and FBX formats. Let me know if you need any help with modifications.",
-                      },
-                    ],
-                  },
-                  {
-                    id: 4,
-                    author: {
-                      name: "Emma Wright",
-                      avatar:
-                        "https://randomuser.me/api/portraits/women/65.jpg",
-                      username: "emmaw",
-                    },
-                    date: "2024-03-22",
-                    content:
-                      "Just curious about the polycount? I'm working on a mobile game and wondering if these would be suitable or too heavy for mobile.",
-                    likes: 5,
-                  },
-                ].map((comment) => (
-                  <div
-                    key={comment.id}
-                    className="rounded-lg border border-white/10 bg-[#16141C] p-6"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex">
-                        <img
-                          src={comment.author.avatar}
-                          alt={comment.author.name}
-                          className="mr-3 h-10 w-10 rounded-full"
-                        />
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <a
-                              href={`/profile/${comment.author.username}`}
-                              className="hover:text-primary font-medium"
-                            >
-                              {comment.author.name}
-                            </a>
-                            {comment.author.username ===
-                              "environment_designer" && (
-                              <span className="bg-primary/20 text-primary rounded px-2 py-0.5 text-xs">
-                                Author
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-sm text-white/50">
-                            {new Date(comment.date).toLocaleDateString(
-                              "en-US",
-                              {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                              },
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                      <button className="text-white/40 hover:text-white">
-                        •••
-                      </button>
+            {activeTab === "comments" && (
+              <Suspense
+                fallback={
+                  <div className="absolute inset-0 top-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="flex items-center gap-2">
+                      <div className="border-primary h-6 w-6 animate-spin rounded-full border-t-2 border-b-2"></div>
+                      <span>Loading comments...</span>
                     </div>
-
-                    <p className="mt-3 text-white/90">{comment.content}</p>
-
-                    <div className="mt-4 flex items-center gap-4">
-                      <button className="hover:text-primary flex items-center gap-1 text-sm text-white/50">
-                        <Heart size={14} />
-                        <span>{comment.likes}</span>
-                      </button>
-                      <button className="hover:text-primary text-sm text-white/50">
-                        Reply
-                      </button>
-                    </div>
-
-                    {/* Replies */}
-                    {comment.replies && comment.replies.length > 0 && (
-                      <div className="mt-4 border-l-2 border-white/10 pl-4">
-                        {comment.replies.map((reply) => (
-                          <div key={reply.id} className="mt-4">
-                            <div className="flex">
-                              <img
-                                src={reply.author.avatar}
-                                alt={reply.author.name}
-                                className="mr-3 h-8 w-8 rounded-full"
-                              />
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <a
-                                    href={`/profile/${reply.author.username}`}
-                                    className="hover:text-primary font-medium"
-                                  >
-                                    {reply.author.name}
-                                  </a>
-                                  {reply.author.username ===
-                                    "environment_designer" && (
-                                    <span className="bg-primary/15 text-primary rounded px-2 py-0.5 text-xs">
-                                      Author
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-sm text-white/50">
-                                  {new Date(reply.date).toLocaleDateString(
-                                    "en-US",
-                                    {
-                                      year: "numeric",
-                                      month: "short",
-                                      day: "numeric",
-                                    },
-                                  )}
-                                </p>
-                              </div>
-                            </div>
-
-                            <p className="mt-2 text-white/90">
-                              {reply.content}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
-                ))
-              ) : (
-                <p className="text-center text-white/70">
-                  Be the first to comment on this asset!
-                </p>
-              )}
-            </div>
+                }
+              >
+                {/* //TODO lazy load art comments */}
+                <ArtComments />
+              </Suspense>
+            )}
           </div>
         )}
       </div>

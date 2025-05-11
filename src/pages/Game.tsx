@@ -7,7 +7,6 @@ import { downloadAGame, loadGame, resetGame } from "../redux/modules/games";
 import { Download, Heart, MessageSquare, Star, Undo2 } from "lucide-react";
 import { lazy, Suspense } from "react";
 
-// Lazy load the comments dialog
 const GameCommentDialog = lazy(
   () => import("../components/games/GameCommentDialog"), //TODO this is only mocking comments, replace it with comment fetched from server
 );

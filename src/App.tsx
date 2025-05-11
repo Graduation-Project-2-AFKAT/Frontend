@@ -1,5 +1,5 @@
-import { Routes, Route } from "react-router";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
+import { Route, Routes } from "react-router";
 
 const RootLayout = lazy(() => import("./pages/Layout"));
 const ErrorHandler = lazy(() => import("./components/errors/ErrorHanbdler"));
@@ -20,32 +20,12 @@ const GameJam = lazy(() => import("./pages/GameJam"));
 const HostJam = lazy(() => import("./pages/HostJam"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 
-// import RootLayout from "./pages/Layout";
-// import ErrorHandler from "./components/errors/ErrorHanbdler";
-// import ProtectedRoute from "./components/auth/ProtectedRoute";
-// import Login from "./pages/auth/Login";
-// import Register from "./pages/auth/Register";
-// import Home from "./pages/Home";
-// import Profile from "./pages/Profile";
-// import EditProfile from "./pages/profile/EditProfile";
-// import BecomeAMember from "./pages/BecomeAMember";
-// import Games from "./pages/Games";
-// import Game from "./pages/Game";
-// import PublishGame from "./pages/PublishGame";
-// import Arts from "./pages/Arts";
-// import Art from "./pages/Art";
-// import PublishArt from "./pages/PublishArt";
-// import GameJam from "./pages/GameJam";
-// import HostJam from "./pages/HostJam";
-// import PageNotFound from "./pages/PageNotFound";
-
+import { useSelector } from "react-redux";
 import { ToastContainer, ToastPosition } from "react-toastify";
 import "./App.css";
-import { RootState } from "./redux/store";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
 import { useAppDispatch } from "./redux/hooks";
 import { loadMyUser } from "./redux/modules/users";
+import { RootState } from "./redux/store";
 
 const LoadingFallback = ({ isAuth }: { isAuth: boolean }) => (
   <div

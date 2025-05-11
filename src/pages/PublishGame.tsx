@@ -1,18 +1,20 @@
-import { useState, useRef } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Image, Info, Package, Upload, X } from "lucide-react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 import Input from "../components/form/Input";
-import { Upload, Image, Info, Package, X } from "lucide-react";
-import { toast } from "react-toastify";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { createGame } from "../redux/modules/games";
 
 interface IAddGameFormData {
   title: string;
   description: string;
-  releaseDate: string | undefined;
+  thumbnail: File | null;
+  tags: string[];
   version: string;
   price: string;
-  tags: string[];
   isMultiplayer: boolean | undefined;
 }
 
@@ -27,10 +29,10 @@ const validationSchema = yup.object({
     .min(1, "Select at least one tag")
     .defined()
     .of(yup.string()),
-  releaseDate: yup.string(),
   version: yup.string().required("Version is required"),
   price: yup.string().required("Price is required"),
   isMultiplayer: yup.boolean(),
+  // releaseDate: yup.string(),
 });
 
 const PublishGame = () => {
@@ -45,13 +47,16 @@ const PublishGame = () => {
     defaultValues: {
       title: "",
       description: "",
+      thumbnail: null,
       tags: [],
-      releaseDate: "",
       version: "1.0.0",
       price: "Free",
       isMultiplayer: false,
     },
   });
+
+  const dispatch = useAppDispatch();
+  const { isLoading } = useAppSelector((state) => state.loading);
 
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -205,6 +210,8 @@ const PublishGame = () => {
         return;
       }
 
+      setValue("thumbnail", file);
+
       const reader = new FileReader();
       reader.onload = (event) => {
         setUploadedImage(event.target?.result as string);
@@ -297,22 +304,19 @@ const PublishGame = () => {
       }
     }
 
-    const releaseDate = getValues("releaseDate");
-    if (releaseDate === "") {
-      setValue("releaseDate", new Date().toISOString().split("T")[0]);
-    }
+    console.log(data);
+    const formData = new FormData();
+    const fileFormat = uploadedWebGLFiles?.name.split(".").pop();
 
-    console.log({
-      ...data,
-      files: {
-        WebGL: uploadedWebGLFiles,
-        Windows: uploadedWindowsFiles,
-      },
-      coverImage: uploadedImage,
-    });
-    toast.success(
-      "Game uploaded successfully! Our team will review it shortly.",
-    );
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("thumbnail", data.thumbnail);
+    formData.append("tags", selectedTags.join(","));
+    formData.append("game_file", uploadedWebGLFiles!);
+    formData.append("fileFormat", fileFormat || "");
+
+    // TODO
+    // dispatch(createGame(formData));
   });
 
   return (
@@ -427,7 +431,7 @@ const PublishGame = () => {
               />
             </div>
 
-            <div>
+            {/* <div>
               <label
                 className="mb-2 block text-sm font-medium"
                 htmlFor="release"
@@ -440,7 +444,7 @@ const PublishGame = () => {
                 className="w-full"
                 {...register("releaseDate")}
               />
-            </div>
+            </div> */}
 
             <div>
               <label className="mb-2 block text-sm font-medium" htmlFor="price">
@@ -771,6 +775,7 @@ const PublishGame = () => {
             <button
               type="submit"
               className="bg-primary rounded px-6 py-2 font-bold text-black hover:bg-teal-400"
+              disabled={isLoading}
             >
               Submit Game
             </button>

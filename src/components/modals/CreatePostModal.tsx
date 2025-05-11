@@ -1,21 +1,21 @@
 import {
   Dialog,
+  DialogPanel,
   Transition,
   TransitionChild,
-  DialogPanel,
 } from "@headlessui/react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Plus, X } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
-import { X, Plus } from "lucide-react";
-import ProgressBar from "./ProgressBar";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import * as yup from "yup";
+import api from "../../config/axios.config";
+import { IPost } from "../../interfaces";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { createPost } from "../../redux/modules/posts";
 import PostTheme from "./PostTheme";
-import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { IPost } from "../../interfaces";
-import api from "../../config/axios.config";
+import ProgressBar from "./ProgressBar";
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -169,10 +169,8 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
     }
   }, [isOpen, reset]);
 
-  // Handle post submission
   const onSubmit = handleSubmit(async (data) => {
     try {
-      // Create form data for post submission
       const formData = new FormData();
       formData.append("title", data.title || "");
       formData.append("content", data.content || "");
