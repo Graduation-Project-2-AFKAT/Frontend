@@ -53,11 +53,11 @@ export const loadPostsById = createAsyncThunk(
     try {
       dispatch(startLoading("posts/view"));
 
-      const res = await api.get(`/home/posts/${id}`);
+      const res = await api.get(`/auth/users/${id}/posts`);
 
-      console.log(res.data);
+      // console.log(res.data);
 
-      // return res.data;
+      return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
@@ -123,11 +123,11 @@ export const postsSlice = createSlice({
     });
 
     builder.addCase(loadPostsById.fulfilled, (state, action) => {
-      state.Post = action.payload;
+      state.Posts = action.payload.results;
     });
 
     builder.addCase(loadPostsById.rejected, (state) => {
-      state.Post = null;
+      state.Posts = [];
     });
 
     builder.addCase(createPost.fulfilled, (state, action) => {

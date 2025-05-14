@@ -25,8 +25,8 @@ const Posts = ({ type = "all" }: IProps) => {
       dispatch(loadPosts());
     } else if (type === "mine" && (postsType === "all" || !postsType)) {
       if (userId && isNumber) {
-        // dispatch(loadPostsById(userId)); //TODO let 3mmar (the bitch) fix it
-        dispatch(loadMyPosts());
+        dispatch(loadPostsById(userId)); //TODO let 3mmar (the bitch) fix it
+        // dispatch(loadMyPosts());
       } else {
         dispatch(loadMyPosts());
       }

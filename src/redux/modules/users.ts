@@ -14,7 +14,6 @@ export const registerUser = createAsyncThunk(
 
       const res = await api.post("/auth/register/", userData);
 
-      // await dispatch(loadMyUser());
       dispatch(showAlert({ msg: "Registration successful", type: "success" }));
 
       return res.data;
@@ -36,7 +35,6 @@ export const loginUser = createAsyncThunk(
 
       const res = await api.post("/auth/login", userData);
 
-      // await dispatch(loadMyUser());
       dispatch(showAlert({ msg: "Login successful", type: "success" }));
 
       return res.data;
@@ -102,10 +100,32 @@ export const updateUserProfile = createAsyncThunk(
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // await dispatch(loadMyUser());
       dispatch(showAlert({ msg: "Changes Saved!", type: "success" }));
 
       return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data); //TODO: errors should be in Error redux module
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
+export const followUser = createAsyncThunk(
+  "user/followUser",
+  async (id: string, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("users/followUser"));
+
+      const res = await api.post(`/auth/follow/${id}`);
+
+      // dispatch(showAlert({ msg: res.data.detail, type: "success" }));
+
+      console.log(res);
+
+      // return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
@@ -126,7 +146,6 @@ export const changePassword = createAsyncThunk(
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // await dispatch(loadMyUser());
       dispatch(showAlert({ msg: res.data.detail, type: "success" }));
 
       console.log(res);

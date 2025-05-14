@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { defaultImage } from "../utils";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { Link, useLocation } from "react-router";
-import { loadUserById } from "../redux/modules/users";
+import { followUser, loadUserById } from "../redux/modules/users";
 import { IUser } from "../interfaces";
 import Tabs from "../components/profile/ProfileTabs";
 
@@ -116,6 +116,16 @@ const Profile = () => {
     }
   }, [location.pathname, isLoading, author, user]);
 
+  const handleFollow = () => {
+    try {
+      if (author) {
+        dispatch(followUser(author.id.toString()));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="w-full overflow-auto" id="profile">
       {isLoading && !type.startsWith("posts") ? (
@@ -166,8 +176,6 @@ const Profile = () => {
             </div>
 
             <div className="flex flex-col items-center space-y-5 pt-10 pb-5 lg:hidden">
-              {/* <i className="fa-solid fa-circle-user text-7xl" /> */}
-
               {userData ? (
                 <img
                   src={userData?.userProfile?.profile_image || "#"}
@@ -218,7 +226,10 @@ const Profile = () => {
                     Edit profile
                   </Link>
                 ) : (
-                  <button className="border-primary hover:bg-primary w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black">
+                  <button
+                    className="border-primary hover:bg-primary w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black"
+                    onClick={handleFollow}
+                  >
                     Follow
                   </button>
                 )}
@@ -267,10 +278,6 @@ const Profile = () => {
                   ref={window.innerWidth >= 1280 ? iRef : undefined}
                   className="duration-150*-* relative -top-26 col-span-3 flex translate-y-0 flex-col items-center opacity-0"
                 >
-                  {/* <i
-                ref={window.innerWidth >= 1280 ? iRef : undefined}
-                className="fa-solid fa-circle-user absolute -top-28 text-8xl"
-              /> */}
                   <img
                     src={userData?.userProfile?.profile_image || "#"}
                     alt="profile avatar"
@@ -343,16 +350,13 @@ const Profile = () => {
                       Edit profile
                     </Link>
                   ) : (
-                    <button className="border-primary hover:bg-primary w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black">
+                    <button
+                      className="border-primary hover:bg-primary w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black"
+                      onClick={handleFollow}
+                    >
                       Follow
                     </button>
                   )}
-
-                  {/* <div>
-                <button className="rounded-md border p-1.5">
-                  <EllipsisVertical />
-                </button>
-              </div> */}
                 </div>
 
                 <div className="flex w-full flex-col space-y-3 rounded-lg border border-white/25 bg-[#222028] px-5 py-5">
@@ -397,10 +401,6 @@ const Profile = () => {
                       ref={window.innerWidth < 1280 ? iRef : undefined}
                       className="relative -top-24 col-span-3 flex translate-y-20 flex-col items-center opacity-0 duration-150"
                     >
-                      {/* <i
-                    ref={window.innerWidth < 1280 ? iRef : undefined}
-                    className="fa-solid fa-circle-user absolute -top-28 text-8xl"
-                  /> */}
                       <img
                         src={userData?.userProfile?.profile_image || "#"}
                         alt="profile avatar"
