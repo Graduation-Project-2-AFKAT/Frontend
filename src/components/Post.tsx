@@ -2,14 +2,17 @@ import { Heart, MessageSquare } from "lucide-react";
 import { IPost } from "../interfaces";
 import { Link } from "react-router";
 import moment from "moment";
+import { useAppSelector } from "../redux/hooks";
 
 interface IProps {
   post: IPost;
+  handleFollow?: () => void;
 }
 
-const Post = ({ post }: IProps) => {
+const Post = ({ post, handleFollow }: IProps) => {
+  const { id } = useAppSelector((state) => state.users.user);
   const { username, user_id, modified_at, created_at, user_profile_image } =
-    post; //TODO created_at or published_at??
+    post;
 
   const modified = new Date(modified_at).toLocaleString();
   const created = new Date(created_at).toLocaleString();
@@ -20,8 +23,8 @@ const Post = ({ post }: IProps) => {
       style={{
         gridTemplate: "auto auto 1fr auto auto / 1fr 1fr 1fr",
         backgroundImage: post.theme ? `url('${post.theme}')` : "none",
-        backgroundPosition: "top center",
-        // backgroundSize: `${bgZoom}%`,
+        backgroundPosition: "center",
+        backgroundSize: `${post.theme_zoom_number}%`,
       }}
     >
       <div
@@ -29,7 +32,6 @@ const Post = ({ post }: IProps) => {
       />
       <div className="col-span-3 flex h-fit justify-between px-5 pt-5">
         <div className="group flex items-center duration-150">
-          {/*  //TODO add user pfp */}
           <img
             src={user_profile_image}
             className={`${post.theme ? "drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""} fa-solid fa-circle-user aspect-square w-12 rounded-full border border-white object-cover`}
@@ -52,23 +54,34 @@ const Post = ({ post }: IProps) => {
                 : moment(created_at).fromNow()}
             </small>
           )}
-          <button className="rounded-sm border border-amber-50 bg-black/20 px-3 py-1 text-sm font-medium duration-150 hover:opacity-70">
-            Follow
-          </button>
+          {user_id !== id && (
+            <button
+              className="rounded-sm border border-amber-50 bg-black/20 px-3 py-1 text-sm font-medium transition-opacity hover:opacity-70"
+              onClick={handleFollow}
+            >
+              Follow
+            </button>
+          )}
         </div>
       </div>
-      <div className="col-span-3 py-4 pl-5 text-2xl font-bold tracking-wide">
+      <div className="col-span-3 py-2 pb-3 pl-5 text-center text-2xl font-bold tracking-wide">
         <span
-          className={`${post.theme ? "font-bold drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""}`}
+          className={`${post.theme ? "font-bold drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""} inline-block max-w-full px-2 break-words`}
         >
           {post.title}
         </span>
       </div>
-      <div className="col-span-3 flex h-full items-center justify-center border text-center">
-        <i className="fa-solid fa-play hover:text-primary text-5xl text-gray-300 transition-colors" />
-      </div>
+      {post.image && (
+        <div className="col-span-3 flex h-full items-center justify-center px-8 py-2 text-center">
+          <img
+            src={post.image}
+            alt={post.image.split("/").pop()}
+            className="h-full rounded-lg object-fill"
+          />
+        </div>
+      )}
       <div
-        className={`${post.theme ? "drop-shadow-[1px_4px_2px_rgba(0,0,0,0.7)]" : ""} col-span-3 mx-5 my-5 rounded-lg border bg-[#2A2731] px-4 py-3 text-lg`}
+        className={`${post.theme ? "drop-shadow-[1px_4px_2px_rgba(0,0,0,0.7)]" : ""} ${post.image ? "text-md" : "text-xl"} col-span-3 mx-8 my-5 rounded-lg border bg-[#2A2731] px-5 py-4`}
       >
         {post.content}
       </div>
@@ -99,10 +112,6 @@ const Post = ({ post }: IProps) => {
             </span>
           </span>
         </div>
-
-        {/* <div>
-          <i className="fa-solid fa-expand px-2 text-2xl duration-150 hover:opacity-75" />
-        </div> */}
       </div>
     </li>
   );

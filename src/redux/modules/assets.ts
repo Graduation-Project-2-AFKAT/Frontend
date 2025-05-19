@@ -11,7 +11,7 @@ export const loadAssets = createAsyncThunk(
     try {
       dispatch(startLoading("assets/load"));
 
-      const res = await api.get("/art");
+      const res = await api.get("/arts");
 
       // console.log(res.data);
 
@@ -32,7 +32,7 @@ export const loadAsset = createAsyncThunk(
     try {
       dispatch(startLoading("assets/view"));
 
-      const res = await api.get(`/art/${id}`);
+      const res = await api.get(`/arts/${id}`);
 
       // console.log(res.data);
 
@@ -64,7 +64,7 @@ export const downloadAsset = createAsyncThunk(
     dispatch(setDownloadProgress({ downloadProgress: 0, estimatedTime: null }));
 
     try {
-      const res = await api.get(`/art/${id}/download`, {
+      const res = await api.get(`/arts/${id}/download`, {
         responseType: "blob",
         onDownloadProgress: (progressEvent) => {
           const progress =
@@ -145,7 +145,7 @@ export const createAsset = createAsyncThunk(
     try {
       dispatch(startLoading("assets/create"));
 
-      const res = await api.post(`/art/`, assetData, {
+      const res = await api.post(`/arts/`, assetData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

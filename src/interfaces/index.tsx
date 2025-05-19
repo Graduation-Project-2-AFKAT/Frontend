@@ -16,6 +16,9 @@ export interface IUser {
     phone: string;
     profile_image: string;
   };
+  followers_count: number;
+  following_count: number;
+  is_following: boolean;
 }
 
 export interface IPost {

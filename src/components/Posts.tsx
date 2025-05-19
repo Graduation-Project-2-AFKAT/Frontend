@@ -1,8 +1,9 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { loadMyPosts, loadPosts, loadPostsById } from "../redux/modules/posts";
 import Post from "./Post";
-import { useLocation } from "react-router";
+import SkeletonPosts from "./ui/SkeletonPosts";
 
 interface IProps {
   type?: "all" | "mine";
@@ -25,39 +26,20 @@ const Posts = ({ type = "all" }: IProps) => {
       dispatch(loadPosts());
     } else if (type === "mine" && (postsType === "all" || !postsType)) {
       if (userId && isNumber) {
-        dispatch(loadPostsById(userId)); //TODO let 3mmar (the bitch) fix it
-        // dispatch(loadMyPosts());
+        dispatch(loadPostsById(userId));
       } else {
         dispatch(loadMyPosts());
       }
+    } else {
+      dispatch(loadPosts());
     }
-  }, []);
+  }, [location.pathname, dispatch, postsType, type]);
 
   return (
     <ul className="mb-25 space-y-10">
       {isLoading && loadingType.startsWith("posts") ? (
         <div className="flex flex-col items-center justify-center space-y-10 pb-12">
-          {[1, 2, 3].map((item) => (
-            <li
-              key={item}
-              className="w-full animate-pulse rounded-xl border border-white/25 bg-[#2A2731] p-5"
-            >
-              <div className="flex items-center space-x-2">
-                <div className="h-10 w-10 rounded-full bg-white/10"></div>
-                <div className="h-4 w-32 rounded bg-white/10"></div>
-                <div className="ml-auto h-6 w-20 rounded bg-white/10"></div>
-              </div>
-
-              <div className="mt-4 h-5 w-3/4 rounded bg-white/10"></div>
-              <div className="mt-7 h-82 rounded-lg bg-white/5"></div>
-              <div className="mt-4 flex justify-end">
-                <div className="flex space-x-4">
-                  <div className="h-6 w-16 rounded bg-white/10"></div>
-                  <div className="h-6 w-24 rounded bg-white/10"></div>
-                </div>
-              </div>
-            </li>
-          ))}
+          <SkeletonPosts />
         </div>
       ) : Posts.length > 0 ? (
         Posts.map((post) => {

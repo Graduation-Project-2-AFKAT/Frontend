@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { defaultImage } from "../utils";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { Link, useLocation } from "react-router";
-import { followUser, loadUserById } from "../redux/modules/users";
+import { followUser, loadUserById, unfollowUser } from "../redux/modules/users";
 import { IUser } from "../interfaces";
 import Tabs from "../components/profile/ProfileTabs";
 
@@ -119,7 +119,11 @@ const Profile = () => {
   const handleFollow = () => {
     try {
       if (author) {
-        dispatch(followUser(author.id.toString()));
+        if (userData?.is_following) {
+          dispatch(unfollowUser(author.id.toString()));
+        } else {
+          dispatch(followUser(author.id.toString()));
+        }
       }
     } catch (err) {
       console.log(err);
@@ -204,11 +208,15 @@ const Profile = () => {
 
               <div className="grid w-full grid-cols-3 text-center">
                 <small className="flex flex-col">
-                  <span className="text-xl font-bold">0</span>
+                  <span className="text-xl font-bold">
+                    {userData?.following_count}
+                  </span>
                   <span className="opacity-50">Following</span>
                 </small>
                 <small className="flex flex-col">
-                  <span className="text-xl font-bold">0</span>
+                  <span className="text-xl font-bold">
+                    {userData?.followers_count}
+                  </span>
                   <span className="opacity-50">Followers</span>
                 </small>
                 <small className="flex flex-col">
@@ -227,10 +235,10 @@ const Profile = () => {
                   </Link>
                 ) : (
                   <button
-                    className="border-primary hover:bg-primary w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black"
+                    className={`${userData?.is_following ? "border-red-400 hover:bg-red-400" : "border-primary hover:bg-primary"} w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black`}
                     onClick={handleFollow}
                   >
-                    Follow
+                    {userData?.is_following ? "Unfollow" : "Follow"}
                   </button>
                 )}
 
@@ -297,11 +305,15 @@ const Profile = () => {
 
                 <div className="grid grid-cols-3">
                   <small className="flex flex-col">
-                    <span className="text-xl font-bold">0</span>
+                    <span className="text-xl font-bold">
+                      {userData?.following_count}
+                    </span>
                     <span className="opacity-50">Following</span>
                   </small>
                   <small className="flex flex-col">
-                    <span className="text-xl font-bold">0</span>
+                    <span className="text-xl font-bold">
+                      {userData?.followers_count}
+                    </span>
                     <span className="opacity-50">Followers</span>
                   </small>
                   <small className="flex flex-col">
@@ -327,15 +339,7 @@ const Profile = () => {
 
             {/* Mid Section */}
             <div className="" id="MSection">
-              <Tabs
-                defaultTab="Posts"
-                tabs={["Posts", "Likes", "Draft Posts", "Scheduled Posts"]}
-              />
-
-              {/* {isLoading ? <Posts type="mine" /> : <div>Loading...</div>} */}
-              {/* <div className="flex h-full flex-col items-center py-10 text-xl font-light">
-                You haven't anything yet.
-              </div> */}
+              <Tabs defaultTab="Posts" tabs={["Posts", "Scheduled Posts"]} />
             </div>
 
             {/* Right Section */}
@@ -351,10 +355,10 @@ const Profile = () => {
                     </Link>
                   ) : (
                     <button
-                      className="border-primary hover:bg-primary w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black"
+                      className={`${userData?.is_following ? "border-red-400 hover:bg-red-400" : "border-primary hover:bg-primary"} border-primary hover:bg-primary w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black`}
                       onClick={handleFollow}
                     >
-                      Follow
+                      {userData?.is_following ? "Unfollow" : "Follow"}
                     </button>
                   )}
                 </div>

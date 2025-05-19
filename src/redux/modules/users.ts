@@ -119,7 +119,30 @@ export const followUser = createAsyncThunk(
     try {
       dispatch(startLoading("users/followUser"));
 
-      const res = await api.post(`/auth/follow/${id}`);
+      const res = await api.post(`/auth/follow/${id}/`);
+
+      // dispatch(showAlert({ msg: res.data.detail, type: "success" }));
+
+      console.log(res.status);
+
+      return res.status;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data); //TODO: errors should be in Error redux module
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
+export const unfollowUser = createAsyncThunk(
+  "user/unfollowUser",
+  async (id: string, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("users/unfollowUser"));
+
+      const res = await api.delete(`/auth/unfollow/${id}/`);
 
       // dispatch(showAlert({ msg: res.data.detail, type: "success" }));
 
@@ -149,6 +172,7 @@ export const changePassword = createAsyncThunk(
       dispatch(showAlert({ msg: res.data.detail, type: "success" }));
 
       console.log(res);
+
       // return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
@@ -189,6 +213,18 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(loadUserById.fulfilled, (state, action) => {
       state.author = action.payload;
+    });
+
+    builder.addCase(followUser.fulfilled, (state, action) => {
+      if (action.payload === 201 && state.author) {
+        state.author.is_following = true;
+      }
+    });
+
+    builder.addCase(unfollowUser.fulfilled, (state, action) => {
+      if (action.payload === 200 && state.author) {
+        state.author.is_following = false;
+      }
     });
 
     builder.addMatcher(

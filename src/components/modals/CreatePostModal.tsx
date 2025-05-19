@@ -41,6 +41,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
       content: "",
     },
   });
+  const title = watch("title") || "";
   const content = watch("content") || "";
 
   const dispatch = useAppDispatch();
@@ -176,11 +177,11 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
       formData.append("content", data.content || "");
       formData.append("published_at", new Date().toISOString());
       if (imageFile) {
-        formData.append("attachment", imageFile);
+        formData.append("image", imageFile);
       }
       if (postTheme) {
         formData.append("theme", postTheme);
-        formData.append("bgZoom", bgZoom.toString());
+        formData.append("theme_zoom_number", bgZoom.toString());
       }
 
       // Dispatch post creation action
@@ -457,10 +458,11 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                       type="submit"
                       disabled={
                         isLoading ||
+                        title.length === 0 ||
                         content.length === 0 ||
                         content.length > 256
                       }
-                      className={`bg-primary rounded-lg border border-black px-5 py-2 font-medium text-black shadow-md shadow-black/50 transition-transform disabled:cursor-not-allowed disabled:opacity-70 ${
+                      className={`bg-primary rounded-lg border border-black px-5 py-2 font-medium text-black shadow-md shadow-black/50 transition-transform disabled:cursor-not-allowed! disabled:opacity-70 ${
                         isLoading ||
                         content.length === 0 ||
                         content.length > 256

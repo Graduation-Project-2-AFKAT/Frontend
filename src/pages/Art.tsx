@@ -22,6 +22,7 @@ const Art = () => {
 
   const {
     id,
+    user_id,
     title,
     description,
     author,
@@ -209,7 +210,7 @@ const Art = () => {
       <div className="space-y-8 px-15 pt-8 pb-20">
         {/* Header */}
         <header className="flex items-center justify-between">
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col space-y-3">
             <h1 className="text-3xl font-bold">{title}</h1>
             <div className="flex">
               <img
@@ -220,7 +221,10 @@ const Art = () => {
 
               <span className="text-white/70">by</span>
               {/* //TODO redirect to profile page with author id to load their data, in profile page check if there is id on url load their data else keep your data there */}
-              <Link to={`#`} className="hover:text-primary ml-1 font-medium">
+              <Link
+                to={`/profile/${user_id}`}
+                className="hover:text-primary ml-1 font-medium"
+              >
                 {author}
               </Link>
             </div>
