@@ -26,6 +26,7 @@ import "./App.css";
 import { useAppDispatch } from "./redux/hooks";
 import { loadMyUser } from "./redux/modules/users";
 import { RootState } from "./redux/store";
+import EditArt from "./components/Arts/EditArt";
 
 const LoadingFallback = ({ isAuth }: { isAuth: boolean }) => (
   <div
@@ -169,6 +170,14 @@ function App() {
               element={
                 <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
                   <PublishArt />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/arts/:id/edit"
+              element={
+                <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
+                  <EditArt />
                 </ProtectedRoute>
               }
             />

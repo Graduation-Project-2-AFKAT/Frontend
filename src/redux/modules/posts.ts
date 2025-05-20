@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
-import { showAlert } from "./alerts";
+import { showAlert } from "./alerts.ts";
 import { AxiosError } from "axios";
 import api from "../../config/axios.config.ts";
 import { startLoading, stopLoading } from "./loading";

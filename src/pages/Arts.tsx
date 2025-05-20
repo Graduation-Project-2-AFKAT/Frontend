@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Component } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { loadAssets } from "../redux/modules/assets";
-import ArtCard from "../components/ArtCard";
+import ArtCard from "../components/Arts/ArtCard";
 import { IAsset } from "../interfaces";
 
 // Sample categories for game art assets

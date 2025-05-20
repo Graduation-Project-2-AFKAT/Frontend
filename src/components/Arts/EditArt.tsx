@@ -1,19 +1,20 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import Input from "../components/form/Input";
+import Input from "../../components/form/Input";
 import { Image, Info, X, FileText, Box } from "lucide-react";
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createAsset } from "../redux/modules/assets";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { createAsset } from "../redux/modules/arts";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useLocation } from "react-router";
+import { loadAssetById } from "../../redux/modules/assets";
 
 interface IAddArtFormData {
+  id: number | null;
   author: string;
   title: string;
   description: string;
-  thumbnail: File | null;
-  model_file: File | null;
   tags: string[];
   price: string;
   fileFormat: string;
@@ -32,7 +33,7 @@ const validationSchema = yup.object({
   price: yup.string().required("Price is required"),
 });
 
-const PublishArt = () => {
+const EditArt = () => {
   const {
     register,
     handleSubmit,
@@ -41,19 +42,47 @@ const PublishArt = () => {
   } = useForm<IAddArtFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
+      id: null,
       author: "",
       title: "",
       description: "",
-      thumbnail: null,
-      model_file: null,
       tags: [],
-      license: "Standard Commercial License",
-      price: "Free",
-      fileFormat: "GLTF",
     },
   });
 
   const dispatch = useAppDispatch();
+  const { Asset } = useAppSelector((state) => state.assets);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (Asset) {
+      const { id, title, description, thumbnail, tags } = Asset;
+
+      setValue("id", id);
+      setValue("title", title);
+      setValue("description", description);
+
+      // Update state variables
+      setSelectedTags(tags || []);
+      if (thumbnail) {
+        setUploadedImage(
+          typeof thumbnail === "string"
+            ? thumbnail
+            : URL.createObjectURL(thumbnail),
+        );
+      }
+    }
+  }, [Asset]);
+
+  useEffect(() => {
+    if (!Asset) {
+      const pathParts = location.pathname.split("/");
+      const assetId = pathParts[pathParts.length - 2];
+
+      dispatch(loadAssetById(assetId));
+    }
+  }, []);
 
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -65,7 +94,7 @@ const PublishArt = () => {
 
   const fileFormats = ["GLTF", "GLB"];
 
-  const tags = [
+  const tagsOptions = [
     "Unity",
     "Blender",
     "Krita",
@@ -229,22 +258,19 @@ const PublishArt = () => {
   };
 
   const onSubmit = handleSubmit((data) => {
-    if (activeStep === 3) {
-      if (!uploadedModelFile) {
-        toast.error("Please upload a 3D model file");
-        return;
-      }
-    }
-
     const formData = new FormData();
     const fileFormat = uploadedModelFile?.name.split(".").pop();
 
+    formData.append("id", data.id);
     formData.append("title", data.title);
     formData.append("description", data.description);
     formData.append("thumbnail", data.thumbnail);
     formData.append("tags", selectedTags.join(","));
     formData.append("model_file", uploadedModelFile!);
     formData.append("fileFormat", fileFormat || "");
+
+    formData.get("id");
+    console.log(data);
 
     // TODO
     // dispatch(createAsset(formData));
@@ -540,7 +566,7 @@ const PublishArt = () => {
                 <span className="ml-1 text-red-400">*</span>
               </label>
               <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
+                {tagsOptions.map((tag) => (
                   <button
                     key={tag}
                     type="button"
@@ -569,7 +595,7 @@ const PublishArt = () => {
           <div className="space-y-6">
             <div className="flex flex-col items-center justify-center">
               <p className="mb-4 text-center text-lg font-medium">
-                Upload Your 3D Model<span className="ml-1 text-red-400">*</span>
+                Upload Your 3D Model
               </p>
               <div
                 className="flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
@@ -704,4 +730,4 @@ const PublishArt = () => {
   );
 };
 
-export default PublishArt;
+export default EditArt;

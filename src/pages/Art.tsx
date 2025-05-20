@@ -1,19 +1,20 @@
 import { Grid, Html, OrbitControls, Stage, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Download, Flag, Heart, Share2 } from "lucide-react";
+import { Download, Edit, Flag, Heart } from "lucide-react";
 import moment from "moment";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { toast } from "react-toastify";
 import * as THREE from "three";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { downloadAsset, loadAsset } from "../redux/modules/assets";
+import { downloadAsset, loadAssetById } from "../redux/modules/assets";
 
 const ArtComments = lazy(
   () => import("../components/Arts/ArtComments"), //TODO this is only mocking comments, replace it with comment fetched from server
 );
 
 const Art = () => {
+  const { user } = useAppSelector((state) => state.users);
   const { Asset, downloadProgress, estimatedTime } = useAppSelector(
     (state) => state.assets,
   );
@@ -43,13 +44,28 @@ const Art = () => {
   const [isReportLoading, setIsReportLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!Asset) {
-      const id = location.pathname.split("/").pop();
+    const id = location.pathname.split("/").pop();
 
-      dispatch(loadAsset(id!));
-    }
+    dispatch(loadAssetById(id!));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Ensure prevent scrolling when mouse is over canvas container
+  useEffect(() => {
+    const container = canvasContainerRef.current;
+
+    if (container) {
+      const preventScroll = (e: WheelEvent) => {
+        e.preventDefault();
+      };
+
+      container.addEventListener("wheel", preventScroll, { passive: false });
+
+      return () => {
+        container.removeEventListener("wheel", preventScroll);
+      };
+    }
   }, []);
 
   const handleDownload = () => {
@@ -176,23 +192,6 @@ const Art = () => {
     return <primitive ref={modelRef} object={scene} />;
   }
 
-  // Ensure prevent scrolling when mouse is over canvas container
-  useEffect(() => {
-    const container = canvasContainerRef.current;
-
-    if (container) {
-      const preventScroll = (e: WheelEvent) => {
-        e.preventDefault();
-      };
-
-      container.addEventListener("wheel", preventScroll, { passive: false });
-
-      return () => {
-        container.removeEventListener("wheel", preventScroll);
-      };
-    }
-  }, []);
-
   const handleLike = () => {
     setLiked(!liked);
   };
@@ -247,7 +246,7 @@ const Art = () => {
               {isLoading &&
                 type === "assets/download" &&
                 downloadProgress > 0 && (
-                  <div className="absolute bottom-0 mt-2 w-full max-w-[150px] translate-y-8 xl:hidden">
+                  <div className="absolute bottom-0 mt-2 w-full max-w-[150px] translate-y-8">
                     <div className="h-1.5 w-full rounded-full bg-gray-700">
                       <div
                         className="bg-primary h-1.5 rounded-full transition-all duration-300 ease-out"
@@ -268,9 +267,14 @@ const Art = () => {
               >
                 <Heart size={20} className={liked ? "fill-primary" : ""} />
               </button>
-              <button className="rounded border border-white/20 px-3 py-2 hover:border-white/50">
-                <Share2 size={20} />
-              </button>
+              {user_id === user?.id && (
+                <Link
+                  to={"edit"}
+                  className="inline-flex rounded border border-white/20 px-3 py-2 hover:border-white/50"
+                >
+                  <Edit size={20} />
+                </Link>
+              )}
             </div>
           </div>
         </header>

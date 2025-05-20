@@ -1,10 +1,17 @@
 import Board from "../components/ui/Board";
 import { toast } from "react-toastify";
 import { useCallback, useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { downloadAGame, loadGame, resetGame } from "../redux/modules/games";
-import { Download, Heart, MessageSquare, Star, Undo2 } from "lucide-react";
+import {
+  Download,
+  Edit,
+  Heart,
+  MessageSquare,
+  Star,
+  Undo2,
+} from "lucide-react";
 import { lazy, Suspense } from "react";
 
 const GameCommentDialog = lazy(
@@ -16,6 +23,8 @@ const Game = () => {
   const dispatch = useAppDispatch();
   const { Game } = useAppSelector((state) => state.games);
   const { isLoading, type } = useAppSelector((state) => state.loading);
+  const { user } = useAppSelector((state) => state.users);
+  const { Asset } = useAppSelector((state) => state.assets);
   const { downloadProgress, estimatedTime } = useAppSelector(
     (state) => state.games,
   );
@@ -95,17 +104,19 @@ const Game = () => {
             </div>
           </div>
 
-          <div className="flex flex-col items-end xl:hidden">
-            <button
-              onClick={handleDownload}
-              disabled={isLoading && type === "games/download"}
-              className={`"disabled:bg-primary/70 bg-primary my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-not-allowed! ${!(isLoading && type === "games/download") && "hover:scale-95"}`}
-            >
-              {isLoading && type === "games/download"
-                ? `Downloading...`
-                : `Download`}
-              <Download width={18} />
-            </button>
+          <div className="flex items-center gap-x-3">
+            <div className="flex flex-col items-end xl:hidden">
+              <button
+                onClick={handleDownload}
+                disabled={isLoading && type === "games/download"}
+                className={`"disabled:bg-primary/70 bg-primary my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-not-allowed! ${!(isLoading && type === "games/download") && "hover:scale-95"}`}
+              >
+                {isLoading && type === "games/download"
+                  ? `Downloading...`
+                  : `Download`}
+                <Download width={18} />
+              </button>
+            </div>
 
             {/* Progress bar - only show when downloading */}
             {isLoading && type === "games/download" && downloadProgress > 0 && (
@@ -122,6 +133,16 @@ const Game = () => {
                 </div>
               </div>
             )}
+            <div>
+              {Asset?.user_id !== user?.id && (
+                <Link
+                  to={"edit"}
+                  className="inline-flex rounded border border-white/20 px-3 py-2 hover:border-white/50"
+                >
+                  <Edit size={20} />
+                </Link>
+              )}
+            </div>
           </div>
         </div>
 
@@ -144,7 +165,6 @@ const Game = () => {
               <input
                 type="text"
                 id="invite-link"
-                // value={`AFK@T.com/games/${id}`}
                 value={window.location.href}
                 className="w-full rounded border border-white/15 px-3 py-1.5"
                 readOnly
@@ -181,33 +201,47 @@ const Game = () => {
             </div>
           </div>
 
-          <div className="flex flex-col items-end">
-            <button
-              onClick={handleDownload}
-              disabled={isLoading && type === "games/download"}
-              className={`"disabled:bg-primary/70 bg-primary my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-wait ${!(isLoading && type === "games") && "hover:scale-95"}`}
-            >
-              {isLoading && type === "games/download"
-                ? `Downloading...`
-                : `Download`}
-              <Download width={18} />
-            </button>
+          <div className="flex items-center gap-x-3">
+            <div className="flex flex-col items-end">
+              <button
+                onClick={handleDownload}
+                disabled={isLoading && type === "games/download"}
+                className={`"disabled:bg-primary/70 bg-primary my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-wait ${!(isLoading && type === "games") && "hover:scale-95"}`}
+              >
+                {isLoading && type === "games/download"
+                  ? `Downloading...`
+                  : `Download`}
+                <Download width={18} />
+              </button>
 
-            {/* Progress bar - only show when downloading */}
-            {isLoading && type === "games/download" && downloadProgress > 0 && (
-              <div className="mt-2 hidden w-full max-w-[150px] xl:block">
-                <div className="h-1.5 w-full rounded-full bg-gray-700">
-                  <div
-                    className="bg-primary h-1.5 rounded-full transition-all duration-300 ease-out"
-                    style={{ width: `${downloadProgress}%` }}
-                  />
-                </div>
-                <div className="mt-1 flex justify-between text-xs">
-                  <p>~{estimatedTime || 0}s left</p>
-                  <p>{downloadProgress}%</p>
-                </div>
-              </div>
-            )}
+              {/* Progress bar - only show when downloading */}
+              {isLoading &&
+                type === "games/download" &&
+                downloadProgress > 0 && (
+                  <div className="mt-2 hidden w-full max-w-[150px] xl:block">
+                    <div className="h-1.5 w-full rounded-full bg-gray-700">
+                      <div
+                        className="bg-primary h-1.5 rounded-full transition-all duration-300 ease-out"
+                        style={{ width: `${downloadProgress}%` }}
+                      />
+                    </div>
+                    <div className="mt-1 flex justify-between text-xs">
+                      <p>~{estimatedTime || 0}s left</p>
+                      <p>{downloadProgress}%</p>
+                    </div>
+                  </div>
+                )}
+            </div>
+            <div>
+              {Asset?.user_id === user?.id && (
+                <Link
+                  to={"edit"}
+                  className="inline-flex rounded border border-white/20 px-3 py-2 hover:border-white/50"
+                >
+                  <Edit size={20} />
+                </Link>
+              )}
+            </div>
           </div>
         </div>
 

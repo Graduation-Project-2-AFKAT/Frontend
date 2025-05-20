@@ -146,9 +146,9 @@ export const unfollowUser = createAsyncThunk(
 
       // dispatch(showAlert({ msg: res.data.detail, type: "success" }));
 
-      console.log(res);
+      console.log(res.status);
 
-      // return res.data;
+      return res.status;
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
@@ -218,12 +218,14 @@ export const userSlice = createSlice({
     builder.addCase(followUser.fulfilled, (state, action) => {
       if (action.payload === 201 && state.author) {
         state.author.is_following = true;
+        state.author.followers_count++;
       }
     });
 
     builder.addCase(unfollowUser.fulfilled, (state, action) => {
       if (action.payload === 200 && state.author) {
         state.author.is_following = false;
+        state.author.followers_count--;
       }
     });
 

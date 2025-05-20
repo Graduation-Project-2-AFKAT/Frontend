@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { showAlert } from "./alerts";
+import { showAlert } from "./alerts.ts";
 import { AxiosError } from "axios";
 import api from "../../config/axios.config.ts";
-import { startLoading, stopLoading } from "./loading";
-import { IAsset } from "../../interfaces";
+import { startLoading, stopLoading } from "./loading.ts";
+import { IAsset } from "../../interfaces/index.tsx";
 
 export const loadAssets = createAsyncThunk(
   "assets/loadAll",
@@ -26,7 +26,7 @@ export const loadAssets = createAsyncThunk(
   },
 );
 
-export const loadAsset = createAsyncThunk(
+export const loadAssetById = createAsyncThunk(
   "assets/view",
   async (id: number | string, { dispatch, rejectWithValue }) => {
     try {
@@ -175,6 +175,42 @@ export const createAsset = createAsyncThunk(
   },
 );
 
+export const updateAsset = createAsyncThunk(
+  "assets/update",
+  async (assetData: FormData, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("assets/update"));
+
+      const res = await api.patch(`/arts/${assetData.get("id")}`, assetData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(res.data);
+      dispatch(
+        showAlert({
+          msg: "3D model uploaded successfully! Our team will review it shortly.",
+          type: "success",
+        }),
+      );
+
+      // return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(
+        showAlert({
+          msg: error.response?.data || "Failed to create post",
+          type: "error",
+        }),
+      );
+      return rejectWithValue(error.response?.data);
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
 const initialState = {
   Assets: [] as IAsset[],
   Asset: null as IAsset | null,
@@ -200,11 +236,11 @@ export const assetsSlice = createSlice({
       state.Assets = [];
     });
 
-    builder.addCase(loadAsset.fulfilled, (state, action) => {
+    builder.addCase(loadAssetById.fulfilled, (state, action) => {
       state.Asset = action.payload;
     });
 
-    builder.addCase(loadAsset.rejected, (state) => {
+    builder.addCase(loadAssetById.rejected, (state) => {
       state.Asset = null;
     });
   },

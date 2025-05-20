@@ -32,16 +32,17 @@ const Post = ({ post, handleFollow }: IProps) => {
       />
       <div className="col-span-3 flex h-fit justify-between px-5 pt-5">
         <div className="group flex items-center duration-150">
-          <img
-            src={user_profile_image}
-            className={`${post.theme ? "drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""} fa-solid fa-circle-user aspect-square w-12 rounded-full border border-white object-cover`}
-          />
-          <Link to={`/profile/${user_id}`}>
-            <span
-              className={`${post.theme ? "drop-shadow-[1px_1px_1px_rgba(0,0,0,1)]" : ""} ml-3 cursor-pointer text-sm font-bold hover:underline`}
-            >
-              @{username}
-            </span>
+          <Link to={`/profile/${user_id}`} className="mr-3">
+            <img
+              src={user_profile_image}
+              className={`${post.theme ? "drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""} fa-solid fa-circle-user aspect-square w-12 rounded-full border border-white object-cover`}
+            />
+          </Link>
+          <Link
+            to={`/profile/${user_id}`}
+            className={`${post.theme ? "drop-shadow-[1px_1px_1px_rgba(0,0,0,1)]" : ""} cursor-pointer text-sm font-bold hover:underline`}
+          >
+            <span>@{username}</span>
           </Link>
         </div>
         <div
@@ -76,12 +77,12 @@ const Post = ({ post, handleFollow }: IProps) => {
           <img
             src={post.image}
             alt={post.image.split("/").pop()}
-            className="h-full rounded-lg object-fill"
+            className="h-full rounded-lg border border-white/20 object-fill"
           />
         </div>
       )}
       <div
-        className={`${post.theme ? "drop-shadow-[1px_4px_2px_rgba(0,0,0,0.7)]" : ""} ${post.image ? "text-md" : "text-xl"} col-span-3 mx-8 my-5 rounded-lg border bg-[#2A2731] px-5 py-4`}
+        className={`${post.theme ? "drop-shadow-[1px_4px_2px_rgba(0,0,0,0.7)]" : ""} ${post.image ? "text-md" : "text-xl"} col-span-3 mx-8 my-5 rounded-lg border border-white/20 bg-[#2A2731] px-5 py-4`}
       >
         {post.content}
       </div>
