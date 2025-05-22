@@ -1,21 +1,48 @@
 import { ThumbsDown, ThumbsUp } from "lucide-react";
-import { useState } from "react";
+import moment from "moment";
+import { useEffect, useState } from "react";
+import api from "../../config/axios.config";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { commentGame, loadGameComments } from "../../redux/modules/games";
 
 interface GameCommentDialogProps {
   onClose: () => void;
-  gameId?: string;
 }
 
-const GameCommentDialog = ({
-  onClose,
-  gameId = "1",
-}: GameCommentDialogProps) => {
+interface IComment {
+  id: number;
+  game: number;
+  user: number;
+  username: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
+const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
+  const dispatch = useAppDispatch();
+  const { userProfile } = useAppSelector((state) => state.users.user);
+  const { Game, Comments } = useAppSelector((state) => state.games);
+
   const [comment, setComment] = useState("");
+  const [createdAt, setCreatedAt] = useState("");
+  const [updatedAt, setUpdatedAt] = useState("");
+
+  const handleCommentTime = (modified_at: string, created_at: string) => {
+    setCreatedAt(new Date(created_at).toLocaleString());
+    setUpdatedAt(new Date(modified_at).toLocaleString());
+  };
+
+  useEffect(() => {
+    dispatch(loadGameComments());
+  }, []);
 
   const handleSubmitComment = () => {
-    // Here you would handle the comment submission
-    console.log("Submitting comment:", comment, "for game:", gameId);
-    // Clear the comment input
+    if (!Game) return;
+
+    const commentData = { comment: comment, gameId: Game.id };
+    dispatch(commentGame(commentData));
+
     setComment("");
   };
 
@@ -39,12 +66,19 @@ const GameCommentDialog = ({
 
         <h2 className="my-5 px-5 text-lg font-bold">Add a Comment</h2>
 
-        <div className="flex h-fit items-center gap-x-5 px-5">
-          <i className="fa-solid fa-circle-user text-5xl" />
+        <div className="flex h-fit items-start gap-x-5 px-5">
+          {/* <i className="fa-solid fa-circle-user text-5xl" /> */}
+          <img
+            src={userProfile.profile_image}
+            className={
+              "fa-solid fa-circle-user aspect-square w-12 rounded-full border border-white object-cover"
+            }
+          />
           <textarea
             className="w-full rounded-md border border-white/25 p-3 text-sm duration-300 outline-none focus-within:border-white/100"
             rows={1}
             placeholder="Leave a comment..."
+            name="comment"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             onInput={(e) => {
@@ -67,32 +101,33 @@ const GameCommentDialog = ({
           </button>
         </div>
 
-        {/* Mock comments */}
+        {/* Comments */}
         <div className="mt-5 py-5">
           <hr className="w-full opacity-15" />
 
-          {/* Comment items - you could map these from an array */}
-          {[1, 2, 3, 4, 5].map((index) => (
-            <div key={index}>
-              <div className="flex gap-x-2 rounded px-10 py-7">
+          {Comments.map(({ id, username, content }) => (
+            <div key={id}>
+              <div className="flex gap-x-5 rounded px-10 py-6">
                 <i className="fa-solid fa-circle-user text-4xl" />
 
-                <div className="flex flex-col justify-between gap-y-5">
+                <div className="flex flex-col justify-between gap-y-3">
                   <div>
                     <p className="text-sm font-bold">
-                      User{index}{" "}
-                      <span className="font-extralight opacity-50">@user</span>
+                      {username}{" "}
+                      <span className="font-extralight opacity-50">
+                        @{username}
+                      </span>
                     </p>
-                    <small className="text-xs opacity-50">
-                      almost 2 years ago
-                    </small>
+                    {(createdAt || updatedAt) && (
+                      <small>
+                        {createdAt !== updatedAt
+                          ? `(Edited) ${moment(updatedAt).fromNow()}`
+                          : moment(createdAt).fromNow()}
+                      </small>
+                    )}
                   </div>
 
-                  <p className="text-sm">
-                    {index % 2 === 0
-                      ? "This is a great game!"
-                      : "Looking forward to more updates!"}
-                  </p>
+                  <p className="text-sm">{content}</p>
 
                   <div className="flex items-center gap-x-5">
                     <div className="flex gap-x-2">
@@ -104,7 +139,7 @@ const GameCommentDialog = ({
                             "cubic-bezier(0.438, 3, 0.64, 1)",
                         }}
                       />
-                      <span>{15 - index}</span>
+                      <span>{15 - id}</span>
                     </div>
                     <ThumbsDown
                       size={25}

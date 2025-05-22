@@ -1,9 +1,3 @@
-import Board from "../components/ui/Board";
-import { toast } from "react-toastify";
-import { useCallback, useEffect, useState } from "react";
-import { Link, useLocation } from "react-router";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { downloadAGame, loadGame, resetGame } from "../redux/modules/games";
 import {
   Download,
   Edit,
@@ -12,7 +6,17 @@ import {
   Star,
   Undo2,
 } from "lucide-react";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router";
+import { toast } from "react-toastify";
+import Board from "../components/ui/Board";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import {
+  downloadAGame,
+  loadGameById,
+  rateGame,
+  resetGame,
+} from "../redux/modules/games";
 
 const GameCommentDialog = lazy(
   () => import("../components/games/GameCommentDialog"), //TODO this is only mocking comments, replace it with comment fetched from server
@@ -24,7 +28,6 @@ const Game = () => {
   const { Game } = useAppSelector((state) => state.games);
   const { isLoading, type } = useAppSelector((state) => state.loading);
   const { user } = useAppSelector((state) => state.users);
-  const { Asset } = useAppSelector((state) => state.assets);
   const { downloadProgress, estimatedTime } = useAppSelector(
     (state) => state.games,
   );
@@ -50,9 +53,9 @@ const Game = () => {
     if (!Game) {
       const pathParts = location.pathname.split("/");
       const gameId = pathParts[pathParts.length - 1];
-      dispatch(loadGame(gameId));
+      dispatch(loadGameById(gameId));
     } else if (id) {
-      dispatch(loadGame(id.toString()));
+      dispatch(loadGameById(id.toString()));
     }
 
     return () => {
@@ -62,13 +65,16 @@ const Game = () => {
 
   const handleRating = useCallback(
     (value: number) => {
+      if (!Game) return;
+
+      dispatch(rateGame({ rate: value, gameId: Game.id }));
       if (userRating === value) {
         setUserRating(0);
       } else {
         setUserRating(value);
       }
     },
-    [userRating],
+    [userRating, Game, dispatch],
   );
 
   const handleDownload = () => {
@@ -133,8 +139,9 @@ const Game = () => {
                 </div>
               </div>
             )}
+            {/* //TODO fix Game.user_id is not exist
             <div>
-              {Asset?.user_id !== user?.id && (
+              {Game?. !== user?.id && (
                 <Link
                   to={"edit"}
                   className="inline-flex rounded border border-white/20 px-3 py-2 hover:border-white/50"
@@ -142,7 +149,7 @@ const Game = () => {
                   <Edit size={20} />
                 </Link>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -232,6 +239,7 @@ const Game = () => {
                   </div>
                 )}
             </div>
+            {/* //TODO fix Game.user_id is not exist
             <div>
               {Asset?.user_id === user?.id && (
                 <Link
@@ -241,7 +249,7 @@ const Game = () => {
                   <Edit size={20} />
                 </Link>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -281,24 +289,6 @@ const Game = () => {
               />
             </div>
           )}
-
-          {/* //TODO Full screen button */}
-          {/* <button
-            className="absolute border"
-            onClick={() => {
-              const iframe = document.querySelector("iframe");
-
-              if (iframe) {
-                if (!document.fullscreenElement) {
-                  iframe.requestFullscreen();
-                } else {
-                  document.exitFullscreen();
-                }
-              }
-            }}
-          >
-            Full screen
-          </button> */}
         </div>
 
         <div className="my-2 flex justify-between rounded-md border border-white/10 bg-[#2E2B35] px-5 py-2.5">
@@ -332,10 +322,7 @@ const Game = () => {
                   </div>
                 }
               >
-                <GameCommentDialog
-                  onClose={() => setShowDialog(false)}
-                  gameId={id?.toString()}
-                />
+                <GameCommentDialog onClose={() => setShowDialog(false)} />
               </Suspense>
             )}
           </div>

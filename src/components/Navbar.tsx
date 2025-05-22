@@ -23,7 +23,6 @@ const Navbar = ({
   const { user, isAuth } = useAppSelector((state) => state.users);
 
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [darkTheme, setDarkTheme] = useState("ON");
 
   const handleMenuClick = () => {
     setShowSidebar((prev) => !prev);
@@ -79,7 +78,7 @@ const Navbar = ({
                 to="/games"
                 className={`underlineNav relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300`}
               >
-                Discover
+                Games
               </NavLink>
             </li>
 
@@ -120,7 +119,7 @@ const Navbar = ({
                           setShowMiniNav(false);
                         }}
                       >
-                        Discover
+                        Games
                       </Link>
                     </li>
                     <li className="cursor-pointer hover:bg-[#1f1c24]">
@@ -170,7 +169,7 @@ const Navbar = ({
               <li>
                 <NavLink
                   to="/membership"
-                  className="rounded-lg border-2 p-2 text-sm text-nowrap"
+                  className="rounded-lg border-2 p-2 text-sm text-nowrap hover:opacity-70"
                 >
                   Become a member
                 </NavLink>
@@ -239,15 +238,6 @@ const Navbar = ({
                 >
                   Settings
                 </NavLink>
-                <div
-                  className="flex cursor-pointer items-center justify-between px-4 py-2.5 hover:bg-white/10"
-                  onClick={() =>
-                    setDarkTheme((prev) => (prev === "ON" ? "OFF" : "ON"))
-                  }
-                >
-                  Dark Theme
-                  <small className="text-gray-500">{darkTheme}</small>
-                </div>
 
                 <div className="px-4">
                   <small className="bg-primary my-3 flex h-9 w-full cursor-pointer items-center justify-center rounded-md text-base font-medium tracking-wider">

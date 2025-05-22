@@ -50,6 +50,17 @@ export interface IGame {
   rating: number;
   game_file: string;
   thumbnail: string;
+  comments: string[];
+}
+
+export interface IComment {
+  id: number;
+  game: number;
+  user: number;
+  content: string;
+  username: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface IJam {
