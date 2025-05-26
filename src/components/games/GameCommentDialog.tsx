@@ -25,16 +25,28 @@ const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
   const { Game, Comments } = useAppSelector((state) => state.games);
 
   const [comment, setComment] = useState("");
-  const [createdAt, setCreatedAt] = useState("");
-  const [updatedAt, setUpdatedAt] = useState("");
 
-  const handleCommentTime = (modified_at: string, created_at: string) => {
-    setCreatedAt(new Date(created_at).toLocaleString());
-    setUpdatedAt(new Date(modified_at).toLocaleString());
+  // This function just formats dates without changing state
+  const formatCommentTime = (created: string, updated: string) => {
+    const createdMoment = moment(created);
+    const updatedMoment = moment(updated);
+
+    if (!createdMoment.isValid() || !updatedMoment.isValid()) {
+      return "Invalid date";
+    }
+
+    // Check if dates are different (ignoring milliseconds)
+    const wasEdited = !createdMoment.isSame(updatedMoment, "second");
+
+    return wasEdited
+      ? `(Edited) ${updatedMoment.fromNow()}`
+      : createdMoment.fromNow();
   };
 
   useEffect(() => {
-    dispatch(loadGameComments());
+    if (Comments.length === 0) {
+      dispatch(loadGameComments());
+    }
   }, []);
 
   const handleSubmitComment = () => {
@@ -105,26 +117,22 @@ const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
         <div className="mt-5 py-5">
           <hr className="w-full opacity-15" />
 
-          {Comments.map(({ id, username, content }) => (
+          {Comments.map(({ id, username, content, created_at, updated_at }) => (
             <div key={id}>
               <div className="flex gap-x-5 rounded px-10 py-6">
                 <i className="fa-solid fa-circle-user text-4xl" />
 
-                <div className="flex flex-col justify-between gap-y-3">
-                  <div>
+                <div className="flex w-full flex-col justify-between gap-y-3">
+                  <div className="flex justify-between">
                     <p className="text-sm font-bold">
                       {username}{" "}
                       <span className="font-extralight opacity-50">
                         @{username}
                       </span>
                     </p>
-                    {(createdAt || updatedAt) && (
-                      <small>
-                        {createdAt !== updatedAt
-                          ? `(Edited) ${moment(updatedAt).fromNow()}`
-                          : moment(createdAt).fromNow()}
-                      </small>
-                    )}
+                    <small className="opacity-50">
+                      {formatCommentTime(created_at, updated_at)}
+                    </small>
                   </div>
 
                   <p className="text-sm">{content}</p>
