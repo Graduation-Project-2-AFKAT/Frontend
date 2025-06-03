@@ -40,7 +40,7 @@ const Arts = () => {
   return (
     <main className="w-full overflow-y-auto p-10">
       <div className="flex flex-col gap-y-5">
-        <div className="mb-5 flex items-center justify-between">
+        <header className="mb-5 flex items-center justify-between">
           <h1 className="text-2xl font-bold">
             Share Your Game Assets With The World!
           </h1>
@@ -51,7 +51,7 @@ const Arts = () => {
           >
             Add Your Asset <Component size={20} />
           </Link>
-        </div>
+        </header>
 
         {/* Hero section */}
         <div className="relative mb-6 h-64 overflow-hidden rounded-xl">
