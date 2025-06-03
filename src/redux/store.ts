@@ -9,9 +9,9 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [
           "games/setDownloadProgress",
-          "games/downloadGame/pending",
-          "games/downloadGame/fullfiled",
-          "games/downloadGame/rejected",
+          "games/download/pending",
+          "games/download/fullfilled",
+          "games/download/rejected",
         ],
         ignoredPath: ["games.downloadBlob"],
       },
@@ -23,6 +23,7 @@ export type AppDispatch = typeof store.dispatch;
 
 export default store;
 
+// TODO
 // let currentState = store.getState();
 
 // store.subscribe(() => {

@@ -7,7 +7,7 @@ interface IProps {
 }
 
 const GameCard = ({ game, className }: IProps) => {
-  const { id, title, creator, tags, thumbnail } = game;
+  const { id, title, username, tags, thumbnail } = game;
 
   return (
     <Link
@@ -30,7 +30,7 @@ const GameCard = ({ game, className }: IProps) => {
               <i className="fa-solid fa-circle-user w-10 cursor-pointer text-4xl" />
 
               <div className="ml-2 flex flex-col">
-                <small className="font-bold opacity-70">{creator}</small>
+                <small className="font-bold opacity-70">{username}</small>
                 <span className="font-bold">{title}</span>
               </div>
             </div>

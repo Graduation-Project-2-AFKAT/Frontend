@@ -1,113 +1,101 @@
 import { ThumbsDown, ThumbsUp } from "lucide-react";
-import { useState } from "react";
+import moment from "moment";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { loadAssetComments } from "../../redux/modules/assets";
 
 const ArtComments = () => {
-  const [comment, setComment] = useState("");
+  const dispatch = useAppDispatch();
+  const { Asset, Comments } = useAppSelector((state) => state.assets);
 
-  const handleSubmitComment = () => {
-    // Here you would handle the comment submission
-    console.log("Submitting comment:", comment);
-    // Clear the comment input
-    setComment("");
+  useEffect(() => {
+    if (Asset && Comments.length === 0) {
+      dispatch(loadAssetComments(Asset.id));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [Asset]);
+
+  const formatCommentTime = (created: string, updated: string) => {
+    const createdMoment = moment(created);
+    const updatedMoment = moment(updated);
+
+    if (!createdMoment.isValid() || !updatedMoment.isValid()) {
+      return "Invalid date";
+    }
+
+    // Check if dates are different (ignoring milliseconds)
+    const wasEdited = !createdMoment.isSame(updatedMoment, "second");
+
+    return wasEdited
+      ? `(Edited) ${updatedMoment.fromNow()}`
+      : createdMoment.fromNow();
   };
 
+  if (Comments.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-lg border border-white/10 bg-[#16141C] p-10 text-center">
+        <p className="text-lg font-medium">No comments yet</p>
+        <p className="mt-2 text-white/70">
+          Be the first to share your thoughts about this asset!
+        </p>
+      </div>
+    );
+  }
+
   return (
-    //TODO Make this Comment component general for games and posts
-    <div className="absolute inset-0 top-0 z-50 items-center justify-center overflow-y-auto bg-black/50">
-      <div
-        className="relative mx-auto w-full overflow-hidden bg-[#29282D] py-5 shadow-lg sm:my-20 sm:w-[38rem] sm:rounded-lg"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button className="group absolute top-5 right-0 translate-x-21 space-x-5 rounded-l-lg border border-r-0 border-red-400 bg-red-400 py-2 pr-10 pl-4 text-sm font-extrabold tracking-wider text-black duration-300 hover:translate-x-5 hover:shadow-md hover:shadow-black/100">
-          <span>X</span>
-          <span>Close</span>
-        </button>
+    <div className="space-y-6">
+      <h3 className="text-xl font-semibold">Comments ({Comments.length})</h3>
 
-        <h2 className="my-5 px-5 text-lg font-bold">Add a Comment</h2>
-
-        <div className="flex h-fit items-center gap-x-5 px-5">
-          <i className="fa-solid fa-circle-user text-5xl" />
-          <textarea
-            className="w-full rounded-md border border-white/25 p-3 text-sm duration-300 outline-none focus-within:border-white/100"
-            rows={1}
-            placeholder="Leave a comment..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            onInput={(e) => {
-              const target = e.target as HTMLTextAreaElement;
-              target.style.height = "auto";
-              target.style.height = `${target.scrollHeight}px`;
-            }}
-            style={{ overflow: "hidden", resize: "none" }}
-          />
-        </div>
-
-        {/* Submit button */}
-        <div className="mt-3 flex justify-end px-5">
-          <button
-            onClick={handleSubmitComment}
-            disabled={!comment.trim()}
-            className="bg-primary rounded px-4 py-1.5 font-medium text-black disabled:opacity-50"
+      {Comments.length > 0 &&
+        Comments.map(({ id, username, content, created_at, updated_at }) => (
+          <div
+            key={id}
+            className="rounded-lg border border-white/10 bg-[#16141C] p-5"
           >
-            Submit
-          </button>
-        </div>
+            <div className="flex gap-x-4">
+              <img
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`}
+                alt={username}
+                className="h-10 w-10 rounded-full"
+              />
 
-        {/* Mock comments */}
-        <div className="mt-5 py-5">
-          <hr className="w-full opacity-15" />
-
-          {/* Comment items - you could map these from an array */}
-          {[1, 2, 3, 4, 5].map((index) => (
-            <div key={index}>
-              <div className="flex gap-x-2 rounded px-10 py-7">
-                <i className="fa-solid fa-circle-user text-4xl" />
-
-                <div className="flex flex-col justify-between gap-y-5">
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-bold">
-                      User{index}{" "}
-                      <span className="font-extralight opacity-50">@user</span>
-                    </p>
-                    <small className="text-xs opacity-50">
-                      almost 2 years ago
-                    </small>
+                    <p className="font-medium">{username}</p>
+                    <p className="text-xs text-white/50">@{username}</p>
                   </div>
+                  <span className="text-xs text-white/50">
+                    {formatCommentTime(created_at, updated_at)}
+                  </span>
+                </div>
 
-                  <p className="text-sm">
-                    {index % 2 === 0
-                      ? "This is a great game!"
-                      : "Looking forward to more updates!"}
-                  </p>
+                <p className="mt-3 text-white/90">{content}</p>
 
-                  <div className="flex items-center gap-x-5">
-                    <div className="flex gap-x-2">
-                      <ThumbsUp
-                        size={25}
-                        className="relative origin-left duration-250 hover:-rotate-10"
-                        style={{
-                          transitionTimingFunction:
-                            "cubic-bezier(0.438, 3, 0.64, 1)",
-                        }}
-                      />
-                      <span>{15 - index}</span>
-                    </div>
-                    <ThumbsDown
-                      size={25}
-                      className="relative top-0.5 origin-right duration-250 hover:-rotate-10"
-                      style={{
-                        transitionTimingFunction:
-                          "cubic-bezier(0.438, 3, 0.64, 1)",
-                      }}
+                <div className="mt-4 flex items-center gap-6">
+                  <button className="flex items-center gap-1.5 text-white/70 hover:text-white">
+                    <ThumbsUp
+                      size={16}
+                      className="transition-transform hover:-translate-y-0.5"
                     />
-                  </div>
+                    <span className="text-xs">{15 - id}</span>
+                  </button>
+
+                  <button className="flex items-center gap-1.5 text-white/70 hover:text-white">
+                    <ThumbsDown
+                      size={16}
+                      className="transition-transform hover:translate-y-0.5"
+                    />
+                  </button>
+
+                  <button className="text-xs text-white/70 hover:text-white">
+                    Reply
+                  </button>
                 </div>
               </div>
-              <hr className="w-full opacity-15" />
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        ))}
     </div>
   );
 };

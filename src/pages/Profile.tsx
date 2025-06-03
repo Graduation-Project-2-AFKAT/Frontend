@@ -1,12 +1,12 @@
 import { EllipsisVertical, MessageSquare, Trophy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
-import { defaultImage } from "../utils";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { Link, useLocation } from "react-router";
-import { followUser, loadUserById, unfollowUser } from "../redux/modules/users";
-import { IUser } from "../interfaces";
+import { toast } from "react-toastify";
 import Tabs from "../components/profile/ProfileTabs";
+import { IUser } from "../interfaces";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { followUser, loadUserById, unfollowUser } from "../redux/modules/users";
+import { defaultImage } from "../utils";
 
 const Profile = () => {
   const dispatch = useAppDispatch();
@@ -146,14 +146,20 @@ const Profile = () => {
             <div className="hidden items-center gap-x-5 lg:flex">
               <div className="relative top-8 flex aspect-square w-32 items-center justify-center self-end overflow-hidden rounded-full border-2 bg-black text-white">
                 {userData ? (
-                  <img
-                    src={userData?.userProfile?.profile_image}
-                    alt="profile avatar"
-                    className="object-cover"
-                  />
+                  userData.userProfile.profile_image ? (
+                    <img
+                      src={userData.userProfile.profile_image}
+                      alt="profile avatar"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-5xl text-white">
+                      {defaultImage(userData?.username)}
+                    </div>
+                  )
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-5xl text-white">
-                    {defaultImage(userData?.username)}
+                  <div className="flex h-full w-full animate-pulse items-center justify-center bg-gray-800/50">
+                    <span className="sr-only">Loading profile</span>
                   </div>
                 )}
               </div>
@@ -181,14 +187,20 @@ const Profile = () => {
 
             <div className="flex flex-col items-center space-y-5 pt-10 pb-5 lg:hidden">
               {userData ? (
-                <img
-                  src={userData?.userProfile?.profile_image || "#"}
-                  alt="profile avatar"
-                  className="aspect-square w-30 rounded-full border-2 object-cover"
-                />
+                userData?.userProfile?.profile_image ? (
+                  <img
+                    src={userData.userProfile.profile_image || "#"}
+                    alt="profile avatar"
+                    className="aspect-square w-30 rounded-full border-2 object-cover"
+                  />
+                ) : (
+                  <div className="flex h-30 w-30 items-center justify-center rounded-full border-2 bg-black text-5xl text-white">
+                    {defaultImage(userData?.username)}
+                  </div>
+                )
               ) : (
-                <div className="flex h-30 w-30 items-center justify-center rounded-full border-2 bg-black text-5xl text-white">
-                  {defaultImage(userData?.username)}
+                <div className="flex h-full w-full animate-pulse items-center justify-center bg-gray-800/50">
+                  <span className="sr-only">Loading profile</span>
                 </div>
               )}
 
@@ -225,7 +237,7 @@ const Profile = () => {
                 </small>
               </div>
 
-              <div className="flex w-full items-center justify-between space-x-2 px-5 md:px-0">
+              <div className="flex w-full items-center justify-between gap-x-2 px-5 md:px-0">
                 {isOwner ? (
                   <Link
                     to={`/profile/edit`}
@@ -265,12 +277,6 @@ const Profile = () => {
                     </button>
                   </form>
                 </dialog>
-
-                <div>
-                  <button className="rounded-md border p-1.5">
-                    <EllipsisVertical />
-                  </button>
-                </div>
               </div>
             </div>
           </header>
@@ -278,7 +284,7 @@ const Profile = () => {
           <section className="grid min-h-screen w-full gap-x-10 bg-[#23202A] px-10 pt-10 xl:px-15 xl:pt-12">
             {/* Left Section */}
             <div
-              className="sticky top-20 hidden h-fit translate-y-0 space-y-10 rounded-lg border border-white/25 bg-[#222028] py-10 pt-4 duration-250 xl:block"
+              className="sticky top-20 hidden h-fit translate-y-0 space-y-10 rounded-lg border border-white/10 bg-[#2A2731] py-10 pt-4 duration-250 xl:block"
               id={window.innerWidth >= 1280 ? "LSection" : undefined}
             >
               <div className="flex w-full flex-col gap-x-4 px-5 text-center">
@@ -317,7 +323,7 @@ const Profile = () => {
                     <span className="opacity-50">Followers</span>
                   </small>
                   <small className="flex flex-col">
-                    <span className="text-xl font-bold">0</span>
+                    <span className="text-xl font-bold">+99</span>
                     <span className="opacity-50">Likes</span>
                   </small>
                 </div>
@@ -363,7 +369,7 @@ const Profile = () => {
                   )}
                 </div>
 
-                <div className="flex w-full flex-col space-y-3 rounded-lg border border-white/25 bg-[#222028] px-5 py-5">
+                <div className="flex w-full flex-col space-y-3 rounded-lg border border-white/10 bg-[#2A2731] px-5 py-5">
                   <h1 className="text-lg font-bold">Your invite link</h1>
                   <div className="flex items-center gap-x-2">
                     <input
@@ -397,7 +403,7 @@ const Profile = () => {
 
                 {/* left section to right on smaller screens */}
                 <div
-                  className="sticky top-20 h-fit translate-y-0 space-y-5 rounded-lg border border-white/25 bg-[#222028] py-5 pt-0 duration-300 xl:hidden"
+                  className="sticky top-20 h-fit translate-y-0 space-y-5 rounded-lg border border-white/10 bg-[#222028] py-5 pt-0 duration-300 xl:hidden"
                   id={window.innerWidth < 1280 ? "LSection" : undefined}
                 >
                   <div className="flex w-full flex-col gap-x-4 px-5 text-center">
@@ -409,7 +415,7 @@ const Profile = () => {
                         src={userData?.userProfile?.profile_image || "#"}
                         alt="profile avatar"
                         ref={window.innerWidth < 1280 ? iRef : undefined}
-                        className="absolute aspect-square w-20 -translate-y-28 rounded-full border object-cover"
+                        className="absolute aspect-square w-20 -translate-y-28 rounded-full border object-cover text-xs"
                       />
 
                       <ul className="grid -translate-y-3 grid-cols-2 gap-x-2 text-xs">

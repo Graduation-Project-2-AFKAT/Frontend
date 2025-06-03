@@ -3,7 +3,7 @@ import { showAlert } from "./alerts.ts";
 import { AxiosError } from "axios";
 import api from "../../config/axios.config.ts";
 import { startLoading, stopLoading } from "./loading.ts";
-import { IAsset } from "../../interfaces/index.tsx";
+import { IAsset, IComment } from "../../interfaces/index.tsx";
 
 export const loadAssets = createAsyncThunk(
   "assets/loadAll",
@@ -181,7 +181,7 @@ export const updateAsset = createAsyncThunk(
     try {
       dispatch(startLoading("assets/update"));
 
-      const res = await api.patch(`/arts/${assetData.get("id")}`, assetData, {
+      const res = await api.patch(`/arts/${assetData.get("id")}/`, assetData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -190,7 +190,7 @@ export const updateAsset = createAsyncThunk(
       console.log(res.data);
       dispatch(
         showAlert({
-          msg: "3D model uploaded successfully! Our team will review it shortly.",
+          msg: "3D model updated successfully! Our team will review it shortly.",
           type: "success",
         }),
       );
@@ -211,9 +211,81 @@ export const updateAsset = createAsyncThunk(
   },
 );
 
+export const loadAssetComments = createAsyncThunk(
+  "assets/comments",
+  async (assetId: number, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("assets/comments"));
+
+      const res = await api.get(`/arts/${assetId}/comments`);
+
+      // console.log(res);
+
+      return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data || "Failed to load asset");
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
+export const commentAsset = createAsyncThunk(
+  "assets/comment",
+  async (
+    data: { comment: string; assetId: number },
+    { dispatch, rejectWithValue },
+  ) => {
+    try {
+      dispatch(startLoading("assets/comment"));
+
+      const res = await api.post(`/arts/${data.assetId}/comment/`, {
+        content: data.comment,
+      });
+
+      // console.log("comment:", res.data);
+
+      return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data || "Failed to load asset");
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
+// export const rateAsset = createAsyncThunk(
+//   "assets/rate",
+//   async (
+//     data: { rate: number; assetId: number },
+//     { dispatch, rejectWithValue },
+//   ) => {
+//     try {
+//       dispatch(startLoading("assets/rate"));
+
+//       const res = await api.post(`/arts/${data.assetId}/rate/`, data.rate);
+
+//       console.log("rate:", res);
+
+//       // return res.data;
+//     } catch (err: unknown) {
+//       const error = err as AxiosError;
+//       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+//       return rejectWithValue(error.response?.data || "Failed to load asset");
+//     } finally {
+//       dispatch(stopLoading());
+//     }
+//   },
+// );
+
 const initialState = {
   Assets: [] as IAsset[],
   Asset: null as IAsset | null,
+  Comments: [] as IComment[],
   downloadProgress: 0,
   estimatedTime: null as number | null,
 };
@@ -225,6 +297,10 @@ export const assetsSlice = createSlice({
     setDownloadProgress: (state, action) => {
       state.downloadProgress = action.payload.downloadProgress;
       state.estimatedTime = action.payload.estimatedTime;
+    },
+    resetAsset: (state) => {
+      state.Asset = null;
+      state.Comments = [];
     },
   },
   extraReducers: (builder) => {
@@ -243,9 +319,21 @@ export const assetsSlice = createSlice({
     builder.addCase(loadAssetById.rejected, (state) => {
       state.Asset = null;
     });
+
+    builder.addCase(loadAssetComments.fulfilled, (state, action) => {
+      state.Comments = action.payload;
+    });
+
+    builder.addCase(loadAssetComments.rejected, (state) => {
+      state.Comments = [];
+    });
+
+    builder.addCase(commentAsset.fulfilled, (state, action) => {
+      state.Comments = [action.payload, ...state.Comments];
+    });
   },
 });
 
-export const { setDownloadProgress } = assetsSlice.actions;
+export const { setDownloadProgress, resetAsset } = assetsSlice.actions;
 
 export default assetsSlice.reducer;

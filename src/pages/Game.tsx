@@ -12,7 +12,8 @@ import { toast } from "react-toastify";
 import Board from "../components/ui/Board";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
-  downloadAGame,
+  downloadGame,
+  gameRatings,
   loadGameById,
   rateGame,
   resetGame,
@@ -26,8 +27,8 @@ const Game = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { Game } = useAppSelector((state) => state.games);
-  const { isLoading, type } = useAppSelector((state) => state.loading);
   const { user } = useAppSelector((state) => state.users);
+  const { isLoading, type } = useAppSelector((state) => state.loading);
   const { downloadProgress, estimatedTime } = useAppSelector(
     (state) => state.games,
   );
@@ -35,7 +36,7 @@ const Game = () => {
     id = "",
     title = "",
     description = "",
-    creator = "",
+    username: creator = "",
     rating = 3.3,
     game_file = "",
     thumbnail = "",
@@ -56,6 +57,10 @@ const Game = () => {
       dispatch(loadGameById(gameId));
     } else if (id) {
       dispatch(loadGameById(id.toString()));
+    }
+
+    if (location.state?.permissionDenied) {
+      toast.warn(location.state?.message);
     }
 
     return () => {
@@ -79,9 +84,7 @@ const Game = () => {
 
   const handleDownload = () => {
     if (id) {
-      dispatch(
-        downloadAGame({ id: id, gameTitle: title, gameFile: game_file }),
-      );
+      dispatch(downloadGame({ id: id, gameTitle: title, gameFile: game_file }));
     }
   };
 
@@ -139,17 +142,15 @@ const Game = () => {
                 </div>
               </div>
             )}
-            {/* //TODO fix Game.user_id is not exist
-            <div>
-              {Game?. !== user?.id && (
-                <Link
-                  to={"edit"}
-                  className="inline-flex rounded border border-white/20 px-3 py-2 hover:border-white/50"
-                >
-                  <Edit size={20} />
-                </Link>
-              )}
-            </div> */}
+
+            {Game?.user_id === user?.id && (
+              <Link
+                to={"edit"}
+                className="inline-flex rounded border border-white/20 px-3 py-2 hover:border-white/50"
+              >
+                <Edit size={20} />
+              </Link>
+            )}
           </div>
         </div>
 
@@ -239,17 +240,15 @@ const Game = () => {
                   </div>
                 )}
             </div>
-            {/* //TODO fix Game.user_id is not exist
-            <div>
-              {Asset?.user_id === user?.id && (
-                <Link
-                  to={"edit"}
-                  className="inline-flex rounded border border-white/20 px-3 py-2 hover:border-white/50"
-                >
-                  <Edit size={20} />
-                </Link>
-              )}
-            </div> */}
+
+            {Game?.user_id === user?.id && (
+              <Link
+                to={"edit"}
+                className="inline-flex rounded border border-white/20 px-3 py-2 hover:border-white/50"
+              >
+                <Edit size={20} />
+              </Link>
+            )}
           </div>
         </div>
 
@@ -329,7 +328,7 @@ const Game = () => {
 
           {/* Rating */}
           <div className="flex items-end gap-x-5">
-            <p className="text-sm">( {userRating} / 5 )</p>
+            <p className="text-sm">( {rating} / 5 )</p>
             <div className="relative flex">
               {/* Empty/background stars */}
               {[1, 2, 3, 4, 5].map((value) => (
@@ -345,7 +344,7 @@ const Game = () => {
               <div
                 className="pointer-events-none absolute flex overflow-hidden"
                 style={{
-                  width: `${(userRating / 5) * 100}%`,
+                  width: `${(user_rating / 5) * 100}%`,
                   willChange: "width",
                   transition: "width 0.2s ease-out",
                 }}
@@ -426,7 +425,7 @@ const Game = () => {
               <input
                 type="text"
                 id="invite-link-sm"
-                value={`AFK@T.com/games/${id}`}
+                value={window.location.href}
                 className="w-full rounded border border-white/15 px-3 py-1.5"
                 readOnly
               />

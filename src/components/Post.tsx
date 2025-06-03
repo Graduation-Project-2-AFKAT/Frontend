@@ -1,7 +1,7 @@
 import { Heart, MessageSquare } from "lucide-react";
-import { IPost } from "../interfaces";
-import { Link } from "react-router";
 import moment from "moment";
+import { Link } from "react-router";
+import { IPost } from "../interfaces";
 import { useAppSelector } from "../redux/hooks";
 
 interface IProps {
@@ -10,7 +10,8 @@ interface IProps {
 }
 
 const Post = ({ post, handleFollow }: IProps) => {
-  const { id } = useAppSelector((state) => state.users.user);
+  const user = useAppSelector((state) => state.users.user);
+  const id = user?.id;
   const { username, user_id, modified_at, created_at, user_profile_image } =
     post;
 
@@ -77,7 +78,7 @@ const Post = ({ post, handleFollow }: IProps) => {
           <img
             src={post.image}
             alt={post.image.split("/").pop()}
-            className="h-full rounded-lg border border-white/20 object-fill"
+            className={`h-full rounded-lg border border-white/20 object-fill`} //TODO
           />
         </div>
       )}

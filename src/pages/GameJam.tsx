@@ -78,7 +78,7 @@ const GameJam = () => {
   }, [activeTab, dispatch]);
 
   return (
-    <div className="p-10">
+    <main className="w-full overflow-y-auto px-20 pt-10">
       {/* Header */}
       <div className="mb-10 text-center">
         <h1 className="mb-4 text-4xl font-bold">Game Jams</h1>
@@ -506,7 +506,7 @@ const GameJam = () => {
       </div>
 
       {/* Footer */}
-      <div className="mt-10 rounded-t-full border-t border-white/10 py-5 text-center">
+      <div className="mt-10 rounded-t-full border-t border-white/10 py-8 text-center">
         <p className="text-sm text-white/60">
           © {new Date().getFullYear()} AFKAT. All rights reserved.
         </p>
@@ -515,7 +515,7 @@ const GameJam = () => {
           respective owners.
         </p>
       </div>
-    </div>
+    </main>
   );
 };
 

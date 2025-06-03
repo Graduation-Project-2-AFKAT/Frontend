@@ -38,7 +38,7 @@ const Arts = () => {
   };
 
   return (
-    <div className="mx-auto w-full max-w-7xl p-10">
+    <main className="w-full overflow-y-auto p-10">
       <div className="flex flex-col gap-y-5">
         <div className="mb-5 flex items-center justify-between">
           <h1 className="text-2xl font-bold">
@@ -46,7 +46,7 @@ const Arts = () => {
           </h1>
           <Link
             to={`${window.location.pathname}/publish`}
-            className="hover:bg-primary focus:bg-primary/75 flex cursor-pointer items-center gap-x-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-bold text-black duration-50 focus:translate-y-0.5"
+            className="hover:bg-primary focus:bg-primary/75 ml-5 flex cursor-pointer items-center gap-x-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-bold text-nowrap text-black duration-50 focus:translate-y-0.5"
             onClick={scrollToTop}
           >
             Add Your Asset <Component size={20} />
@@ -122,7 +122,7 @@ const Arts = () => {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-              <span>Loading assets...</span>
+              <span>Loading Assets...</span>
             </div>
           </div>
         ) : (
@@ -177,7 +177,7 @@ const Arts = () => {
           </>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 

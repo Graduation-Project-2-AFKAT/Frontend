@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { AlertMessages } from "../interfaces";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { resetAlertMsg } from "../redux/modules/alerts";
+import { startLoading } from "../redux/modules/loading";
 
 const RootLayout = () => {
   const location = useLocation();
@@ -49,9 +50,7 @@ const RootLayout = () => {
           }
         });
       }
-    }
 
-    if (show) {
       dispatch(resetAlertMsg());
     }
 

@@ -43,7 +43,7 @@ export const loadGameById = createAsyncThunk(
   },
 );
 
-export const downloadAGame = createAsyncThunk(
+export const downloadGame = createAsyncThunk(
   "games/download",
   async (
     {
@@ -169,13 +169,49 @@ export const createGame = createAsyncThunk(
   },
 );
 
+export const updateGame = createAsyncThunk(
+  "Games/update",
+  async (gameData: FormData, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("Games/update"));
+
+      const res = await api.patch(`/games/${gameData.get("id")}`, gameData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(res.data);
+      dispatch(
+        showAlert({
+          msg: "Game updated successfully! Our team will review it shortly.",
+          type: "success",
+        }),
+      );
+
+      // return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(
+        showAlert({
+          msg: error.response?.data || "Failed to create post",
+          type: "error",
+        }),
+      );
+      return rejectWithValue(error.response?.data);
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
 export const loadGameComments = createAsyncThunk(
   "games/comments",
-  async (_, { dispatch, rejectWithValue }) => {
+  async (gameId: number, { dispatch, rejectWithValue }) => {
     try {
       dispatch(startLoading("games/comments"));
 
-      const res = await api.get(`/games/comments`);
+      const res = await api.get(`/games/${gameId}/comments`);
 
       // console.log(res);
 
@@ -206,6 +242,27 @@ export const commentGame = createAsyncThunk(
       // console.log("comment:", res.data);
 
       return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data || "Failed to load game");
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
+export const gameRatings = createAsyncThunk(
+  "games/ratings",
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("games/ratings"));
+
+      const res = await api.get(`/games/ratings`);
+
+      console.log("rate:", res);
+
+      // return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
@@ -258,6 +315,7 @@ export const gamesSlice = createSlice({
     },
     resetGame: (state) => {
       state.Game = null;
+      state.Comments = [];
     },
   },
   extraReducers: (builder) => {
@@ -278,7 +336,7 @@ export const gamesSlice = createSlice({
     });
 
     builder.addCase(loadGameComments.fulfilled, (state, action) => {
-      state.Comments = action.payload.results;
+      state.Comments = action.payload;
     });
 
     builder.addCase(loadGameComments.rejected, (state) => {

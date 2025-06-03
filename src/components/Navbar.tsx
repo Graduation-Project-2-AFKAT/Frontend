@@ -1,9 +1,9 @@
-import { useState } from "react";
-import Divider from "./ui/Divider";
-import { Link, NavLink } from "react-router";
 import { LogOut } from "lucide-react";
-import { logout } from "../redux/modules/users";
+import { useState } from "react";
+import { Link, NavLink } from "react-router";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { logout } from "../redux/modules/users";
+import Divider from "./ui/Divider";
 
 interface IProps {
   showSidebar: boolean;
@@ -36,9 +36,9 @@ const Navbar = ({
 
   return (
     //TODO make underline white/100 when selected
-    <nav className="fixed z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015] px-8">
+    <nav className="fixed z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015]/10 px-8 shadow-[1px_1px_5px_rgba(0,0,0,0.5)] drop-shadow-md backdrop-blur-sm">
       <div // Click outside any opened menu to close it
-        className={`${showMiniNav || showUserMenu ? "fixed" : "hidden"} inset-0 z-5 bg-red-400/20`} //TODO replace bg-red-400/10 with bg-transparent
+        className={`${showMiniNav || showUserMenu ? "fixed" : "hidden"} inset-0 z-5 h-screen w-screen bg-black/50`} //TODO replace bg-red-400/10 with bg-transparent
         onClick={() => {
           if (showMiniNav) {
             setShowMiniNav(false);
@@ -53,7 +53,7 @@ const Navbar = ({
           <i
             className="fa-solid fa-bars md:before:hidden"
             onClick={handleMenuClick}
-          ></i>
+          />
 
           <NavLink
             to="/"
@@ -150,8 +150,8 @@ const Navbar = ({
             )}
           </div>
 
-          <div className="mx-0 flex grow items-center rounded-md bg-[#2A2731] py-2 pl-3 text-sm">
-            <i className="fa-solid fa-magnifying-glass mr-4"></i>
+          <div className="mx-0 flex grow items-center rounded-md border border-white/25 bg-[#2A2731] py-2 pl-3 text-sm">
+            <i className="fa-solid fa-magnifying-glass mr-4" />
             <input
               id="search-bar"
               type="text"
@@ -201,7 +201,7 @@ const Navbar = ({
 
             {/* user menu */}
             <div
-              className={`${showUserMenu ? "opacity-100" : "pointer-events-none opacity-0 duration-200"} absolute top-22 right-10 z-5 aspect-auto w-60 rounded-lg border border-white/50 bg-black opacity-0 drop-shadow-2xl before:absolute before:-top-4.5 before:right-6 before:h-0 before:w-0 before:border-8 before:border-b-10 before:border-transparent before:border-b-white/50`}
+              className={`${showUserMenu ? "opacity-100" : "pointer-events-none opacity-0 duration-200"} absolute top-22 right-0 z-5 aspect-auto w-60 -translate-x-5 rounded-lg border border-white/50 bg-black opacity-0 drop-shadow-2xl before:absolute before:-top-4.5 before:right-6 before:h-0 before:w-0 before:border-8 before:border-b-10 before:border-transparent before:border-b-white/50`}
             >
               <NavLink to="/profile" onClick={() => setShowUserMenu(false)}>
                 <div className="px-4 pt-4 hover:bg-white/10">

@@ -49,7 +49,7 @@ const Tabs = ({ defaultTab, tabs }: IProps) => {
               </div>
             }
           >
-            <Posts type="mine" />
+            <Posts />
           </Suspense>
         ) : (
           <div>No Results Found</div>

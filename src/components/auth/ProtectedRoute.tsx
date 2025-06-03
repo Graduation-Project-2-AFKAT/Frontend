@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAppSelector } from "../../redux/hooks";
 
 interface IProps {
@@ -16,11 +16,40 @@ const ProtectedRoute = ({
   isAuthRoute = false,
 }: IProps) => {
   const { isLoading } = useAppSelector((state) => state.loading);
+  const { user } = useAppSelector((state) => state.users);
+  const { Game } = useAppSelector((state) => state.games);
+  const { Asset } = useAppSelector((state) => state.assets);
+
+  const location = useLocation();
+
   const localToken = localStorage.getItem("access_token");
   const isLoggedIn = !!localToken || isAuthenticated;
 
   if (!isLoading) {
-    //TODO remove isLoading to stop loading page like anchor tag
+    const urlResources = location.pathname.split("/");
+    const isEdit = urlResources[urlResources.length - 1] === "edit";
+    const pathEnd = urlResources[urlResources.length - 2];
+    const isNumber = pathEnd && !isNaN(Number(pathEnd));
+
+    // if (
+    //   isEdit &&
+    //   isNumber &&
+    //   (Game?.user_id !== user?.id || Asset?.user_id !== user?.id)
+    // ) {
+    //   const contentPath = location.pathname.replace(/\/edit$/, "");
+
+    //   return (
+    //     <Navigate
+    //       to={contentPath}
+    //       replace
+    //       state={{
+    //         permissionDenied: true,
+    //         message: "You don't have permission to edit this content",
+    //       }}
+    //     />
+    //   );
+    // }
+
     // Case 1: User is not logged in and trying to access a protected route
     if (!isLoggedIn && !isAuthRoute) {
       console.log("redirected Case:1");

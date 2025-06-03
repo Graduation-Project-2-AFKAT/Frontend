@@ -5,15 +5,9 @@ import { loadMyPosts, loadPosts, loadPostsById } from "../redux/modules/posts";
 import Post from "./Post";
 import SkeletonPosts from "./ui/SkeletonPosts";
 
-interface IProps {
-  type?: "all" | "mine";
-}
-
-const Posts = ({ type = "all" }: IProps) => {
-  const { isLoading, type: loadingType } = useAppSelector(
-    (state) => state.loading,
-  );
-  const { Posts, type: postsType } = useAppSelector((state) => state.posts);
+const Posts = () => {
+  const { isLoading, type } = useAppSelector((state) => state.loading);
+  const { Posts } = useAppSelector((state) => state.posts);
   const dispatch = useAppDispatch();
 
   const location = useLocation();
@@ -22,9 +16,7 @@ const Posts = ({ type = "all" }: IProps) => {
     const userId = location.pathname.split("/").pop();
     const isNumber = !isNaN(Number(userId));
 
-    if (type === "all" && (postsType === "mine" || !postsType)) {
-      dispatch(loadPosts());
-    } else if (type === "mine" && (postsType === "all" || !postsType)) {
+    if (location.pathname.split("/").some((word) => word === "profile")) {
       if (userId && isNumber) {
         dispatch(loadPostsById(userId));
       } else {
@@ -33,11 +25,13 @@ const Posts = ({ type = "all" }: IProps) => {
     } else {
       dispatch(loadPosts());
     }
-  }, [location.pathname, dispatch, postsType, type]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   return (
     <ul className="mb-25 space-y-10">
-      {isLoading && loadingType.startsWith("posts") ? (
+      {isLoading && type.startsWith("posts") ? (
         <div className="flex flex-col items-center justify-center space-y-10 pb-12">
           <SkeletonPosts />
         </div>

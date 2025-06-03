@@ -1,4 +1,4 @@
-import { IAsset } from "../interfaces";
+import { IAsset } from "../../interfaces";
 
 interface IProps {
   asset: IAsset;
@@ -16,7 +16,7 @@ const ArtCard = ({ asset }: IProps) => {
           className="h-full w-full object-cover transition-transform group-hover:scale-105"
         />
         <div className="absolute top-2 right-2 rounded bg-[#121015]/80 px-3 py-1 text-sm">
-          Price:
+          FREE
         </div>
       </div>
       <div className="p-4">

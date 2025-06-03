@@ -1,14 +1,13 @@
-import { useState, useRef, useEffect } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Box, FileText, Image, Info, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useLocation } from "react-router";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 import Input from "../../components/form/Input";
-import { Image, Info, X, FileText, Box } from "lucide-react";
-import { toast } from "react-toastify";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { createAsset } from "../redux/modules/arts";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { useLocation } from "react-router";
-import { loadAssetById } from "../../redux/modules/assets";
+import { loadAssetById, updateAsset } from "../../redux/modules/assets";
 
 interface IAddArtFormData {
   id: number | null;
@@ -55,35 +54,6 @@ const EditArt = () => {
 
   const location = useLocation();
 
-  useEffect(() => {
-    if (Asset) {
-      const { id, title, description, thumbnail, tags } = Asset;
-
-      setValue("id", id);
-      setValue("title", title);
-      setValue("description", description);
-
-      // Update state variables
-      setSelectedTags(tags || []);
-      if (thumbnail) {
-        setUploadedImage(
-          typeof thumbnail === "string"
-            ? thumbnail
-            : URL.createObjectURL(thumbnail),
-        );
-      }
-    }
-  }, [Asset]);
-
-  useEffect(() => {
-    if (!Asset) {
-      const pathParts = location.pathname.split("/");
-      const assetId = pathParts[pathParts.length - 2];
-
-      dispatch(loadAssetById(assetId));
-    }
-  }, []);
-
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedModelFile, setUploadedModelFile] = useState<File | null>(null);
@@ -114,6 +84,35 @@ const EditArt = () => {
     "Personal Use Only",
     "Creative Commons",
   ];
+
+  useEffect(() => {
+    if (Asset) {
+      const { id, title, description, thumbnail, tags } = Asset;
+
+      setValue("id", id);
+      setValue("title", title);
+      setValue("description", description);
+
+      // Update state variables
+      setSelectedTags(tags || []);
+      if (thumbnail) {
+        setUploadedImage(
+          typeof thumbnail === "string"
+            ? thumbnail
+            : URL.createObjectURL(thumbnail),
+        );
+      }
+    }
+  }, [Asset]);
+
+  useEffect(() => {
+    if (!Asset) {
+      const pathParts = location.pathname.split("/");
+      const assetId = pathParts[pathParts.length - 2];
+
+      dispatch(loadAssetById(assetId));
+    }
+  }, []);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -272,8 +271,9 @@ const EditArt = () => {
     formData.get("id");
     console.log(data);
 
+    console.log("Submitting game update:", data);
     // TODO
-    // dispatch(createAsset(formData));
+    dispatch(updateAsset(formData));
   });
 
   const nextStep = (e: React.MouseEvent<HTMLButtonElement>) => {

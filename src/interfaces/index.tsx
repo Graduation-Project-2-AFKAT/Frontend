@@ -41,10 +41,11 @@ export interface IPost {
 
 export interface IGame {
   id: number;
+  user_id: number;
   title: string;
   description: string;
-  creator: string;
-  user_rating: string;
+  username: string;
+  user_rating: number;
   tags: string[];
   download_count: number;
   rating: number;
@@ -53,9 +54,24 @@ export interface IGame {
   comments: string[];
 }
 
+export interface IAsset {
+  id: number;
+  user_id: number;
+  author: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  model_file: string;
+  download_count: number;
+  tags: string[];
+  created_at: string;
+  preview_image: string;
+}
+
 export interface IComment {
   id: number;
-  game: number;
+  game?: number;
+  art?: number;
   user: number;
   content: string;
   username: string;
@@ -75,20 +91,6 @@ export interface IJam {
   participants: string[];
   participants_count: number;
   is_active: boolean;
-}
-
-export interface IAsset {
-  id: number;
-  user_id: number;
-  author: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  model_file: string;
-  download_count: number;
-  tags: string[];
-  created_at: string;
-  preview_image: string;
 }
 
 export interface AlertMessages {

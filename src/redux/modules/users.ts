@@ -123,7 +123,7 @@ export const followUser = createAsyncThunk(
 
       // dispatch(showAlert({ msg: res.data.detail, type: "success" }));
 
-      console.log(res.status);
+      // console.log(res.status);
 
       return res.status;
     } catch (err: unknown) {
@@ -146,7 +146,7 @@ export const unfollowUser = createAsyncThunk(
 
       // dispatch(showAlert({ msg: res.data.detail, type: "success" }));
 
-      console.log(res.status);
+      // console.log(res.status);
 
       return res.status;
     } catch (err: unknown) {

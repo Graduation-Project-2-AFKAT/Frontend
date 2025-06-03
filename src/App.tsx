@@ -27,6 +27,7 @@ import { useAppDispatch } from "./redux/hooks";
 import { loadMyUser } from "./redux/modules/users";
 import { RootState } from "./redux/store";
 import EditArt from "./components/Arts/EditArt";
+import EditGame from "./components/games/EditGame";
 
 const LoadingFallback = ({ isAuth }: { isAuth: boolean }) => (
   <div
@@ -137,8 +138,15 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/membership"
+              element={
+                <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
+                  <BecomeAMember />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/games" element={<Games />} />
-            {/*//TODO "/games/:title/:id" */}
             <Route
               path="/games/:id"
               element={
@@ -156,15 +164,23 @@ function App() {
               }
             />
             <Route
-              path="/membership"
+              path="/games/:id/edit"
               element={
                 <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
-                  <BecomeAMember />
+                  <EditGame />
                 </ProtectedRoute>
               }
             />
+
             <Route path="/arts" element={<Arts />} />
-            <Route path="/arts/:id" element={<Art />} />
+            <Route
+              path="/arts/:id"
+              element={
+                <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
+                  <Art />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/arts/publish"
               element={

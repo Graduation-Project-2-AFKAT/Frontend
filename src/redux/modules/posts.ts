@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
-import { showAlert } from "./alerts.ts";
 import { AxiosError } from "axios";
 import api from "../../config/axios.config.ts";
-import { startLoading, stopLoading } from "./loading";
 import { IPost } from "../../interfaces";
+import { showAlert } from "./alerts.ts";
+import { startLoading, stopLoading } from "./loading";
 
 export const loadPosts = createAsyncThunk(
   "posts/load",
@@ -104,7 +104,6 @@ export const createPost = createAsyncThunk(
 const initialState = {
   Posts: [] as IPost[],
   Post: null as IPost | null,
-  type: "" as "all" | "mine" | "",
 };
 
 export const postsSlice = createSlice({
@@ -114,12 +113,10 @@ export const postsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(loadMyPosts.fulfilled, (state, action) => {
       state.Posts = action.payload.results;
-      state.type = "mine";
     });
 
     builder.addCase(loadPosts.fulfilled, (state, action) => {
       state.Posts = action.payload.results;
-      state.type = "all";
     });
 
     builder.addCase(loadPostsById.fulfilled, (state, action) => {
@@ -140,7 +137,6 @@ export const postsSlice = createSlice({
       isAnyOf(loadPosts.rejected, loadMyPosts.rejected),
       (state) => {
         state.Posts = [];
-        state.type = "";
       },
     );
   },

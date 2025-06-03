@@ -320,118 +320,122 @@ const PublishGame = () => {
   });
 
   return (
-    <form
-      className="border-primary relative mx-auto my-10 flex h-fit w-[90%] max-w-5xl flex-col items-start rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      {/* Header */}
-      <div className="w-full border-b border-white/10 p-6">
-        <h1 className="text-2xl font-bold">Upload Your Game</h1>
-        <p className="text-sm text-white/70">
-          Share your creation with thousands of players around the world
-        </p>
-      </div>
+    <div className="w-full overflow-y-auto">
+      <form
+        className="border-primary relative mx-auto my-10 flex h-fit w-[85%] max-w-4xl flex-col items-start rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        {/* Header */}
+        <div className="w-full border-b border-white/10 p-6">
+          <h1 className="text-2xl font-bold">Upload Your Game</h1>
+          <p className="text-sm text-white/70">
+            Share your creation with thousands of players around the world
+          </p>
+        </div>
 
-      {/* Progress Steps */}
-      <div className="w-full px-6 pt-4">
-        <div className="flex justify-between">
-          <div className={`flex flex-col items-center`}>
-            <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full ${activeStep >= 1 ? "bg-primary text-black" : "bg-white/20"}`}
-            >
-              <Package size={20} />
+        {/* Progress Steps */}
+        <div className="w-full px-6 pt-4">
+          <div className="flex justify-between">
+            <div className={`flex flex-col items-center`}>
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-full ${activeStep >= 1 ? "bg-primary text-black" : "bg-white/20"}`}
+              >
+                <Package size={20} />
+              </div>
+              <span className="mt-2 text-sm">Game Details</span>
             </div>
-            <span className="mt-2 text-sm">Game Details</span>
-          </div>
-          <div className="relative flex-1">
-            <div
-              className={`absolute top-5 h-1 w-full ${activeStep >= 2 ? "bg-primary" : "bg-white/20"}`}
-            />
-          </div>
-          <div className={`flex flex-col items-center`}>
-            <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full ${activeStep >= 2 ? "bg-primary text-black" : "bg-white/20"}`}
-            >
-              <Image size={20} />
+            <div className="relative flex-1">
+              <div
+                className={`absolute top-5 h-1 w-full ${activeStep >= 2 ? "bg-primary" : "bg-white/20"}`}
+              />
             </div>
-            <span className="mt-2 text-sm">Media & Tags</span>
-          </div>
-          <div className="relative flex-1">
-            <div
-              className={`absolute top-5 h-1 w-full ${activeStep >= 3 ? "bg-primary" : "bg-white/20"}`}
-            />
-          </div>
-          <div className={`flex flex-col items-center`}>
-            <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full ${activeStep >= 3 ? "bg-primary text-black" : "bg-white/20"}`}
-            >
-              <Upload size={20} />
+            <div className={`flex flex-col items-center`}>
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-full ${activeStep >= 2 ? "bg-primary text-black" : "bg-white/20"}`}
+              >
+                <Image size={20} />
+              </div>
+              <span className="mt-2 text-sm">Media & Tags</span>
             </div>
-            <span className="mt-2 text-sm">Upload Files</span>
+            <div className="relative flex-1">
+              <div
+                className={`absolute top-5 h-1 w-full ${activeStep >= 3 ? "bg-primary" : "bg-white/20"}`}
+              />
+            </div>
+            <div className={`flex flex-col items-center`}>
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-full ${activeStep >= 3 ? "bg-primary text-black" : "bg-white/20"}`}
+              >
+                <Upload size={20} />
+              </div>
+              <span className="mt-2 text-sm">Upload Files</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Form Content */}
-      <div className="w-full flex-1 p-6">
-        {/* Step 1: Basic Info */}
-        {activeStep === 1 && (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="col-span-1 md:col-span-2">
-              <label className="mb-2 block text-sm font-medium" htmlFor="title">
-                Game Title
-                <span className="ml-1 text-red-400">*</span>
-              </label>
-              <Input
-                placeholder="Enter your game title"
-                className="w-full"
-                id="title"
-                {...register("title")}
-              />
-              {errors.title && (
-                <p className="mt-1 text-xs text-red-400">
-                  {errors.title.message}
-                </p>
-              )}
-            </div>
+        {/* Form Content */}
+        <div className="w-full flex-1 p-6">
+          {/* Step 1: Basic Info */}
+          {activeStep === 1 && (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="col-span-1 md:col-span-2">
+                <label
+                  className="mb-2 block text-sm font-medium"
+                  htmlFor="title"
+                >
+                  Game Title
+                  <span className="ml-1 text-red-400">*</span>
+                </label>
+                <Input
+                  placeholder="Enter your game title"
+                  className="w-full"
+                  id="title"
+                  {...register("title")}
+                />
+                {errors.title && (
+                  <p className="mt-1 text-xs text-red-400">
+                    {errors.title.message}
+                  </p>
+                )}
+              </div>
 
-            <div className="col-span-1 md:col-span-2">
-              <label
-                className="mb-2 block text-sm font-medium"
-                htmlFor="description"
-              >
-                Description
-                <span className="ml-1 text-red-400">*</span>
-              </label>
-              <textarea
-                id="description"
-                className="field-sizing-content min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400"
-                placeholder="Describe your game (features, story, etc.)"
-                {...register("description")}
-              />
-              {errors.description && (
-                <p className="mt-1 text-xs text-red-400">
-                  {errors.description.message}
-                </p>
-              )}
-            </div>
+              <div className="col-span-1 md:col-span-2">
+                <label
+                  className="mb-2 block text-sm font-medium"
+                  htmlFor="description"
+                >
+                  Description
+                  <span className="ml-1 text-red-400">*</span>
+                </label>
+                <textarea
+                  id="description"
+                  className="field-sizing-content min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400"
+                  placeholder="Describe your game (features, story, etc.)"
+                  {...register("description")}
+                />
+                {errors.description && (
+                  <p className="mt-1 text-xs text-red-400">
+                    {errors.description.message}
+                  </p>
+                )}
+              </div>
 
-            <div>
-              <label
-                className="mb-2 block text-sm font-medium"
-                htmlFor="version"
-              >
-                Version
-              </label>
-              <Input
-                id="version"
-                placeholder="1.0.0"
-                className="w-full"
-                {...register("version")}
-              />
-            </div>
+              <div>
+                <label
+                  className="mb-2 block text-sm font-medium"
+                  htmlFor="version"
+                >
+                  Version
+                </label>
+                <Input
+                  id="version"
+                  placeholder="1.0.0"
+                  className="w-full"
+                  {...register("version")}
+                />
+              </div>
 
-            {/* <div>
+              {/* <div>
               <label
                 className="mb-2 block text-sm font-medium"
                 htmlFor="release"
@@ -446,343 +450,350 @@ const PublishGame = () => {
               />
             </div> */}
 
-            <div>
-              <label className="mb-2 block text-sm font-medium" htmlFor="price">
-                Price
-              </label>
-              <select
-                id="price"
-                className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
-                {...register("price")}
-              >
-                <option value="Free">Free</option>
-                <option value="$0.99">$0.99</option>
-                <option value="$1.99">$1.99</option>
-                <option value="$2.99">$2.99</option>
-                <option value="$4.99">$4.99</option>
-                <option value="$9.99">$9.99</option>
-                <option value="$14.99">$14.99</option>
-                <option value="$19.99">$19.99</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-white/10 bg-white/5 text-teal-400 transition-colors"
-                  {...register("isMultiplayer")}
-                />
-                <span className="text-sm font-medium">Multiplayer Support</span>
-              </label>
-            </div>
-          </div>
-        )}
-
-        {/* Step 2: Media & Tags */}
-        {activeStep === 2 && (
-          <div className="space-y-6">
-            {/* Cover Image */}
-            <div className="flex flex-col">
-              <label className="mb-2 block text-sm font-medium">
-                Cover Image
-                <span className="ml-1 text-red-400">*</span>
-              </label>
-              <div
-                className="flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
-                onClick={() => imageInputRef.current?.click()}
-                onDragOver={handleDragOver}
-                onDrop={handleImageDrop}
-              >
-                {uploadedImage ? (
-                  <div className="relative h-full w-full">
-                    <img
-                      src={uploadedImage}
-                      alt="Cover"
-                      className="h-full w-full rounded object-cover"
-                    />
-                    <button
-                      type="button"
-                      className="absolute top-2 right-2 rounded-full bg-black/70 p-1 text-white hover:bg-black"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setUploadedImage(null);
-                      }}
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center p-6">
-                    <Image size={48} className="mb-2 text-white/70" />
-                    <p className="mb-1 text-white/70">
-                      Click or drop an image here
-                    </p>
-                    <p className="text-xs text-white/50">
-                      PNG, JPG, WebP up to 5MB
-                    </p>
-                  </div>
-                )}
-              </div>
-              <input
-                type="file"
-                ref={imageInputRef}
-                className="hidden"
-                accept=".jpg,.jpeg,.png,.webp"
-                multiple={false}
-                onChange={(e) => {
-                  if (e.target.files && e.target.files[0]) {
-                    handleImageUpload(e);
-                    e.target.value = "";
-                  }
-                }}
-              />
-            </div>
-
-            {/* Tags */}
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                Tags (select at least one)
-                <span className="ml-1 text-red-400">*</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    className={`rounded-full px-4 py-1 text-sm transition-colors ${
-                      selectedTags.includes(tag)
-                        ? "bg-primary border-primary border text-black"
-                        : "border border-white/30 bg-white/5 hover:border-teal-400/50"
-                    }`}
-                    onClick={() => handleTagToggle(tag)}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-              {errors.tags && (
-                <p className="mt-1 text-xs text-red-400">
-                  {errors.tags.message}
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Step 3: Upload Files */}
-        {activeStep === 3 && (
-          <div className="space-y-6">
-            <div className="flex justify-between px-10">
-              <div className="flex flex-col justify-between">
-                <p className="mb-2 text-center">
-                  WebGL Build<span className="ml-1 text-red-400">*</span>
-                </p>
-                <div
-                  className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
-                  onClick={() => WebGLfileInputRef.current?.click()}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleFileDrop("WebGL", e)}
+              <div>
+                <label
+                  className="mb-2 block text-sm font-medium"
+                  htmlFor="price"
                 >
-                  <div className="flex flex-col items-center justify-center p-6">
-                    <Upload size={48} className="mb-2 text-white/70" />
-                    <p className="mb-1 text-center text-white/70">
-                      Click to upload or drag and drop your game files
-                    </p>
-                    <p className="text-center text-xs text-white/50">
-                      ZIP or RAR files only
-                    </p>
-                    <p className="mt-1 text-center text-xs text-white/40">
-                      Maximum file size: 1GB
-                    </p>
-                  </div>
-                </div>
+                  Price
+                </label>
+                <select
+                  id="price"
+                  className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
+                  {...register("price")}
+                >
+                  <option value="Free">Free</option>
+                  <option value="$0.99">$0.99</option>
+                  <option value="$1.99">$1.99</option>
+                  <option value="$2.99">$2.99</option>
+                  <option value="$4.99">$4.99</option>
+                  <option value="$9.99">$9.99</option>
+                  <option value="$14.99">$14.99</option>
+                  <option value="$19.99">$19.99</option>
+                </select>
               </div>
-
-              <input
-                type="file"
-                ref={WebGLfileInputRef}
-                className="hidden"
-                accept=".zip,.rar"
-                multiple={false}
-                onChange={(e) => {
-                  if (e.target.files) {
-                    handleFileUpload(Array.from(e.target.files), "WebGL");
-                  }
-                }}
-              />
-
-              <div className="mx-10 mt-8 border border-white/10" />
 
               <div>
-                <p className="mb-2 text-center">
-                  Windows Build{" "}
-                  <span className="text-white/50">(Optional)</span>
-                </p>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-white/10 bg-white/5 text-teal-400 transition-colors"
+                    {...register("isMultiplayer")}
+                  />
+                  <span className="text-sm font-medium">
+                    Multiplayer Support
+                  </span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Media & Tags */}
+          {activeStep === 2 && (
+            <div className="space-y-6">
+              {/* Cover Image */}
+              <div className="flex flex-col">
+                <label className="mb-2 block text-sm font-medium">
+                  Cover Image
+                  <span className="ml-1 text-red-400">*</span>
+                </label>
                 <div
-                  className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
-                  onClick={() => WindowsfileInputRef.current?.click()}
+                  className="flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                  onClick={() => imageInputRef.current?.click()}
                   onDragOver={handleDragOver}
-                  onDrop={(e) => handleFileDrop("Windows", e)}
+                  onDrop={handleImageDrop}
                 >
-                  <div className="flex flex-col items-center justify-center p-6">
-                    <Upload size={48} className="mb-2 text-white/70" />
-                    <p className="mb-1 text-center text-white/70">
-                      Click to upload or drag and drop your game files
-                    </p>
-                    <p className="text-center text-xs text-white/50">
-                      ZIP or RAR files only
-                    </p>
-                    <p className="mt-1 text-center text-xs text-white/40">
-                      Maximum file size: 1GB
-                    </p>
-                  </div>
+                  {uploadedImage ? (
+                    <div className="relative h-full w-full">
+                      <img
+                        src={uploadedImage}
+                        alt="Cover"
+                        className="h-full w-full rounded object-cover"
+                      />
+                      <button
+                        type="button"
+                        className="absolute top-2 right-2 rounded-full bg-black/70 p-1 text-white hover:bg-black"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setUploadedImage(null);
+                        }}
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center p-6">
+                      <Image size={48} className="mb-2 text-white/70" />
+                      <p className="mb-1 text-white/70">
+                        Click or drop an image here
+                      </p>
+                      <p className="text-xs text-white/50">
+                        PNG, JPG, WebP up to 5MB
+                      </p>
+                    </div>
+                  )}
                 </div>
+                <input
+                  type="file"
+                  ref={imageInputRef}
+                  className="hidden"
+                  accept=".jpg,.jpeg,.png,.webp"
+                  multiple={false}
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      handleImageUpload(e);
+                      e.target.value = "";
+                    }
+                  }}
+                />
               </div>
 
-              <input
-                type="file"
-                ref={WindowsfileInputRef}
-                className="hidden"
-                accept=".zip,.rar"
-                multiple={false}
-                onChange={(e) => {
-                  if (e.target.files) {
-                    handleFileUpload(Array.from(e.target.files), "Windows");
-                  }
-                }}
-              />
+              {/* Tags */}
+              <div>
+                <label className="mb-2 block text-sm font-medium">
+                  Tags (select at least one)
+                  <span className="ml-1 text-red-400">*</span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      className={`rounded-full px-4 py-1 text-sm transition-colors ${
+                        selectedTags.includes(tag)
+                          ? "bg-primary border-primary border text-black"
+                          : "border border-white/30 bg-white/5 hover:border-teal-400/50"
+                      }`}
+                      onClick={() => handleTagToggle(tag)}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+                {errors.tags && (
+                  <p className="mt-1 text-xs text-red-400">
+                    {errors.tags.message}
+                  </p>
+                )}
+              </div>
             </div>
+          )}
 
-            {/* Uploaded Files */}
-            {(uploadedWebGLFiles || uploadedWindowsFiles) && (
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Uploaded Files</p>
-                <div className="flex justify-between px-10">
-                  {/* WebGL Files */}
-                  <div className="flex flex-col gap-y-2">
-                    {uploadedWebGLFiles && (
-                      <div className="flex items-center justify-between rounded bg-white/10 p-2">
-                        <div className="flex items-center">
-                          <Package className="mr-2 text-white/70" size={16} />
-                          <span className="text-sm">
-                            {uploadedWebGLFiles.name}
-                          </span>
-                          <span className="ml-2 text-xs text-white/50">
-                            (
-                            {Math.round(
-                              (uploadedWebGLFiles.size / 1024 / 1024) * 10,
-                            ) / 10}{" "}
-                            MB)
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          className="text-white/70 hover:text-white"
-                          onClick={() => handleRemoveFile("WebGL")}
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Windows Files */}
-                  <div className="flex flex-col gap-y-2">
-                    {uploadedWindowsFiles && (
-                      <div className="flex items-center justify-between rounded bg-white/10 p-2">
-                        <div className="flex items-center">
-                          <Package className="mr-2 text-white/70" size={16} />
-                          <span className="text-sm">
-                            {uploadedWindowsFiles.name}
-                          </span>
-                          <span className="ml-2 text-xs text-white/50">
-                            (
-                            {Math.round(
-                              (uploadedWindowsFiles.size / 1024 / 1024) * 10,
-                            ) / 10}{" "}
-                            MB)
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          className="text-white/70 hover:text-white"
-                          onClick={() => handleRemoveFile("Windows")}
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    )}
+          {/* Step 3: Upload Files */}
+          {activeStep === 3 && (
+            <div className="space-y-6">
+              <div className="flex justify-between px-10">
+                <div className="flex flex-col justify-between">
+                  <p className="mb-2 text-center">
+                    WebGL Build<span className="ml-1 text-red-400">*</span>
+                  </p>
+                  <div
+                    className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                    onClick={() => WebGLfileInputRef.current?.click()}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleFileDrop("WebGL", e)}
+                  >
+                    <div className="flex flex-col items-center justify-center p-6">
+                      <Upload size={48} className="mb-2 text-white/70" />
+                      <p className="mb-1 text-center text-white/70">
+                        Click to upload or drag and drop your game files
+                      </p>
+                      <p className="text-center text-xs text-white/50">
+                        ZIP or RAR files only
+                      </p>
+                      <p className="mt-1 text-center text-xs text-white/40">
+                        Maximum file size: 1GB
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
 
-            <div className="rounded bg-[#1A191F] p-4">
-              <div className="flex items-start">
-                <Info size={20} className="mt-0.5 mr-3 text-teal-400" />
+                <input
+                  type="file"
+                  ref={WebGLfileInputRef}
+                  className="hidden"
+                  accept=".zip,.rar"
+                  multiple={false}
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      handleFileUpload(Array.from(e.target.files), "WebGL");
+                    }
+                  }}
+                />
+
+                <div className="mx-10 mt-8 border border-white/10" />
+
                 <div>
-                  <h3 className="text-sm font-medium">
-                    Guidelines for game submissions:
-                  </h3>
-                  <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-white/70">
-                    <li>
-                      Make sure your game does not contain prohibited content
-                    </li>
-                    <li>
-                      Include any installation instructions or dependencies
-                    </li>
-                    <li>
-                      Submit a playable build that doesn't require additional
-                      downloads
-                    </li>
-                    <li>
-                      Make sure your description accurately represents your game
-                    </li>
-                    <li>
-                      Our team will review your submission within 1-3 business
-                      days
-                    </li>
-                  </ul>
+                  <p className="mb-2 text-center">
+                    Windows Build{" "}
+                    <span className="text-white/50">(Optional)</span>
+                  </p>
+                  <div
+                    className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                    onClick={() => WindowsfileInputRef.current?.click()}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleFileDrop("Windows", e)}
+                  >
+                    <div className="flex flex-col items-center justify-center p-6">
+                      <Upload size={48} className="mb-2 text-white/70" />
+                      <p className="mb-1 text-center text-white/70">
+                        Click to upload or drag and drop your game files
+                      </p>
+                      <p className="text-center text-xs text-white/50">
+                        ZIP or RAR files only
+                      </p>
+                      <p className="mt-1 text-center text-xs text-white/40">
+                        Maximum file size: 1GB
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <input
+                  type="file"
+                  ref={WindowsfileInputRef}
+                  className="hidden"
+                  accept=".zip,.rar"
+                  multiple={false}
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      handleFileUpload(Array.from(e.target.files), "Windows");
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Uploaded Files */}
+              {(uploadedWebGLFiles || uploadedWindowsFiles) && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Uploaded Files</p>
+                  <div className="flex justify-between px-10">
+                    {/* WebGL Files */}
+                    <div className="flex flex-col gap-y-2">
+                      {uploadedWebGLFiles && (
+                        <div className="flex items-center justify-between rounded bg-white/10 p-2">
+                          <div className="flex items-center">
+                            <Package className="mr-2 text-white/70" size={16} />
+                            <span className="text-sm">
+                              {uploadedWebGLFiles.name}
+                            </span>
+                            <span className="ml-2 text-xs text-white/50">
+                              (
+                              {Math.round(
+                                (uploadedWebGLFiles.size / 1024 / 1024) * 10,
+                              ) / 10}{" "}
+                              MB)
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            className="text-white/70 hover:text-white"
+                            onClick={() => handleRemoveFile("WebGL")}
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Windows Files */}
+                    <div className="flex flex-col gap-y-2">
+                      {uploadedWindowsFiles && (
+                        <div className="flex items-center justify-between rounded bg-white/10 p-2">
+                          <div className="flex items-center">
+                            <Package className="mr-2 text-white/70" size={16} />
+                            <span className="text-sm">
+                              {uploadedWindowsFiles.name}
+                            </span>
+                            <span className="ml-2 text-xs text-white/50">
+                              (
+                              {Math.round(
+                                (uploadedWindowsFiles.size / 1024 / 1024) * 10,
+                              ) / 10}{" "}
+                              MB)
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            className="text-white/70 hover:text-white"
+                            onClick={() => handleRemoveFile("Windows")}
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="rounded bg-[#1A191F] p-4">
+                <div className="flex items-start">
+                  <Info size={20} className="mt-0.5 mr-3 text-teal-400" />
+                  <div>
+                    <h3 className="text-sm font-medium">
+                      Guidelines for game submissions:
+                    </h3>
+                    <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-white/70">
+                      <li>
+                        Make sure your game does not contain prohibited content
+                      </li>
+                      <li>
+                        Include any installation instructions or dependencies
+                      </li>
+                      <li>
+                        Submit a playable build that doesn't require additional
+                        downloads
+                      </li>
+                      <li>
+                        Make sure your description accurately represents your
+                        game
+                      </li>
+                      <li>
+                        Our team will review your submission within 1-3 business
+                        days
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-
-      {/* Navigation Buttons */}
-      <div className="w-full border-t border-white/10 p-6">
-        <div className="flex justify-between">
-          <button
-            type="button"
-            className={`rounded px-6 py-2 ${activeStep === 1 ? "invisible" : "bg-white/10 hover:bg-white/20"}`}
-            onClick={prevStep}
-            disabled={activeStep === 1}
-          >
-            Previous
-          </button>
-
-          {activeStep < 3 ? (
-            <button
-              type="button"
-              className="rounded bg-teal-500 px-6 py-2 font-bold text-black hover:bg-teal-400"
-              onClick={nextStep}
-            >
-              Next
-            </button>
-          ) : (
-            <button
-              type="submit"
-              className="bg-primary rounded px-6 py-2 font-bold text-black hover:bg-teal-400"
-              disabled={isLoading}
-            >
-              Submit Game
-            </button>
           )}
         </div>
-      </div>
-    </form>
+
+        {/* Navigation Buttons */}
+        <div className="w-full border-t border-white/10 p-6">
+          <div className="flex justify-between">
+            <button
+              type="button"
+              className={`rounded px-6 py-2 ${activeStep === 1 ? "invisible" : "bg-white/10 hover:bg-white/20"}`}
+              onClick={prevStep}
+              disabled={activeStep === 1}
+            >
+              Previous
+            </button>
+
+            {activeStep < 3 ? (
+              <button
+                type="button"
+                className="rounded bg-teal-500 px-6 py-2 font-bold text-black hover:bg-teal-400"
+                onClick={nextStep}
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="bg-primary rounded px-6 py-2 font-bold text-black hover:bg-teal-400"
+                disabled={isLoading}
+              >
+                Submit Game
+              </button>
+            )}
+          </div>
+        </div>
+      </form>
+    </div>
   );
 };
 

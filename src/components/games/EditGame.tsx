@@ -54,56 +54,10 @@ const EditGame = () => {
     },
   });
 
-  const dispatch = useAppDispatch();
   const { Game } = useAppSelector((state) => state.games);
+  const dispatch = useAppDispatch();
 
   const location = useLocation();
-
-  useEffect(() => {
-    if (Game) {
-      const {
-        id,
-        title,
-        description,
-        thumbnail,
-        tags,
-        releaseDate,
-        status,
-        genre,
-        platform,
-      } = Game;
-
-      setValue("id", id);
-      setValue("title", title);
-      setValue("description", description);
-      setValue(
-        "releaseDate",
-        releaseDate || new Date().toISOString().split("T")[0],
-      );
-      setValue("status", status || "Released");
-      setValue("genre", genre || "");
-      setValue("platform", platform || "");
-
-      // Update state variables
-      setSelectedTags(tags || []);
-      if (thumbnail) {
-        setUploadedImage(
-          typeof thumbnail === "string"
-            ? thumbnail
-            : URL.createObjectURL(thumbnail),
-        );
-      }
-    }
-  }, [Game, setValue]);
-
-  useEffect(() => {
-    if (!Game) {
-      const pathParts = location.pathname.split("/");
-      const gameId = pathParts[pathParts.length - 2];
-
-      dispatch(loadGameById(gameId));
-    }
-  }, [Game, dispatch, location.pathname]);
 
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -174,6 +128,45 @@ const EditGame = () => {
     "Turn-based",
   ];
 
+  useEffect(() => {
+    if (!Game) {
+      const pathParts = location.pathname.split("/");
+      const gameId = pathParts[pathParts.length - 2];
+
+      dispatch(loadGameById(gameId));
+    }
+  }, [Game, dispatch, location.pathname]);
+
+  useEffect(() => {
+    if (Game) {
+      const {
+        id,
+        title,
+        description,
+        thumbnail,
+        tags,
+        // releaseDate,
+        // status,
+        // genre,
+        // platform,
+      } = Game;
+
+      setValue("id", id);
+      setValue("title", title);
+      setValue("description", description);
+
+      // Update state variables
+      setSelectedTags(tags || []);
+      if (thumbnail) {
+        setUploadedImage(
+          typeof thumbnail === "string"
+            ? thumbnail
+            : URL.createObjectURL(thumbnail),
+        );
+      }
+    }
+  }, [Game, setValue]);
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
   };
@@ -197,7 +190,7 @@ const EditGame = () => {
   const handleWebGLUpload = (files: File[]) => {
     if (!files.length) return;
 
-    // Check file size (100MB max for WebGL builds)
+    // Check file size (500MB max for WebGL builds)
     const totalSize =
       files.reduce((total, file) => total + file.size, 0) / 1024 / 1024;
     if (totalSize > 500) {
@@ -235,8 +228,8 @@ const EditGame = () => {
 
     // Check file size (1GB max for Windows builds)
     const totalSize =
-      files.reduce((total, file) => total + file.size, 0) / 1024 / 1024;
-    if (totalSize > 1000) {
+      files.reduce((total, file) => total + file.size, 0) / 1024 / 1024 / 1024;
+    if (totalSize > 1) {
       toast.error(
         <div>
           <h1 className="mb-2 font-bold">Files too large</h1>
@@ -341,6 +334,7 @@ const EditGame = () => {
     formData.append("genre", data.genre);
     formData.append("platform", data.platform);
 
+    // TODO: check difference of this below between editGame.tsx and editArt.tsx
     // Add cover image if uploaded
     if (imageInputRef.current?.files && imageInputRef.current.files[0]) {
       formData.append("coverImage", imageInputRef.current.files[0]);
@@ -361,10 +355,7 @@ const EditGame = () => {
     }
 
     console.log("Submitting game update:", data);
-    // Dispatch update action
     dispatch(updateGame(formData));
-
-    toast.success("Game updated successfully!");
   });
 
   const nextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -700,180 +691,180 @@ const EditGame = () => {
         {/* Step 3: Upload Game Files */}
         {activeStep === 3 && (
           <div className="space-y-8">
-            {/* WebGL Files (for web) */}
-            <div className="border-b border-white/10 pb-6">
-              <div className="flex flex-col">
+            <div className="grid grid-cols-1 gap-8 border-b border-white/10 pb-8 md:grid-cols-2">
+              {/* WebGL Files (for web) */}
+              <div className="flex h-full flex-col">
                 <label className="mb-2 block text-sm font-medium">
                   WebGL Build Files (for web browser)
                 </label>
                 <div
-                  className="flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                  className="flex aspect-video w-full cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
                   onClick={() => webGLInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDrop={handleWebGLDrop}
                 >
-                  <div className="flex flex-col items-center justify-center p-6">
+                  <div className="flex flex-col items-center justify-center p-6 text-center">
                     <Gamepad2 size={64} className="mb-4 text-white/70" />
-                    <p className="mb-2 text-center text-lg text-white/70">
-                      Click to upload or drag and drop your WebGL build files
+                    <p className="mb-2 text-lg text-white/70">
+                      WebGL build files
                     </p>
-                    <p className="text-center text-sm text-white/50">
+                    <p className="text-sm text-white/50">
                       Include all necessary files, including index.html
                     </p>
-                    <p className="mt-1 text-center text-xs text-white/40">
+                    <p className="mt-1 text-xs text-white/40">
                       Maximum total size: 500MB
                     </p>
                   </div>
                 </div>
+
+                <input
+                  type="file"
+                  ref={webGLInputRef}
+                  className="hidden"
+                  multiple={true}
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      handleWebGLUpload(Array.from(e.target.files));
+                      e.target.value = "";
+                    }
+                  }}
+                />
+
+                {/* Uploaded WebGL Files */}
+                {uploadedWebGLFiles && uploadedWebGLFiles.length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium">
+                        Uploaded WebGL Files ({uploadedWebGLFiles.length})
+                      </p>
+                      <button
+                        type="button"
+                        className="text-xs text-white/70 hover:text-white"
+                        onClick={handleRemoveWebGLFiles}
+                      >
+                        Remove all
+                      </button>
+                    </div>
+                    <div className="max-h-60 overflow-y-auto rounded border border-white/10 bg-black/20 p-3">
+                      {uploadedWebGLFiles.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center border-b border-white/5 py-2 last:border-b-0"
+                        >
+                          <FileText size={16} className="mr-2 text-white/70" />
+                          <span className="flex-1 truncate text-sm">
+                            {file.name}
+                          </span>
+                          <span className="ml-2 text-xs text-white/50">
+                            {Math.round((file.size / 1024 / 1024) * 100) / 100}{" "}
+                            MB
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-white/50">
+                      Total:{" "}
+                      {Math.round(
+                        (uploadedWebGLFiles.reduce(
+                          (total, file) => total + file.size,
+                          0,
+                        ) /
+                          1024 /
+                          1024) *
+                          100,
+                      ) / 100}{" "}
+                      MB
+                    </p>
+                  </div>
+                )}
               </div>
 
-              <input
-                type="file"
-                ref={webGLInputRef}
-                className="hidden"
-                multiple={true}
-                onChange={(e) => {
-                  if (e.target.files) {
-                    handleWebGLUpload(Array.from(e.target.files));
-                    e.target.value = "";
-                  }
-                }}
-              />
-
-              {/* Uploaded WebGL Files */}
-              {uploadedWebGLFiles && uploadedWebGLFiles.length > 0 && (
-                <div className="mt-4 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">
-                      Uploaded WebGL Files ({uploadedWebGLFiles.length})
-                    </p>
-                    <button
-                      type="button"
-                      className="text-xs text-white/70 hover:text-white"
-                      onClick={handleRemoveWebGLFiles}
-                    >
-                      Remove all
-                    </button>
-                  </div>
-                  <div className="max-h-60 overflow-y-auto rounded border border-white/10 bg-black/20 p-3">
-                    {uploadedWebGLFiles.map((file, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center border-b border-white/5 py-2 last:border-b-0"
-                      >
-                        <FileText size={16} className="mr-2 text-white/70" />
-                        <span className="flex-1 truncate text-sm">
-                          {file.name}
-                        </span>
-                        <span className="ml-2 text-xs text-white/50">
-                          {Math.round((file.size / 1024 / 1024) * 100) / 100} MB
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-xs text-white/50">
-                    Total:{" "}
-                    {Math.round(
-                      (uploadedWebGLFiles.reduce(
-                        (total, file) => total + file.size,
-                        0,
-                      ) /
-                        1024 /
-                        1024) *
-                        100,
-                    ) / 100}{" "}
-                    MB
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Windows Build Files */}
-            <div>
-              <div className="flex flex-col">
+              {/* Windows Build Files */}
+              <div className="flex h-full flex-col">
                 <label className="mb-2 block text-sm font-medium">
                   Windows Build Files (optional)
                 </label>
                 <div
-                  className="flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                  className="flex aspect-video h-full w-full cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
                   onClick={() => windowsInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDrop={handleWindowsDrop}
                 >
-                  <div className="flex flex-col items-center justify-center p-6">
+                  <div className="flex flex-col items-center justify-center p-6 text-center">
                     <Box size={64} className="mb-4 text-white/70" />
-                    <p className="mb-2 text-center text-lg text-white/70">
-                      Click to upload or drag and drop your Windows build files
+                    <p className="mb-2 text-lg text-white/70">
+                      Windows build files
                     </p>
-                    <p className="text-center text-sm text-white/50">
+                    <p className="text-sm text-white/50">
                       Include executable and all necessary files
                     </p>
-                    <p className="mt-1 text-center text-xs text-white/40">
+                    <p className="mt-1 text-xs text-white/40">
                       Maximum total size: 1GB
                     </p>
                   </div>
                 </div>
-              </div>
 
-              <input
-                type="file"
-                ref={windowsInputRef}
-                className="hidden"
-                multiple={true}
-                onChange={(e) => {
-                  if (e.target.files) {
-                    handleWindowsUpload(Array.from(e.target.files));
-                    e.target.value = "";
-                  }
-                }}
-              />
+                <input
+                  type="file"
+                  ref={windowsInputRef}
+                  className="hidden"
+                  multiple={true}
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      handleWindowsUpload(Array.from(e.target.files));
+                      e.target.value = "";
+                    }
+                  }}
+                />
 
-              {/* Uploaded Windows Files */}
-              {uploadedWindowsFiles && uploadedWindowsFiles.length > 0 && (
-                <div className="mt-4 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">
-                      Uploaded Windows Files ({uploadedWindowsFiles.length})
-                    </p>
-                    <button
-                      type="button"
-                      className="text-xs text-white/70 hover:text-white"
-                      onClick={handleRemoveWindowsFiles}
-                    >
-                      Remove all
-                    </button>
-                  </div>
-                  <div className="max-h-60 overflow-y-auto rounded border border-white/10 bg-black/20 p-3">
-                    {uploadedWindowsFiles.map((file, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center border-b border-white/5 py-2 last:border-b-0"
+                {/* Uploaded Windows Files */}
+                {uploadedWindowsFiles && uploadedWindowsFiles.length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium">
+                        Uploaded Windows Files ({uploadedWindowsFiles.length})
+                      </p>
+                      <button
+                        type="button"
+                        className="text-xs text-white/70 hover:text-white"
+                        onClick={handleRemoveWindowsFiles}
                       >
-                        <FileText size={16} className="mr-2 text-white/70" />
-                        <span className="flex-1 truncate text-sm">
-                          {file.name}
-                        </span>
-                        <span className="ml-2 text-xs text-white/50">
-                          {Math.round((file.size / 1024 / 1024) * 100) / 100} MB
-                        </span>
-                      </div>
-                    ))}
+                        Remove all
+                      </button>
+                    </div>
+                    <div className="max-h-60 overflow-y-auto rounded border border-white/10 bg-black/20 p-3">
+                      {uploadedWindowsFiles.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center border-b border-white/5 py-2 last:border-b-0"
+                        >
+                          <FileText size={16} className="mr-2 text-white/70" />
+                          <span className="flex-1 truncate text-sm">
+                            {file.name}
+                          </span>
+                          <span className="ml-2 text-xs text-white/50">
+                            {Math.round((file.size / 1024 / 1024) * 100) / 100}{" "}
+                            MB
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-white/50">
+                      Total:{" "}
+                      {Math.round(
+                        (uploadedWindowsFiles.reduce(
+                          (total, file) => total + file.size,
+                          0,
+                        ) /
+                          1024 /
+                          1024) *
+                          100,
+                      ) / 100}{" "}
+                      MB
+                    </p>
                   </div>
-                  <p className="text-xs text-white/50">
-                    Total:{" "}
-                    {Math.round(
-                      (uploadedWindowsFiles.reduce(
-                        (total, file) => total + file.size,
-                        0,
-                      ) /
-                        1024 /
-                        1024) *
-                        100,
-                    ) / 100}{" "}
-                    MB
-                  </p>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
             <div className="rounded bg-[#1A191F] p-4">
