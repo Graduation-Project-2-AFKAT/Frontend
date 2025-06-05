@@ -6,12 +6,15 @@ import App from "./App.tsx";
 import store from "./redux/store.ts";
 import { Provider } from "react-redux";
 
+const savedTheme = localStorage.getItem("theme") || "dark";
+document.documentElement.setAttribute("data-theme", savedTheme);
+
 createRoot(document.getElementById("root")!).render(
-  // <StrictMode>
-  <BrowserRouter>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </BrowserRouter>,
-  // </StrictMode>,
+  <StrictMode>
+    <BrowserRouter>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </BrowserRouter>
+  </StrictMode>,
 );

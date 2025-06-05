@@ -130,14 +130,14 @@ const Arts = () => {
             {Assets.length > 0 ? (
               <div className="grid-games grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {Assets.map((art: IAsset) => (
-                  <Link
-                    to={`/arts/${art.id}`}
-                    key={art.id}
-                    className="group"
-                    onClick={scrollToTop}
-                  >
-                    <ArtCard asset={art} />
-                  </Link>
+                  // <Link
+                  //   to={`/arts/${art.id}`}
+                  //   key={art.id}
+                  //   className="group"
+                  //   onClick={scrollToTop}
+                  // >
+                  <ArtCard key={art.id} asset={art} />
+                  // </Link>
                 ))}
               </div>
             ) : (
@@ -167,7 +167,7 @@ const Arts = () => {
             {Assets.length > 0 && (
               <div className="my-10 flex justify-center">
                 <button
-                  className="rounded-lg border border-white/10 bg-white/5 px-6 py-2 hover:border-teal-400/50"
+                  className="hover:border-primary/50 rounded-lg border border-white/10 bg-white/5 px-6 py-2"
                   // onClick={() => setArts((prev) => [...prev, ...prev])}
                 >
                   Load More

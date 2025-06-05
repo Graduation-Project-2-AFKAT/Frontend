@@ -37,7 +37,7 @@ const Game = () => {
     title = "",
     description = "",
     username: creator = "",
-    rating = 3.3,
+    rating = 0,
     game_file = "",
     thumbnail = "",
     tags = [],
@@ -66,6 +66,7 @@ const Game = () => {
     return () => {
       dispatch(resetGame());
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRating = useCallback(
@@ -105,11 +106,11 @@ const Game = () => {
             <h1 className="text-2xl">{title}</h1>
             <div>
               by:{" "}
-              <a href="">
-                <span className="font-extralight underline-offset-2 hover:underline">
+              <Link to={`/profile/${Game?.user_id}`}>
+                <span className="text-primary font-extralight underline-offset-2 hover:underline">
                   @{creator}
                 </span>
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -200,12 +201,12 @@ const Game = () => {
           <div>
             <h1 className="text-2xl">{title}</h1>
             <div>
-              by:{" "}
-              <a href="">
+              by: {/* //TODO href below */}
+              <Link to={`profile/${Game?.user_id}`}>
                 <span className="font-extralight underline-offset-2 hover:underline">
                   @{creator}
                 </span>
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -214,7 +215,7 @@ const Game = () => {
               <button
                 onClick={handleDownload}
                 disabled={isLoading && type === "games/download"}
-                className={`"disabled:bg-primary/70 bg-primary my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-wait ${!(isLoading && type === "games") && "hover:scale-95"}`}
+                className={`"disabled:bg-primary/70 bg-primary text-primary-content my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold duration-150 disabled:cursor-wait ${!(isLoading && type === "games") && "hover:scale-95"}`}
               >
                 {isLoading && type === "games/download"
                   ? `Downloading...`

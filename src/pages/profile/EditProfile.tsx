@@ -11,6 +11,7 @@ import { Pencil, Upload, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "../../redux/hooks";
 import { updateUserProfile } from "../../redux/modules/users";
+import Themes from "./Themes";
 
 const EditProfile = () => {
   const dispatch = useAppDispatch();
@@ -255,6 +256,7 @@ const EditProfile = () => {
             handleTabClick={handleTabClick}
             tabs={[
               "Profile",
+              "Themes",
               "Blocked users",
               ",",
               "Email Address",
@@ -268,6 +270,8 @@ const EditProfile = () => {
         <div className="tracking-wide">
           {activeProfileTab === "Profile" ? (
             <ProfileInfo />
+          ) : activeProfileTab === "Themes" ? (
+            <Themes />
           ) : activeProfileTab === "Blocked users" ? (
             <BlockedUsers />
           ) : activeProfileTab === "Email Address" ? (
@@ -279,7 +283,7 @@ const EditProfile = () => {
 
         {/* Right Section */}
         <div
-          className={`${activeProfileTab !== "Blocked users" && "lg:hidden"} hidden pt-10 lg:block`}
+          className={`${activeProfileTab !== "Blocked users" ? "lg:hidden" : ""} hidden pt-10 lg:block`}
         >
           <p className="text-sm font-extralight opacity-50">
             When you block someone, that user won't be able to follow you, send

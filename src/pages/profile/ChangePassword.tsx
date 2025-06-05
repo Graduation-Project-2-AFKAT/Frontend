@@ -115,7 +115,7 @@ const ChangePassword = () => {
             !confirmNewPassword ||
             !passwordsMatch
           }
-          className="disabled:bg-primary/50 bg-primary hover:bg-primary/70 flex items-center gap-2 rounded px-5 py-3 text-sm font-bold text-black transition-colors duration-250 disabled:cursor-not-allowed!"
+          className="disabled:bg-primary/50 bg-primary hover:bg-primary/70 flex items-center gap-2 rounded px-4 py-2.5 text-sm font-bold text-black transition-colors duration-250 disabled:cursor-not-allowed!"
         >
           {isLoading ? (
             <>

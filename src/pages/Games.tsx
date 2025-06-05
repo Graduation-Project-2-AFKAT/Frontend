@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { loadGames } from "../redux/modules/games";
 import GameCard from "../components/GameCard";
 import Tabs from "../components/games/GamesTabs";
+import Board from "../components/ui/Board";
 
 const Games = () => {
   const { isLoading } = useAppSelector((state) => state.loading);
@@ -73,7 +74,7 @@ const Games = () => {
   return (
     <main className="w-full overflow-y-auto pt-0 lg:gap-10">
       <header
-        className={`border-b-primary sticky top-0 z-2 flex items-center justify-between border-b-2 bg-[#1d1a25] px-10 py-6 backdrop-blur-3xl transition-transform duration-300 ${
+        className={`border-b-primary bg-neutral/5 sticky top-0 z-2 flex items-center justify-between border-b-2 px-10 py-6 backdrop-blur-3xl transition-transform duration-300 ${
           isVisible ? "translate-y-0" : "-translate-y-[110%]"
         }`}
       >
@@ -102,7 +103,7 @@ const Games = () => {
                 className={`rounded-full px-4 py-1 text-sm transition-colors ${
                   selectedTags.includes(tag)
                     ? "bg-primary border-primary border text-black"
-                    : "border border-white/30 bg-white/5 hover:border-teal-400/50"
+                    : "hover:border-primary/50 border border-white/30 bg-white/5"
                 }`}
                 onClick={() => {
                   handleTagToggle(tag);
@@ -115,9 +116,7 @@ const Games = () => {
       </div>
 
       <section className="col-span-2 space-y-6 scroll-smooth md:mx-auto md:w-[85%] lg:w-full lg:px-10">
-        <div className="border-b border-white/20" />
-
-        {/* sub-tabs */}
+        <div className="border-b border-white/10" />
         <Tabs
           defaultTab="Featured"
           tabs={["Featured", "Newest", "Top Rated"]}
@@ -156,15 +155,7 @@ const Games = () => {
             })}
           </ul>
         )}
-
-        {/* <div className="absolute bottom-10 h-10 w-135 shadow-[inset_0_-20px_20px_-20px_rgba(0,0,0,0.5)]"></div> */}
       </section>
-
-      {/* <Board
-        title="Leaderboard"
-        className="h-fit border lg:hidden xl:flex"
-        itemsCount={3}
-      /> */}
     </main>
   );
 };

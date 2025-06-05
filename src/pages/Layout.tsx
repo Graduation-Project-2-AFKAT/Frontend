@@ -1,12 +1,11 @@
+import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router";
+import { toast } from "react-toastify";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { AlertMessages } from "../interfaces";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { resetAlertMsg } from "../redux/modules/alerts";
-import { startLoading } from "../redux/modules/loading";
 
 const RootLayout = () => {
   const location = useLocation();
@@ -77,7 +76,7 @@ const RootLayout = () => {
           />
         )}
         <div
-          className={`${isAuth ? "md:ml-20" : ""} flex h-screen justify-center overflow-y-auto pt-18`}
+          className={`${isAuth ? "md:ml-20" : ""} bg-neutral/5 flex h-screen justify-center overflow-y-auto pt-18`}
           id="main-elem"
         >
           {isAuthRoute && (

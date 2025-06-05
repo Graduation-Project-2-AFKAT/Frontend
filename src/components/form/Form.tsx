@@ -54,7 +54,7 @@ const Form = ({ label, redirect }: IProps) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="group border-primary relative mx-10 my-auto flex min-h-[525px] w-[min(100%,350px)] flex-col items-center rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
+      className="group relative mx-10 my-auto flex min-h-[525px] w-[min(100%,350px)] flex-col items-center rounded-2xl border-2 border-teal-400 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
     >
       <div className="mb-4 flex flex-1 flex-col">
         <img
@@ -105,7 +105,7 @@ const Form = ({ label, redirect }: IProps) => {
       </div>
       <Link
         to={redirect}
-        className="text-primary mt-8 text-xs duration-150"
+        className="mt-8 text-xs duration-150"
         onClick={() => {
           localStorage.removeItem("email");
           localStorage.removeItem("username");
@@ -124,7 +124,7 @@ const Form = ({ label, redirect }: IProps) => {
         >
           {isLoading && (
             <svg
-              className="text-primary mr-3 -ml-1 size-5 animate-spin"
+              className="mr-3 -ml-1 size-5 animate-spin text-teal-400"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"

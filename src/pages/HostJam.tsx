@@ -324,7 +324,7 @@ const HostJam = () => {
 
       <div className="w-full overflow-y-auto">
         <form
-          className="border-primary relative mx-auto my-10 flex h-fit w-[85%] max-w-4xl flex-col items-start rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
+          className="border-primary focus-within:shadow-primary/25 relative mx-auto my-10 flex h-fit w-[85%] max-w-4xl flex-col items-start rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg"
           onSubmit={handleSubmit(onSubmit)}
         >
           {/* Header */}
@@ -412,7 +412,7 @@ const HostJam = () => {
                   </label>
                   <textarea
                     id="description"
-                    className="field-sizing-content min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400"
+                    className="focus:border-primary field-sizing-content min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none"
                     placeholder="Describe your game jam (goals, target audience, etc.)"
                     {...register("description")}
                   />
@@ -515,7 +515,7 @@ const HostJam = () => {
                   <input
                     type="checkbox"
                     id="isOnline"
-                    className="h-4 w-4 rounded border-white/10 bg-white/5 text-teal-400 transition-colors"
+                    className="text-primary h-4 w-4 rounded border-white/10 bg-white/5 transition-colors"
                     {...register("isOnline")}
                     onChange={(e) => {
                       setValue("isOnline", e.target.checked);
@@ -543,7 +543,7 @@ const HostJam = () => {
                     <span className="ml-1 text-red-400">*</span>
                   </label>
                   <div
-                    className="flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                    className="hover:border-primary/50 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors"
                     onClick={() => imageInputRef.current?.click()}
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleImageDrop(e, "cover")}
@@ -651,7 +651,7 @@ const HostJam = () => {
                   </label>
                   <textarea
                     id="rules"
-                    className="min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400"
+                    className="focus:border-primary min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none"
                     placeholder="List the rules and guidelines for your game jam"
                     {...register("rules")}
                   />
@@ -740,7 +740,7 @@ const HostJam = () => {
                     <span className="ml-1 text-red-400">*</span>
                   </label>
                   <div
-                    className="flex h-40 w-40 cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                    className="hover:border-primary/50 flex h-40 w-40 cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors"
                     onClick={() => logoInputRef.current?.click()}
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleImageDrop(e, "logo")}
@@ -788,7 +788,7 @@ const HostJam = () => {
                 <div className="col-span-1 md:col-span-2">
                   <div className="rounded bg-[#1A191F] p-4">
                     <div className="flex items-start">
-                      <Info size={20} className="mt-0.5 mr-3 text-teal-400" />
+                      <Info size={20} className="text-primary mt-0.5 mr-3" />
                       <div>
                         <h3 className="text-sm font-medium">
                           Next steps after submission:
@@ -838,16 +838,15 @@ const HostJam = () => {
               {activeStep < 3 ? (
                 <button
                   type="button"
-                  className="rounded bg-teal-500 px-6 py-2 font-bold text-black hover:bg-teal-400"
+                  className="hover:bg-primary/80 bg-primary text-primary-content rounded px-6 py-2 font-bold"
                   onClick={nextStep}
                 >
                   Next
                 </button>
               ) : (
                 <button
-                  type="button"
-                  className="bg-primary rounded px-6 py-2 font-bold text-black hover:bg-teal-400"
-                  onClick={() => handleSubmit(onSubmit)()}
+                  type="submit"
+                  className="bg-primary hover:bg-primary text-primary-content rounded px-6 py-2 font-bold"
                 >
                   Submit Game Jam
                 </button>

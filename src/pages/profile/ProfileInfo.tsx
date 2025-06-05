@@ -13,7 +13,6 @@ const ProfileInfo = () => {
   const [githubLink, setGithubLink] = useState<string>("");
   const [linkedInLink, setLinkedInLink] = useState<string>("");
   const [bio, setBio] = useState<string>("");
-  const [theme, setTheme] = useState<string>("#00a1a1");
 
   // Track if form has been modified
   const [isFormDirty, setIsFormDirty] = useState<boolean>(false);
@@ -32,12 +31,11 @@ const ProfileInfo = () => {
         nickname !== user.username ||
         githubLink !== "" ||
         linkedInLink !== "" ||
-        bio !== "" ||
-        theme !== "#00a1a1";
+        bio !== "";
 
       setIsFormDirty(isDirty);
     }
-  }, [nickname, githubLink, linkedInLink, bio, theme, user]);
+  }, [nickname, githubLink, linkedInLink, bio, user]);
 
   // Handle form submission
   const handleSubmit = async (e: FormEvent) => {
@@ -56,32 +54,6 @@ const ProfileInfo = () => {
       onSubmit={handleSubmit}
       className="relative -left-10 space-y-10 pb-25"
     >
-      {/* Color Theme section */}
-      <div className="flex flex-col space-y-3">
-        <div className="flex items-center justify-between">
-          <p className="font-bold">Color Theme</p>
-          <div
-            className="relative h-8 w-8 cursor-pointer overflow-hidden rounded-full border-1"
-            style={{ backgroundColor: theme }}
-          >
-            <input
-              type="color"
-              name="theme"
-              id="theme"
-              value={theme}
-              onChange={(e) => {
-                setTheme(e.target.value);
-              }}
-              className="absolute -top-5 -left-5 h-15 w-15 cursor-pointer"
-            />
-          </div>
-        </div>
-        <small className="font-extralight text-white/50">
-          Setting a theme will change how AFKAT looks for you. When other people
-          view your profile, they'll also be switched to your theme.
-        </small>
-      </div>
-
       {/* Username section */}
       <div className="flex flex-col space-y-3">
         <label className="font-bold" htmlFor="username">
@@ -173,7 +145,7 @@ const ProfileInfo = () => {
         <button
           type="submit"
           disabled={!isFormDirty || isLoading}
-          className="disabled:bg-primary/50 bg-primary hover:bg-primary/70 flex items-center gap-2 rounded px-5 py-3 text-sm font-bold text-black transition-colors duration-250 disabled:cursor-not-allowed!"
+          className="disabled:bg-primary/50 bg-primary hover:bg-primary/70 flex items-center gap-2 rounded px-4 py-2.5 text-sm font-bold text-black transition-colors duration-250 disabled:cursor-not-allowed!"
         >
           {isLoading ? (
             <>

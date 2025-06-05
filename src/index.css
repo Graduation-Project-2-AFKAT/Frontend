@@ -15,7 +15,7 @@
     /* outline: 1px solid slategrey; */
   }
 
-  .no-scrollbar {
+  .hide-scrollbar {
     scrollbar-width: none;
     -ms-overflow-style: none;
   }

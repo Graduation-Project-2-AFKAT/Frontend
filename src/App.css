@@ -1,4 +1,12 @@
 @import "tailwindcss";
+@plugin "daisyui" {
+  themes: all;
+}
+@plugin "daisyui/theme" {
+  name: "dark";
+  --color-primary: var(--primary);
+  /* --color-base-100: "#ff0000"; */
+}
 
 /* #root {
   max-width: 1280px;

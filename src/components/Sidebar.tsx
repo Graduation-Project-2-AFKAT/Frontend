@@ -1,5 +1,5 @@
 import { Boxes, Gamepad2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface IProps {
   showSidebar: boolean;
@@ -26,34 +26,11 @@ const Sidebar = ({
     settings: false,
   });
 
-  // const handleClick = (tab: keyof typeof select) => {
-  //   if (selectedTab === tab) {
-  //     if (expandSidebar) {
-  //       setExpandSidebar(false);
-  //     } else {
-  //       setExpandSidebar(true);
-  //     }
-
-  //     if (window.innerWidth <= 1023) {
-  //       setShowSidebar(false);
-  //     }
-
-  //     setSelect((prev) => {
-  //       return { ...prev, [tab]: false };
-  //     });
-
-  //     return;
-  //   }
-
-  //   const newSelected = {
-  //     ...select,
-  //     [tab]: true,
-  //   };
-
-  //   setSelectedTab(tab);
-  //   setSelect(newSelected);
-  //   setExpandSidebar(true);
-  // };
+  useEffect(() => {
+    if (!expandSidebar) {
+      setSelectedTab("");
+    }
+  }, [expandSidebar]);
 
   const handleClick = (tab: keyof typeof select) => {
     if (selectedTab === tab) {
@@ -76,25 +53,19 @@ const Sidebar = ({
     }
 
     const newSelected = {
-      home: false,
-      games: false,
-      assets: false,
-      gameJams: false,
-      create: false,
-      language: false,
-      settings: false,
+      ...select,
       [tab]: true,
     };
 
-    setSelectedTab(tab);
     setSelect(newSelected);
+    setSelectedTab(tab);
     setExpandSidebar(true);
   };
 
   return (
     <>
       <div
-        className={`${expandSidebar ? "fixed" : "hidden"} inset-0 z-5 bg-black/50 duration-300`}
+        className={`${expandSidebar ? "fixed" : "hidden"} inset-0 z-5 bg-black/50 transition-all`}
         onClick={() => {
           //TODO create a function to handle this
           if (expandSidebar) {
@@ -122,54 +93,54 @@ const Sidebar = ({
       </div>
 
       <aside
-        className={`group fixed top-0 ${showSidebar ? "-left-0" : "-left-22"} z-10 flex h-screen flex-col items-center justify-between bg-[#121015] px-0 py-20 text-2xl duration-300 md:pb-8`}
+        className={`group fixed top-0 ${showSidebar ? "-left-0" : "-left-22"} z-10 flex h-screen flex-col items-center justify-between bg-[#121015] px-0 py-20 text-2xl transition-all md:pb-8`}
       >
         <div
-          className={`md:space-y- relative space-y-5 rounded-lg p-4 whitespace-nowrap duration-300 ease-in`}
+          className={`md:space-y- relative space-y-5 rounded-lg p-4 whitespace-nowrap transition-colors ease-in`}
         >
           <div
-            className="group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:content-['Home']"
+            className={`${selectedTab === "home" ? "text-primary" : ""} group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Home']`}
             onClick={() => handleClick("home")}
           >
             <i className="fa-solid fa-house" />
           </div>
           <div
-            className="group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:content-['Games']"
+            className={`${selectedTab === "games" ? "text-primary" : ""} group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Games']`}
             onClick={() => handleClick("games")}
           >
             <Gamepad2 size={25} />
           </div>
           <div
-            className="group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:content-['Assets']"
+            className={`${selectedTab === "assets" ? "text-primary" : ""} group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Assets']`}
             onClick={() => handleClick("assets")}
           >
             <Boxes size={25} />
           </div>
           <div
-            className="group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:content-['Game_Jams']"
+            className={`${selectedTab === "gameJams" ? "text-primary" : ""} group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Game_Jams']`}
             onClick={() => handleClick("gameJams")}
           >
             <i className="fa-solid fa-award" />
           </div>
-          <hr className="mx-2" />
+          <hr className="mx-2 opacity-25" />
           <div
-            className="group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:content-['Create_a_community']"
+            className={`${selectedTab === "create" ? "text-primary" : ""} group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Create_a_community']`}
             onClick={() => handleClick("create")}
           >
             <i className="fa-solid fa-plus" />
           </div>
         </div>
 
-        <div className="-mx-8 flex w-full flex-col items-center space-y-6 text-center whitespace-nowrap duration-300 ease-in lg:mx-0 lg:w-fit">
+        <div className="-mx-8 flex w-full flex-col items-center space-y-6 text-center whitespace-nowrap transition-colors ease-in lg:mx-0 lg:w-fit">
           <div
-            className="tooltips w-10 cursor-pointer before:content-['Language']"
+            className={`${selectedTab === "language" ? "text-primary" : ""} tooltips w-10 cursor-pointer before:font-medium before:content-['Language']`}
             onClick={() => handleClick("language")}
           >
             <i className="fa-solid fa-earth-americas" />
           </div>
 
           <div
-            className="tooltips w-10 cursor-pointer before:content-['Settings']"
+            className={`${selectedTab === "settings" ? "text-primary" : ""} tooltips w-10 cursor-pointer before:font-medium before:content-['Settings']`}
             onClick={() => handleClick("settings")}
           >
             <i className="fa-solid fa-gear" />

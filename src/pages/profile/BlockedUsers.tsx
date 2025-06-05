@@ -1,9 +1,7 @@
 import { useState } from "react";
 import Input from "../../components/ui/Input";
 
-interface IProps {}
-
-const BlockedUsers = ({}: IProps) => {
+const BlockedUsers = () => {
   const [showModal, setShowModal] = useState(false);
 
   return (

@@ -190,7 +190,7 @@ const BecomeAMember = () => {
         </div>
 
         <form
-          className="border-primary rounded-2xl border-2 bg-[#121015] p-8 shadow-lg duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
+          className="border-primary focus-within:shadow-primary/25 rounded-2xl border-2 bg-[#121015] p-8 shadow-lg duration-500 focus-within:shadow-lg"
           onSubmit={handleSubmit(onSubmit)}
         >
           {/* Show form errors at the top */}
@@ -292,7 +292,7 @@ const BecomeAMember = () => {
                 </label>
                 <textarea
                   id="experience"
-                  className="min-h-[120px] w-full rounded border border-white/10 bg-white/5 p-3 text-white placeholder-white/50 transition-colors outline-none focus:border-teal-400"
+                  className="focus:border-primary min-h-[120px] w-full rounded border border-white/10 bg-white/5 p-3 text-white placeholder-white/50 transition-colors outline-none"
                   placeholder={`Tell us about your experience as ${selectedRole === "admin" ? "an" : "a"} ${selectedRole}...`}
                   {...register("experience")}
                 />
@@ -312,7 +312,7 @@ const BecomeAMember = () => {
                 <input
                   id="urlLink"
                   type="url"
-                  className="w-full rounded border border-white/10 bg-white/5 p-3 text-white placeholder-white/50 transition-colors outline-none focus:border-teal-400"
+                  className="focus:border-primary w-full rounded border border-white/10 bg-white/5 p-3 text-white placeholder-white/50 transition-colors outline-none"
                   placeholder="https://"
                   {...register("portfolio")}
                 />
@@ -337,7 +337,7 @@ const BecomeAMember = () => {
                       className={`rounded-full px-3 py-1 text-sm transition-colors ${
                         selectedSkills.includes(skill)
                           ? "bg-primary text-black"
-                          : "border border-white/30 bg-white/5 hover:border-teal-400/50"
+                          : "hover:border-primary border border-white/30 bg-white/5"
                       }`}
                       onClick={() => handleSkillToggle(skill)}
                     >
@@ -350,7 +350,7 @@ const BecomeAMember = () => {
                 <div className="flex">
                   <input
                     type="text"
-                    className="flex-1 rounded-l border border-white/10 bg-white/5 p-2 text-white placeholder-white/50 transition-colors outline-none focus:border-teal-400"
+                    className="focus:border-primary flex-1 rounded-l border border-white/10 bg-white/5 p-2 text-white placeholder-white/50 transition-colors outline-none"
                     placeholder="Add another skill..."
                     value={customSkill}
                     onChange={(e) => setCustomSkill(e.target.value)}
@@ -405,7 +405,7 @@ const BecomeAMember = () => {
                 </label>
                 <textarea
                   id="motivation"
-                  className="min-h-[120px] w-full rounded border border-white/10 bg-white/5 p-3 text-white placeholder-white/50 transition-colors outline-none focus:border-teal-400"
+                  className="focus:border-primary min-h-[120px] w-full rounded border border-white/10 bg-white/5 p-3 text-white placeholder-white/50 transition-colors outline-none"
                   placeholder="Tell us why you're interested in joining AFKAT..."
                   {...register("motivation")}
                 />
@@ -424,7 +424,7 @@ const BecomeAMember = () => {
                 <input
                   id="references"
                   type="text"
-                  className="w-full rounded border border-white/10 bg-white/5 p-3 text-white placeholder-white/50 transition-colors outline-none focus:border-teal-400"
+                  className="focus:border-primary w-full rounded border border-white/10 bg-white/5 p-3 text-white placeholder-white/50 transition-colors outline-none"
                   placeholder="Names and contact information of references..."
                   {...register("references")}
                 />
@@ -435,7 +435,7 @@ const BecomeAMember = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="bg-primary rounded px-6 py-3 font-medium text-black transition-colors hover:bg-teal-400 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="bg-primary hover:bg-primary rounded px-6 py-3 font-medium text-black transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {submitting ? "Submitting..." : "Submit Application"}
                 </button>

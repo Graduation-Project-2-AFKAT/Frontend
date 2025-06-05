@@ -317,7 +317,7 @@ const PublishArt = () => {
   return (
     <div className="w-full overflow-y-auto">
       <form
-        className="border-primary relative mx-auto my-10 flex h-fit w-[85%] max-w-4xl flex-col items-start overflow-y-auto rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg focus-within:shadow-teal-400/25"
+        className="border-primary focus-within:shadow-primary/25 relative mx-auto my-10 flex h-fit w-[85%] max-w-4xl flex-col items-start overflow-y-auto rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg"
         onSubmit={onSubmit}
       >
         {/* Header */}
@@ -404,7 +404,7 @@ const PublishArt = () => {
                 </label>
                 <textarea
                   id="description"
-                  className="field-sizing-content min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400"
+                  className="focus:border-primary field-sizing-content min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none"
                   placeholder="Describe your 3D model (features, uses, technical details, etc.)"
                   {...register("description")}
                 />
@@ -425,7 +425,7 @@ const PublishArt = () => {
                 </label>
                 <select
                   id="fileFormat"
-                  className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
+                  className="focus:border-primary w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:bg-[#1E1C21]"
                   {...register("fileFormat")}
                 >
                   {fileFormats.map((format) => (
@@ -446,7 +446,7 @@ const PublishArt = () => {
                 </label>
                 <select
                   id="license"
-                  className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
+                  className="focus:border-primary w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:bg-[#1E1C21]"
                   {...register("license")}
                 >
                   {licenses.map((license) => (
@@ -467,7 +467,7 @@ const PublishArt = () => {
                 </label>
                 <select
                   id="price"
-                  className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
+                  className="focus:border-primary w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:bg-[#1E1C21]"
                   {...register("price")}
                 >
                   <option value="Free">Free</option>
@@ -492,7 +492,7 @@ const PublishArt = () => {
                   <span className="ml-1 text-red-400">*</span>
                 </label>
                 <div
-                  className="flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                  className="hover:border-primary/50 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors"
                   onClick={() => imageInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDrop={handleImageDrop}
@@ -556,7 +556,7 @@ const PublishArt = () => {
                       className={`rounded-full px-4 py-1 text-sm transition-colors ${
                         selectedTags.includes(tag)
                           ? "bg-primary border-primary border text-black"
-                          : "border border-white/30 bg-white/5 hover:border-teal-400/50"
+                          : "hover:border-primary border border-white/30 bg-white/5"
                       }`}
                       onClick={() => handleTagToggle(tag)}
                     >
@@ -582,7 +582,7 @@ const PublishArt = () => {
                   <span className="ml-1 text-red-400">*</span>
                 </p>
                 <div
-                  className="flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                  className="hover:border-primary/50 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center rounded border border-dashed border-white/30 bg-white/5 transition-colors"
                   onClick={() => modelFileInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDrop={handleFileDrop}
@@ -649,7 +649,7 @@ const PublishArt = () => {
 
               <div className="rounded bg-[#1A191F] p-4">
                 <div className="flex items-start">
-                  <Info size={20} className="mt-0.5 mr-3 text-teal-400" />
+                  <Info size={20} className="text-primary mt-0.5 mr-3" />
                   <div>
                     <h3 className="text-sm font-medium">
                       Guidelines for 3D model submissions:

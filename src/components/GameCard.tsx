@@ -11,9 +11,8 @@ const GameCard = ({ game, className }: IProps) => {
 
   return (
     <Link
-      to={`${window.location.href}/${id}`}
-      className={`${className} outline-primary aspect-[4/5] rounded-2xl border border-white/25 bg-[#2A2731] shadow-md drop-shadow-md duration-50 md:rounded-lg lg:hover:outline-2 lg:hover:outline-dashed`}
-      key={id}
+      to={`${id}`}
+      className={`${className} outline-primary bg-neutral/5 border-primary/25 aspect-[4/5] rounded-2xl border shadow-md drop-shadow-md duration-50 md:rounded-lg lg:hover:outline-2 lg:hover:outline-dashed`}
     >
       <div className="flex h-full flex-col justify-between">
         <div className="h-full overflow-hidden">
@@ -90,7 +89,7 @@ const GameCard = ({ game, className }: IProps) => {
                 //   window.location.pathname +
                 //   `?tag=${tag}`
                 // } //TODO tag button filter games
-                className={`rounded-full border border-white/75 bg-white/5 px-4 py-1 text-sm transition-colors hover:border-teal-400/50`}
+                className={`hover:border-primary rounded-full border border-white/75 bg-white/5 px-4 py-1 text-sm transition-colors`}
               >
                 {tags[0]}
               </button>

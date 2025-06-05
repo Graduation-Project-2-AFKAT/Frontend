@@ -133,7 +133,7 @@ const Profile = () => {
   return (
     <div className="w-full overflow-auto" id="profile">
       {isLoading && !type.startsWith("posts") ? (
-        <div className="absolute inset-0 top-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="bg-primary/50 absolute inset-0 top-0 z-50 flex items-center justify-center">
           <div className="flex flex-col items-center justify-center gap-2">
             <div className="border-primary h-15 w-15 animate-spin rounded-full border-t-2 border-b-2" />
             <span>Loading...</span>

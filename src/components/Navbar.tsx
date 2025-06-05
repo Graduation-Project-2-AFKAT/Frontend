@@ -150,7 +150,7 @@ const Navbar = ({
             )}
           </div>
 
-          <div className="mx-0 flex grow items-center rounded-md border border-white/25 bg-[#2A2731] py-2 pl-3 text-sm">
+          <div className="bg-primary/5 mx-0 flex grow items-center rounded-md border border-white/25 py-2 pl-3 text-sm">
             <i className="fa-solid fa-magnifying-glass mr-4" />
             <input
               id="search-bar"
@@ -201,10 +201,10 @@ const Navbar = ({
 
             {/* user menu */}
             <div
-              className={`${showUserMenu ? "opacity-100" : "pointer-events-none opacity-0 duration-200"} absolute top-22 right-0 z-5 aspect-auto w-60 -translate-x-5 rounded-lg border border-white/50 bg-black opacity-0 drop-shadow-2xl before:absolute before:-top-4.5 before:right-6 before:h-0 before:w-0 before:border-8 before:border-b-10 before:border-transparent before:border-b-white/50`}
+              className={`${showUserMenu ? "opacity-100" : "pointer-events-none opacity-0 duration-200"} absolute top-22 right-3 z-5 aspect-auto w-60 -translate-x-5 rounded-lg border border-[#8E8D92] bg-[#1D1A25] opacity-0 drop-shadow-2xl before:absolute before:-top-4.5 before:right-3 before:h-0 before:w-0 before:border-8 before:border-b-10 before:border-transparent before:border-b-[#8E8D92]`}
             >
               <NavLink to="/profile" onClick={() => setShowUserMenu(false)}>
-                <div className="px-4 pt-4 hover:bg-white/10">
+                <div className="rounded-t-md px-4 pt-4 hover:bg-white/5">
                   <p className="text-xl font-bold">
                     {user?.username || "Username"}
                   </p>
@@ -219,28 +219,28 @@ const Navbar = ({
               <div>
                 <NavLink
                   to="/profile"
-                  className="block px-4 py-2.5 hover:bg-white/10"
+                  className="block px-4 py-2.5 hover:bg-white/5"
                   onClick={() => setShowUserMenu(false)}
                 >
                   Profile
                 </NavLink>
                 <NavLink
                   to="/games"
-                  className="block px-4 py-2.5 hover:bg-white/10"
+                  className="block px-4 py-2.5 hover:bg-white/5"
                   onClick={() => setShowUserMenu(false)}
                 >
                   Games
                 </NavLink>
                 <NavLink
                   to="/settings"
-                  className="block px-4 py-2.5 hover:bg-white/10"
+                  className="block px-4 py-2.5 hover:bg-white/5"
                   onClick={() => setShowUserMenu(false)}
                 >
                   Settings
                 </NavLink>
 
                 <div className="px-4">
-                  <small className="bg-primary my-3 flex h-9 w-full cursor-pointer items-center justify-center rounded-md text-base font-medium tracking-wider">
+                  <small className="btn btn-primary my-3 flex h-9 w-full cursor-pointer items-center justify-center rounded-md text-base font-semibold tracking-wider">
                     Invite a friend
                   </small>
 
@@ -248,11 +248,11 @@ const Navbar = ({
                 </div>
 
                 <div
-                  className="flex cursor-pointer px-3 py-4 hover:bg-white/10"
+                  className="flex cursor-pointer rounded-b-md px-3 py-4 hover:bg-white/5"
                   onClick={userLogout}
                 >
                   {/* //TODO replace bg-red-400/10 with bg-transparent */}
-                  <LogOut className="mr-2 scale-[-0.7] text-red-400" /> Logout
+                  <LogOut className="text-secondary mr-2 scale-[-.9]" /> Logout
                 </div>
               </div>
             </div>

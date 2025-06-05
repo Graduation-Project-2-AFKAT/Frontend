@@ -1,10 +1,10 @@
+import moment from "moment";
 import { lazy, Suspense, useEffect, useState } from "react";
 import Input from "../components/form/Input";
 import Posts from "../components/Posts";
 import Board from "../components/ui/Board";
-import { useAppSelector } from "../redux/hooks";
 import { IPost } from "../interfaces";
-import moment from "moment";
+import { useAppSelector } from "../redux/hooks";
 
 const CreatePostModal = lazy(
   () => import("../components/modals/CreatePostModal"),
@@ -28,7 +28,9 @@ const Home = () => {
   }, [postsList]);
 
   return (
-    <main className="grid w-full overflow-y-auto pt-10 lg:gap-10 lg:px-10 lg:pl-15">
+    <main
+      className={`${window.innerWidth < 768 ? "hide-scrollbar" : ""} grid w-full overflow-y-auto pt-10 lg:gap-10 lg:px-10 lg:pl-15`}
+    >
       {/*//! You think this is a useless line right ? ...Comment it and see how important it is ;) */}
       {/* <div className="hidden lg:block"></div> */}
 
@@ -40,7 +42,7 @@ const Home = () => {
 
       {/* Main */}
       <section className="space-y-6 md:mx-auto md:w-[75%] lg:w-full lg:px-0">
-        <div className="lg:border-primary flex h-25 items-center border border-white/10 bg-[#2A2731] px-5 shadow-md drop-shadow-md md:rounded-lg">
+        <div className="flex h-25 items-center border border-white/10 bg-[#2A2731] px-5 shadow-md drop-shadow-md md:rounded-lg">
           {/* <i className="fa-solid fa-circle-user mr-6 text-4xl" /> */}
           <img
             src={user?.userProfile.profile_image}
@@ -86,10 +88,14 @@ const Home = () => {
         </div>
 
         <div className="text-md flex items-center justify-between space-x-6 px-[4%] font-bold md:px-0 lg:px-[30%] lg:text-base lg:font-medium">
-          <button className="bg-primary w-full rounded-lg py-2">For You</button>
-          <button className="border-primary w-full rounded-lg border-2 py-2">
-            Following
-          </button>
+          <div className="flex w-full gap-4">
+            <button className="bg-primary hover:bg-primary-focus hover:bg-primary/80 text-primary-content flex-1 rounded-lg py-2 font-semibold transition-colors">
+              For You
+            </button>
+            <button className="border-primary hover:bg-primary/10 flex-1 rounded-lg border-2 py-2 transition-colors">
+              Following
+            </button>
+          </div>
         </div>
 
         <Posts posts={postsToShow} />
