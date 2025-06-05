@@ -31,24 +31,24 @@ const ProtectedRoute = ({
     const pathEnd = urlResources[urlResources.length - 2];
     const isNumber = pathEnd && !isNaN(Number(pathEnd));
 
-    // if (
-    //   isEdit &&
-    //   isNumber &&
-    //   (Game?.user_id !== user?.id || Asset?.user_id !== user?.id)
-    // ) {
-    //   const contentPath = location.pathname.replace(/\/edit$/, "");
+    if (
+      isEdit &&
+      isNumber &&
+      (Game?.user_id !== user?.id || Asset?.user_id !== user?.id)
+    ) {
+      const contentPath = location.pathname.replace(/\/edit$/, "");
 
-    //   return (
-    //     <Navigate
-    //       to={contentPath}
-    //       replace
-    //       state={{
-    //         permissionDenied: true,
-    //         message: "You don't have permission to edit this content",
-    //       }}
-    //     />
-    //   );
-    // }
+      return (
+        <Navigate
+          to={contentPath}
+          replace
+          state={{
+            permissionDenied: true,
+            message: "You don't have permission to edit this content",
+          }}
+        />
+      );
+    }
 
     // Case 1: User is not logged in and trying to access a protected route
     if (!isLoggedIn && !isAuthRoute) {

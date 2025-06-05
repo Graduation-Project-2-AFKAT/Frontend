@@ -38,7 +38,7 @@ const Navbar = ({
     //TODO make underline white/100 when selected
     <nav className="fixed z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015]/10 px-8 shadow-[1px_1px_5px_rgba(0,0,0,0.5)] drop-shadow-md backdrop-blur-sm">
       <div // Click outside any opened menu to close it
-        className={`${showMiniNav || showUserMenu ? "fixed" : "hidden"} inset-0 z-5 h-screen w-screen bg-black/50`} //TODO replace bg-red-400/10 with bg-transparent
+        className={`${showMiniNav || showUserMenu ? "fixed" : "hidden"} inset-0 z-5 h-screen w-screen bg-black/25`}
         onClick={() => {
           if (showMiniNav) {
             setShowMiniNav(false);
@@ -71,7 +71,7 @@ const Navbar = ({
       </div>
 
       {isAuth && (
-        <div className="hidden grow items-center gap-5 px-0 md:mx-8 md:flex">
+        <div className="hidden grow items-center gap-12 md:mx-8 md:flex">
           <ul className="hidden items-center gap-x-5 lg:flex">
             <li>
               <NavLink

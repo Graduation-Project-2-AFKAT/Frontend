@@ -236,7 +236,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
               leaveTo="opacity-0 scale-95"
             >
               <DialogPanel
-                className={`my-20 w-full max-w-2xl transform overflow-hidden rounded-lg border bg-[#2A2731] bg-cover bg-center shadow-xl`}
+                className={`my-20 w-full max-w-2xl transform overflow-hidden rounded-lg border border-white/10 bg-[#2A2731] bg-cover bg-center shadow-xl`}
                 style={{
                   backgroundImage: postTheme ? `url('${postTheme}')` : "none",
                   backgroundSize: `${bgZoom}%`,
@@ -409,7 +409,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                   <div className="mb-3 px-8">
                     <input
                       placeholder="Game Title..."
-                      className={`${postTheme && "bg-black/75 backdrop-blur-sm duration-0"} focus:border-primary w-full rounded-lg border-2 border-white/25 px-3 py-2 text-white transition-colors outline-none focus:ring-0 ${errors.title ? "border-red-500" : ""}`}
+                      className={`${postTheme && "bg-[#050505]/75 backdrop-blur-sm duration-0"} focus:border-primary w-full rounded-lg border-2 border-white/25 px-3 py-2 text-white transition-colors outline-none focus:ring-0 ${errors.title ? "border-red-500" : ""}`}
                       {...register("title")}
                     />
                     {errors.title && (
@@ -423,7 +423,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                   <div className="px-8">
                     <textarea
                       placeholder="What's on your mind?"
-                      className={`${postTheme && "bg-black/75 backdrop-blur-sm duration-0"} focus:border-primary field-sizing-content min-h-30 w-full resize-none rounded-lg border-2 border-white/25 p-3 text-white transition-colors outline-none focus:ring-0 ${errors.content ? "border-red-500" : ""}`}
+                      className={`${postTheme && "bg-[#050505]/75 backdrop-blur-sm duration-0"} focus:border-primary field-sizing-content min-h-30 w-full resize-none rounded-lg border-2 border-white/25 p-3 text-white transition-colors outline-none focus:ring-0 ${errors.content ? "border-red-500" : ""}`}
                       {...register("content")}
                     />
                     {errors.content && (

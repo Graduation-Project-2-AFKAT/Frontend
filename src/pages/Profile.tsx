@@ -344,7 +344,7 @@ const Profile = () => {
             </div>
 
             {/* Mid Section */}
-            <div className="" id="MSection">
+            <div id="MSection">
               <Tabs defaultTab="Posts" tabs={["Posts", "Scheduled Posts"]} />
             </div>
 
@@ -376,7 +376,7 @@ const Profile = () => {
                       type="text"
                       id="invite-link"
                       value={`AFK@T.com/profile/${userData?.username}`}
-                      className="w-full rounded border border-white/15 px-3 py-1.5 text-sm transition-colors outline-none focus-within:border-white"
+                      className="w-full rounded border border-white/25 px-3 py-1.5 text-sm transition-colors outline-none focus-within:border-white"
                       readOnly
                     />
                     <button

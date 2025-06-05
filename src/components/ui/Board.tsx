@@ -15,7 +15,7 @@ const Board = ({
 }: IProps) => {
   return (
     <aside
-      className={`sticky top-0 hidden flex-col space-y-10 rounded-lg bg-[#2A2731] p-8 pb-10 shadow-md shadow-black/50 lg:flex ${className}`}
+      className={`sticky top-0 hidden flex-col space-y-10 rounded-lg bg-[#2A2731] p-8 pb-10 shadow-md drop-shadow-md lg:flex ${className}`}
     >
       <div
         className={`${headerSize ? headerSize : "text-2xl"} underline underline-offset-[15px]`}

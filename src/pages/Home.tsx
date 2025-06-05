@@ -1,8 +1,10 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import Input from "../components/form/Input";
 import Posts from "../components/Posts";
 import Board from "../components/ui/Board";
 import { useAppSelector } from "../redux/hooks";
+import { IPost } from "../interfaces";
+import moment from "moment";
 
 const CreatePostModal = lazy(
   () => import("../components/modals/CreatePostModal"),
@@ -10,8 +12,20 @@ const CreatePostModal = lazy(
 
 const Home = () => {
   const { user } = useAppSelector((state) => state.users);
+  const { Posts: postsList } = useAppSelector((state) => state.posts);
 
+  const [postsToShow, setPostsToShow] = useState<IPost[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (postsToShow) {
+      const filteredPosts = postsList.filter((post) =>
+        moment(post.published_at).fromNow().split(" ").includes("ago"),
+      );
+
+      setPostsToShow(filteredPosts);
+    }
+  }, [postsList]);
 
   return (
     <main className="grid w-full overflow-y-auto pt-10 lg:gap-10 lg:px-10 lg:pl-15">
@@ -41,7 +55,7 @@ const Home = () => {
             <Input
               id="search-bar-posts"
               placeholder="What's on your mind?"
-              className="w-full cursor-pointer border-white/50 transition-colors outline-none focus-within:px-2! hover:border-white/100"
+              className="w-full cursor-pointer border-white/25 transition-colors outline-none focus-within:px-2! hover:border-white"
               onClick={() => setIsCreateModalOpen(true)}
               readOnly
             />
@@ -50,7 +64,7 @@ const Home = () => {
           {isCreateModalOpen && (
             <Suspense
               fallback={
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+                <div className="fixed inset-0 z-50 flex items-center justify-center rounded-lg bg-black/70">
                   <div className="flex flex-col items-center gap-3">
                     <div className="border-t-primary h-10 w-10 animate-spin rounded-full border-4 border-r-transparent border-b-white/30 border-l-white/30"></div>
                     <p className="text-lg">Loading...</p>
@@ -78,7 +92,7 @@ const Home = () => {
           </button>
         </div>
 
-        <Posts />
+        <Posts posts={postsToShow} />
       </section>
 
       {/* Right */}

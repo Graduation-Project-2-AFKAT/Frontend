@@ -12,17 +12,28 @@ interface IProps {
 const Post = ({ post, handleFollow }: IProps) => {
   const user = useAppSelector((state) => state.users.user);
   const id = user?.id;
-  const { username, user_id, modified_at, created_at, user_profile_image } =
-    post;
+  const {
+    username,
+    user_id,
+    created_at,
+    modified_at,
+    published_at,
+    user_profile_image,
+  } = post;
 
   const modified = new Date(modified_at).toLocaleString();
   const created = new Date(created_at).toLocaleString();
 
+  const isScheduled = !moment(published_at)
+    .fromNow()
+    .split(" ")
+    .includes("ago");
+
   return (
     <li
-      className="outline-primary grid aspect-[9/10] border border-white/10 bg-[#2A2731] bg-cover shadow-md drop-shadow-md duration-50 md:rounded-xl lg:hover:outline-2 lg:hover:outline-dashed"
+      className="outline-primary grid border border-white/10 bg-[#2A2731] bg-cover shadow-md drop-shadow-md duration-50 md:rounded-xl lg:hover:outline-2 lg:hover:outline-dashed"
       style={{
-        gridTemplate: "auto auto 1fr auto auto / 1fr 1fr 1fr",
+        gridTemplate: `60px 50px ${post.image ? "300px" : "auto"} auto auto / 1fr 1fr 1fr`,
         backgroundImage: post.theme ? `url('${post.theme}')` : "none",
         backgroundPosition: "center",
         backgroundSize: `${post.theme_zoom_number}%`,
@@ -49,12 +60,16 @@ const Post = ({ post, handleFollow }: IProps) => {
         <div
           className={`${post.theme ? "drop-shadow-[1px_1px_2px_rgba(0,0,0,1)]" : ""} flex items-center gap-x-3 font-bold`}
         >
-          {(modified || created) && (
-            <small>
-              {modified !== created
-                ? `(Edited) ${moment(modified_at).fromNow()}`
-                : moment(created_at).fromNow()}
-            </small>
+          {isScheduled ? (
+            <small>Coming {moment(published_at).fromNow()}</small>
+          ) : (
+            (modified || created) && (
+              <small>
+                {modified !== created
+                  ? `(Edited) ${moment(modified_at).fromNow()}`
+                  : moment(created_at).fromNow()}
+              </small>
+            )
           )}
           {user_id !== id && (
             <button
@@ -66,15 +81,15 @@ const Post = ({ post, handleFollow }: IProps) => {
           )}
         </div>
       </div>
-      <div className="col-span-3 py-2 pb-3 pl-5 text-center text-2xl font-bold tracking-wide">
+      <div className="col-span-3 text-center text-2xl font-bold tracking-wide">
         <span
-          className={`${post.theme ? "font-bold drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""} inline-block max-w-full px-2 break-words`}
+          className={`${post.theme ? "font-bold drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""} inline-block max-w-full break-words`}
         >
           {post.title}
         </span>
       </div>
       {post.image && (
-        <div className="col-span-3 flex h-full items-center justify-center px-8 py-2 text-center">
+        <div className="col-span-3 mx-7 flex h-full items-center justify-center text-center">
           <img
             src={post.image}
             alt={post.image.split("/").pop()}
@@ -83,7 +98,7 @@ const Post = ({ post, handleFollow }: IProps) => {
         </div>
       )}
       <div
-        className={`${post.theme ? "drop-shadow-[1px_4px_2px_rgba(0,0,0,0.7)]" : ""} ${post.image ? "text-md" : "text-xl"} col-span-3 mx-8 my-5 rounded-lg border border-white/20 bg-[#2A2731] px-5 py-4`}
+        className={`${post.theme ? "drop-shadow-[1px_4px_2px_rgba(0,0,0,0.7)]" : ""} ${post.image ? "text-md" : "min-h-50 text-xl"} col-span-3 mx-7 my-5 rounded-lg border border-white/20 bg-[#2A2731] px-5 py-4 break-words`}
       >
         {post.content}
       </div>

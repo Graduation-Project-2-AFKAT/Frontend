@@ -1,15 +1,19 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router";
+import { IPost } from "../interfaces";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { loadMyPosts, loadPosts, loadPostsById } from "../redux/modules/posts";
 import Post from "./Post";
 import SkeletonPosts from "./ui/SkeletonPosts";
 
-const Posts = () => {
-  const { isLoading, type } = useAppSelector((state) => state.loading);
-  const { Posts } = useAppSelector((state) => state.posts);
-  const dispatch = useAppDispatch();
+interface IProps {
+  posts: IPost[];
+}
 
+const Posts = ({ posts }: IProps) => {
+  const { isLoading, type } = useAppSelector((state) => state.loading);
+  // const { Posts } = useAppSelector((state) => state.posts);
+  const dispatch = useAppDispatch();
   const location = useLocation();
 
   useEffect(() => {
@@ -30,13 +34,13 @@ const Posts = () => {
   }, [location.pathname]);
 
   return (
-    <ul className="mb-25 space-y-10">
+    <ul className="mb-25 space-y-6">
       {isLoading && type.startsWith("posts") ? (
         <div className="flex flex-col items-center justify-center space-y-10 pb-12">
           <SkeletonPosts />
         </div>
-      ) : Posts.length > 0 ? (
-        Posts.map((post) => {
+      ) : posts.length > 0 ? (
+        posts.map((post) => {
           return <Post key={post.id} post={post} />;
         })
       ) : (

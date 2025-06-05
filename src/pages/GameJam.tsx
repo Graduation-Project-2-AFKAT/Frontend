@@ -1,20 +1,20 @@
-import { useState, useEffect } from "react";
 import {
+  AlertCircle,
+  ArrowRight,
+  Award,
   Calendar,
   Clock,
   Users,
   Trophy,
-  ArrowRight,
-  Award,
-  AlertCircle,
   MapPin,
   X,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { IJam } from "../interfaces";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { loadJams } from "../redux/modules/gameJams";
-import { IJam } from "../interfaces";
 
 import moment from "moment";
 

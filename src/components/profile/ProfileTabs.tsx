@@ -1,4 +1,8 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { useAppSelector } from "../../redux/hooks";
+import { IPost } from "../../interfaces";
+import moment from "moment";
+
 const Posts = lazy(() => import("../Posts"));
 
 interface IProps {
@@ -16,7 +20,29 @@ interface ITab {
 }
 
 const Tabs = ({ defaultTab, tabs }: IProps) => {
+  const { Posts: postsList } = useAppSelector((state) => state.posts);
+
+  const [postsToShow, setPostsToShow] = useState<IPost[]>([]);
+  const [scheduledPosts, setScheduledPosts] = useState<IPost[]>([]);
   const [profileSelectedTab, setProfileSelectedTab] = useState(defaultTab);
+
+  useEffect(() => {
+    if (postsToShow) {
+      const filteredPosts = [] as IPost[];
+      const filteredScheduledPosts = [] as IPost[];
+
+      postsList.map((post) => {
+        if (moment(post.published_at).fromNow().split(" ").includes("ago")) {
+          filteredPosts.push(post);
+        } else {
+          filteredScheduledPosts.push(post);
+        }
+      });
+
+      setPostsToShow(filteredPosts);
+      setScheduledPosts(filteredScheduledPosts);
+    }
+  }, [postsList]);
 
   function handleTabClick(
     tab: "Posts" | "Likes" | "Draft Posts" | "Scheduled Posts",
@@ -45,14 +71,24 @@ const Tabs = ({ defaultTab, tabs }: IProps) => {
           <Suspense
             fallback={
               <div className="flex h-full flex-col items-center py-10 text-xl font-light">
-                You haven't anything yet.
+                Loading...
               </div>
             }
           >
-            <Posts />
+            <Posts posts={postsToShow} />
+          </Suspense>
+        ) : profileSelectedTab === "Scheduled Posts" ? (
+          <Suspense
+            fallback={
+              <div className="flex h-full flex-col items-center py-10 text-xl font-light">
+                Loading...
+              </div>
+            }
+          >
+            <Posts posts={scheduledPosts} />
           </Suspense>
         ) : (
-          <div>No Results Found</div>
+          <div>You haven't anything yet.</div>
         )}
       </div>
     </>
