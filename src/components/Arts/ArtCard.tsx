@@ -11,7 +11,7 @@ const ArtCard = ({ asset }: IProps) => {
   return (
     <Link
       to={`${asset.id}`}
-      className="outline-primary bg-secondary/5 border-primary/25 aspect-[4/5] rounded-2xl border shadow-md drop-shadow-md duration-50 md:rounded-lg lg:hover:outline-2 lg:hover:outline-dashed"
+      className="outline-primary bg-neutral/5 border-primary/25 aspect-[4/5] rounded-2xl border shadow-md drop-shadow-md duration-50 md:rounded-lg lg:hover:outline-2 lg:hover:outline-dashed"
     >
       <div className="flex h-full flex-col justify-between">
         <div className="relative h-full overflow-hidden">
