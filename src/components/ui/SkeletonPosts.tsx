@@ -4,7 +4,7 @@ const SkeletonPosts = () => {
       {[1, 2, 3].map((item) => (
         <li
           key={item}
-          className="w-full animate-pulse rounded-xl border border-white/25 bg-[#2A2731] p-5"
+          className="bg-base-content/5 w-full animate-pulse rounded-xl border border-white/10 p-5"
         >
           <div className="flex items-center space-x-2">
             <div className="h-10 w-10 rounded-full bg-white/10"></div>

@@ -28,27 +28,30 @@ const ProtectedRoute = ({
   if (!isLoading) {
     const urlResources = location.pathname.split("/");
     const isEdit = urlResources[urlResources.length - 1] === "edit";
-    const pathEnd = urlResources[urlResources.length - 2];
-    const isNumber = pathEnd && !isNaN(Number(pathEnd));
+    const pathId = urlResources[urlResources.length - 2];
+    const pathEnd = urlResources[urlResources.length - 3];
+    const isNumber = pathId && !isNaN(Number(pathId));
 
-    if (
-      isEdit &&
-      isNumber &&
-      (Game?.user_id !== user?.id || Asset?.user_id !== user?.id)
-    ) {
-      const contentPath = location.pathname.replace(/\/edit$/, "");
+    // if (
+    //   isEdit &&
+    //   isNumber &&
+    //   ((pathEnd === "games" && Game && Game?.user_id !== user?.id) ||
+    //     (pathEnd === "arts" && Asset && Asset?.user_id !== user?.id))
+    // ) {
+    //   console.log("in");
+    //   const contentPath = location.pathname.replace(/\/edit$/, "");
 
-      return (
-        <Navigate
-          to={contentPath}
-          replace
-          state={{
-            permissionDenied: true,
-            message: "You don't have permission to edit this content",
-          }}
-        />
-      );
-    }
+    //   return (
+    //     <Navigate
+    //       to={contentPath}
+    //       replace
+    //       state={{
+    //         permissionDenied: true,
+    //         message: "You don't have permission to edit this content",
+    //       }}
+    //     />
+    //   );
+    // }
 
     // Case 1: User is not logged in and trying to access a protected route
     if (!isLoggedIn && !isAuthRoute) {

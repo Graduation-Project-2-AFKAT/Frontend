@@ -5,11 +5,10 @@ import Input from "../components/form/Input";
 import { Image, Info, X, FileText, Box } from "lucide-react";
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createAsset } from "../redux/modules/assets";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { createAsset } from "../redux/modules/assets";
 
 interface IAddArtFormData {
-  author: string;
   title: string;
   description: string;
   thumbnail: File | null;
@@ -41,7 +40,6 @@ const PublishArt = () => {
   } = useForm<IAddArtFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      author: "",
       title: "",
       description: "",
       thumbnail: null,
@@ -54,6 +52,8 @@ const PublishArt = () => {
   });
 
   const dispatch = useAppDispatch();
+
+  const { isLoading } = useAppSelector((state) => state.loading);
 
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -236,6 +236,7 @@ const PublishArt = () => {
       }
     }
 
+    console.log(data);
     const formData = new FormData();
     const fileFormat = uploadedModelFile?.name.split(".").pop();
 
@@ -247,7 +248,7 @@ const PublishArt = () => {
     formData.append("fileFormat", fileFormat || "");
 
     // TODO
-    // dispatch(createAsset(formData));
+    dispatch(createAsset(formData));
   });
 
   const nextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -492,7 +493,7 @@ const PublishArt = () => {
                   <span className="ml-1 text-red-400">*</span>
                 </label>
                 <div
-                  className="hover:border-primary/50 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors"
+                  className="hover:border-primary border-primary/50 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border-2 border-dashed bg-white/5 transition-colors"
                   onClick={() => imageInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDrop={handleImageDrop}
@@ -705,9 +706,35 @@ const PublishArt = () => {
             ) : (
               <button
                 type="submit"
-                className="bg-primary hover:bg-primary rounded px-6 py-2 font-bold text-black"
+                className="bg-primary hover:bg-primary text-primary-content rounded px-6 py-2 font-bold disabled:cursor-not-allowed! disabled:opacity-50"
+                disabled={isLoading}
               >
-                Submit 3D Asset
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <svg
+                      className="text-primary-content h-4 w-4 animate-spin"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    <span>Submitting...</span>
+                  </div>
+                ) : (
+                  <span>Submit 3D Asset</span>
+                )}
               </button>
             )}
           </div>

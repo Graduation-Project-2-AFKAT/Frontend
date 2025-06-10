@@ -21,6 +21,15 @@ export interface IUser {
   is_following: boolean;
 }
 
+export interface IMembership {
+  role: "developer" | "designer" | "admin";
+  experience: string;
+  portfolio: string;
+  skills: string[];
+  motivation: string;
+  references: string;
+}
+
 export interface IPost {
   id: number;
   user_id: number;
@@ -53,6 +62,32 @@ export interface IGame {
   thumbnail: string;
   comments: string[];
 }
+
+export interface IAchievement {
+  id: number;
+  playerId: number;
+  achievementId: number;
+  gameId: number;
+  achievementName: string;
+  achievementDescription: string;
+  isCompleted: boolean;
+  achievementIconURL: string;
+  dateAchieved: string;
+}
+
+export interface ILeaderboard {
+  id: number;
+  gameId: number;
+  leaderboardName: string;
+}
+
+// export interface IAchievement {
+//   id: number;
+//   gameId: number;
+//   name: string;
+//   description: string;
+//   imageUrl: string;
+// }
 
 export interface IAsset {
   id: number;
@@ -91,6 +126,9 @@ export interface IJam {
   participants: string[];
   participants_count: number;
   is_active: boolean;
+  game_jam_thumbnail: string;
+  isOnline: boolean;
+  location: string;
 }
 
 export interface AlertMessages {

@@ -5,6 +5,7 @@ import Posts from "../components/Posts";
 import Board from "../components/ui/Board";
 import { IPost } from "../interfaces";
 import { useAppSelector } from "../redux/hooks";
+import { Link } from "react-router";
 
 const CreatePostModal = lazy(
   () => import("../components/modals/CreatePostModal"),
@@ -29,7 +30,7 @@ const Home = () => {
 
   return (
     <main
-      className={`${window.innerWidth < 768 ? "hide-scrollbar" : ""} grid w-full overflow-y-auto pt-10 lg:gap-10 lg:px-10 lg:pl-15`}
+      className={`${window.innerWidth < 768 ? "hide-scrollbar" : ""} bg-neutral/5 grid w-full overflow-y-auto pt-10 lg:gap-10 lg:px-10 lg:pl-15`}
     >
       {/*//! You think this is a useless line right ? ...Comment it and see how important it is ;) */}
       {/* <div className="hidden lg:block"></div> */}
@@ -42,22 +43,27 @@ const Home = () => {
 
       {/* Main */}
       <section className="space-y-6 md:mx-auto md:w-[75%] lg:w-full lg:px-0">
-        <div className="flex h-25 items-center border border-white/10 bg-[#2A2731] px-5 shadow-md drop-shadow-md md:rounded-lg">
+        <div className="bg-base-content/5 flex h-25 items-center border border-white/10 px-5 shadow-md drop-shadow-md md:rounded-lg">
           {/* <i className="fa-solid fa-circle-user mr-6 text-4xl" /> */}
-          <img
-            src={user?.userProfile.profile_image}
-            alt="profile pfp"
-            className="aspect-square w-15 rounded-full border text-xs"
-          />
+          <Link to={"profile"}>
+            <img
+              src={user?.userProfile.profile_image}
+              alt="profile pfp"
+              className="aspect-square w-15 rounded-full border text-xs"
+            />
+          </Link>
 
           <div className="ml-5 w-full">
-            <div className="mb-2 text-xs tracking-wide text-white/50">
+            <Link
+              to={`/profile`}
+              className="text-xs tracking-wide text-white/50"
+            >
               Hey @{user?.username}
-            </div>
+            </Link>
             <Input
               id="search-bar-posts"
               placeholder="What's on your mind?"
-              className="w-full cursor-pointer border-white/25 transition-colors outline-none focus-within:px-2! hover:border-white"
+              className="mt-1 w-full cursor-pointer border-white/25 transition-colors outline-none focus-within:px-2! hover:border-white"
               onClick={() => setIsCreateModalOpen(true)}
               readOnly
             />
@@ -66,7 +72,7 @@ const Home = () => {
           {isCreateModalOpen && (
             <Suspense
               fallback={
-                <div className="fixed inset-0 z-50 flex items-center justify-center rounded-lg bg-black/70">
+                <div className="fixed inset-0 z-50 flex items-center justify-center rounded-lg bg-black/50">
                   <div className="flex flex-col items-center gap-3">
                     <div className="border-t-primary h-10 w-10 animate-spin rounded-full border-4 border-r-transparent border-b-white/30 border-l-white/30"></div>
                     <p className="text-lg">Loading...</p>

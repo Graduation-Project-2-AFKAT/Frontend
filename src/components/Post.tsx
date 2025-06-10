@@ -31,7 +31,7 @@ const Post = ({ post, handleFollow }: IProps) => {
 
   return (
     <li
-      className="outline-primary grid border border-white/10 bg-[#2A2731] bg-cover shadow-md drop-shadow-md duration-50 md:rounded-xl lg:hover:outline-2 lg:hover:outline-dashed"
+      className={`${!post.theme ? "border-white/10" : "border-neutral"} outline-primary bg-base-content/5 grid border bg-cover shadow-md drop-shadow-md duration-50 md:rounded-xl lg:hover:outline-2 lg:hover:outline-dashed`}
       style={{
         gridTemplate: `60px 50px ${post.image ? "300px" : "auto"} auto auto / 1fr 1fr 1fr`,
         backgroundImage: post.theme ? `url('${post.theme}')` : "none",
@@ -40,7 +40,7 @@ const Post = ({ post, handleFollow }: IProps) => {
       }}
     >
       <div
-        className={`${post.theme ? "bg-black/25" : ""} pointer-events-none fixed inset-0 -z-1 rounded-xl`}
+        className={`${post.theme ? "bg-black/50" : ""} pointer-events-none fixed inset-0 -z-1 rounded-xl`}
       />
       <div className="col-span-3 flex h-fit justify-between px-5 pt-5">
         <div className="group flex items-center duration-150">
@@ -98,7 +98,7 @@ const Post = ({ post, handleFollow }: IProps) => {
         </div>
       )}
       <div
-        className={`${post.theme ? "drop-shadow-[1px_4px_2px_rgba(0,0,0,0.7)]" : ""} ${post.image ? "text-md" : "min-h-50 text-xl"} col-span-3 mx-7 my-5 rounded-lg border border-white/20 bg-[#2A2731] px-5 py-4 break-words`}
+        className={`${post.theme ? "drop-shadow-[1px_4px_2px_rgba(0,0,0,0.7)]" : ""} ${post.image ? "text-md bg-neutral-content/5 backdrop-blur-lg" : "bg-base-content/5 min-h-50 text-xl"} col-span-3 mx-7 my-5 rounded-lg border border-white/20 px-5 py-4 text-base break-words`}
       >
         {post.content}
       </div>

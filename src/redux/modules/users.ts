@@ -7,7 +7,7 @@ import { IForm, IUser } from "../../interfaces";
 import { startLoading, stopLoading } from "./loading.ts";
 
 export const registerUser = createAsyncThunk(
-  "user/register",
+  "users/register",
   async (userData: IForm, { dispatch, rejectWithValue }) => {
     try {
       dispatch(startLoading("users/register"));
@@ -28,7 +28,7 @@ export const registerUser = createAsyncThunk(
 );
 
 export const loginUser = createAsyncThunk(
-  "user/login",
+  "users/login",
   async (userData: IForm, { dispatch, rejectWithValue }) => {
     try {
       dispatch(startLoading("users/login"));
@@ -49,7 +49,7 @@ export const loginUser = createAsyncThunk(
 );
 
 export const loadMyUser = createAsyncThunk(
-  "user/loadMyUser",
+  "users/loadMyUser",
   async (_, { dispatch, rejectWithValue }) => {
     dispatch(startLoading("users/me"));
 
@@ -69,7 +69,7 @@ export const loadMyUser = createAsyncThunk(
 );
 
 export const loadUserById = createAsyncThunk(
-  "user/loadUserById",
+  "users/loadUserById",
   async (id: string, { dispatch, rejectWithValue }) => {
     dispatch(startLoading("users/view"));
 
@@ -91,7 +91,7 @@ export const loadUserById = createAsyncThunk(
 );
 
 export const updateUserProfile = createAsyncThunk(
-  "user/updateUserProfile",
+  "users/updateUserProfile",
   async (userData: FormData | null, { dispatch, rejectWithValue }) => {
     try {
       dispatch(startLoading("users/update"));
@@ -114,7 +114,7 @@ export const updateUserProfile = createAsyncThunk(
 );
 
 export const followUser = createAsyncThunk(
-  "user/followUser",
+  "users/followUser",
   async (id: string, { dispatch, rejectWithValue }) => {
     try {
       dispatch(startLoading("users/followUser"));
@@ -137,7 +137,7 @@ export const followUser = createAsyncThunk(
 );
 
 export const unfollowUser = createAsyncThunk(
-  "user/unfollowUser",
+  "users/unfollowUser",
   async (id: string, { dispatch, rejectWithValue }) => {
     try {
       dispatch(startLoading("users/unfollowUser"));
@@ -160,7 +160,7 @@ export const unfollowUser = createAsyncThunk(
 );
 
 export const changePassword = createAsyncThunk(
-  "user/changePassword",
+  "users/changePassword",
   async (userData: FormData | null, { dispatch, rejectWithValue }) => {
     try {
       dispatch(startLoading("users/changePassword"));
@@ -213,6 +213,10 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(loadUserById.fulfilled, (state, action) => {
       state.author = action.payload;
+    });
+
+    builder.addCase(loadUserById.rejected, (state) => {
+      state.author = null;
     });
 
     builder.addCase(followUser.fulfilled, (state, action) => {

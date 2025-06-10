@@ -39,7 +39,6 @@ const PublishGame = () => {
   const {
     register,
     handleSubmit,
-    getValues,
     setValue,
     formState: { errors },
   } = useForm<IAddGameFormData>({
@@ -83,7 +82,7 @@ const PublishGame = () => {
     "Fighting",
     "Shooter",
     "Horror",
-    "Card Game",
+    "Cards Game",
     "Educational",
   ];
 
@@ -190,6 +189,8 @@ const PublishGame = () => {
         return;
       }
 
+      setValue("thumbnail", imageFile);
+
       // Process the image
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -228,8 +229,30 @@ const PublishGame = () => {
 
     // Update both the state and form value with the same new value
     setSelectedTags(newTags);
-    setValue("tags", newTags);
   };
+
+  const onSubmit = handleSubmit((data) => {
+    if (activeStep === 3) {
+      if (!uploadedWebGLFiles) {
+        toast.error("Please make sure to upload game files (WebGl)");
+        return;
+      }
+    }
+
+    console.log(data);
+    const formData = new FormData();
+    const fileFormat = uploadedWebGLFiles?.name.split(".").pop();
+
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("thumbnail", data.thumbnail);
+    formData.append("tags", selectedTags.join(","));
+    formData.append("game_file", uploadedWebGLFiles!);
+    formData.append("fileFormat", fileFormat || "");
+
+    // TODO
+    dispatch(createGame(formData));
+  });
 
   const prevStep = () => {
     if (activeStep > 1) setActiveStep(activeStep - 1);
@@ -296,34 +319,11 @@ const PublishGame = () => {
     }
   };
 
-  const onSubmit = handleSubmit((data) => {
-    if (activeStep === 3) {
-      if (!uploadedWebGLFiles) {
-        toast.error("Please make sure to upload game files (WebGl)");
-        return;
-      }
-    }
-
-    console.log(data);
-    const formData = new FormData();
-    const fileFormat = uploadedWebGLFiles?.name.split(".").pop();
-
-    formData.append("title", data.title);
-    formData.append("description", data.description);
-    formData.append("thumbnail", data.thumbnail);
-    formData.append("tags", selectedTags.join(","));
-    formData.append("game_file", uploadedWebGLFiles!);
-    formData.append("fileFormat", fileFormat || "");
-
-    // TODO
-    // dispatch(createGame(formData));
-  });
-
   return (
     <div className="w-full overflow-y-auto">
       <form
         className="border-primary focus-within:shadow-primary/25 relative mx-auto my-10 flex h-fit w-[85%] max-w-4xl flex-col items-start rounded-2xl border-2 bg-[#121015] shadow-md duration-500 focus-within:shadow-lg"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={onSubmit}
       >
         {/* Header */}
         <div className="w-full border-b border-white/10 p-6">
@@ -498,7 +498,7 @@ const PublishGame = () => {
                   <span className="ml-1 text-red-400">*</span>
                 </label>
                 <div
-                  className="hover:border-primary/50 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors"
+                  className="hover:border-primary border-primary/50 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border-2 border-dashed bg-white/5 transition-colors"
                   onClick={() => imageInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDrop={handleImageDrop}
@@ -784,10 +784,35 @@ const PublishGame = () => {
             ) : (
               <button
                 type="submit"
-                className="bg-primary hover:bg-primary rounded px-6 py-2 font-bold text-black"
+                className="bg-primary hover:bg-primary text-primary-content rounded px-6 py-2 font-bold disabled:cursor-not-allowed! disabled:opacity-50"
                 disabled={isLoading}
               >
-                Submit Game
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <svg
+                      className="text-primary-content h-4 w-4 animate-spin"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    <span>Submitting...</span>
+                  </div>
+                ) : (
+                  <span>Submit Game</span>
+                )}
               </button>
             )}
           </div>

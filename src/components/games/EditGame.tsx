@@ -56,6 +56,7 @@ const EditGame = () => {
     },
   });
 
+  const { isLoading } = useAppSelector((state) => state.loading);
   const { Game } = useAppSelector((state) => state.games);
   const dispatch = useAppDispatch();
 
@@ -110,28 +111,19 @@ const EditGame = () => {
   ];
 
   const tagsOptions = [
-    "2D",
-    "3D",
-    "First Person",
-    "Third Person",
-    "Isometric",
-    "Pixel Art",
-    "Low Poly",
-    "Indie",
-    "Multiplayer",
-    "Single Player",
-    "Open World",
-    "Physics Based",
-    "Procedural Generation",
-    "Narrative",
-    "Rogue-like",
-    "Top Down",
-    "Side Scroller",
-    "Turn-based",
-    // TODO check if last three exist on server side
     "Action",
-    "Stragegy",
+    "Adventure",
+    "RPG",
+    "Strategy",
+    "Simulation",
+    "Sports",
     "Puzzle",
+    "Racing",
+    "Fighting",
+    "Shooter",
+    "Horror",
+    "Cards Game",
+    "Educational",
   ];
 
   useEffect(() => {
@@ -163,6 +155,7 @@ const EditGame = () => {
 
       // Update state variables
       setSelectedTags(tags || []);
+
       if (thumbnail) {
         setUploadedImage(
           typeof thumbnail === "string"
@@ -365,7 +358,7 @@ const EditGame = () => {
       });
     }
 
-    // dispatch(updateGame(formData));
+    dispatch(updateGame(formData));
   });
 
   const nextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -626,7 +619,7 @@ const EditGame = () => {
                   <span className="ml-1 text-red-400">*</span>
                 </label>
                 <div
-                  className="flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                  className="border-primary/50 hover:border-primary flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border-2 border-dashed bg-white/5 transition-colors"
                   onClick={() => imageInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDrop={handleImageDrop}
@@ -752,7 +745,7 @@ const EditGame = () => {
 
                   {/* Uploaded WebGL Files */}
                   {uploadedWebGLFiles && uploadedWebGLFiles.length > 0 && (
-                    <div className="mt-4 space-y-2">
+                    <div className="mt-4 w-full space-y-2">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium">
                           Uploaded WebGL Files ({uploadedWebGLFiles.length})
@@ -843,7 +836,7 @@ const EditGame = () => {
 
                   {/* Uploaded Windows Files */}
                   {uploadedWindowsFiles && uploadedWindowsFiles.length > 0 && (
-                    <div className="mt-4 space-y-2">
+                    <div className="mt-4 w-full space-y-2">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium">
                           Uploaded Windows Files ({uploadedWindowsFiles.length})
@@ -953,7 +946,7 @@ const EditGame = () => {
             ) : (
               <button
                 type="submit"
-                className="bg-primary hover:bg-primary/90 rounded px-6 py-2 font-bold text-black"
+                className="bg-primary hover:bg-primary/90 text-primary-content rounded px-6 py-2 font-bold disabled:cursor-not-allowed! disabled:opacity-50"
                 onClick={() => {
                   const errorsKeys = Object.keys(errors);
 
@@ -980,8 +973,34 @@ const EditGame = () => {
                     return;
                   }
                 }}
+                disabled={isLoading}
               >
-                Update Game
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <svg
+                      className="text-primary-content h-4 w-4 animate-spin"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    <span>Updating...</span>
+                  </div>
+                ) : (
+                  <span>Update Game</span>
+                )}
               </button>
             )}
           </div>

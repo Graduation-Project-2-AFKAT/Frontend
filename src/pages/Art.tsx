@@ -1,6 +1,12 @@
 import { Download, Edit, Flag, Heart } from "lucide-react";
 import moment from "moment";
-import { lazy, MouseEvent, Suspense, useEffect, useState } from "react";
+import {
+  lazy,
+  MouseEvent as ReactMouseEvent,
+  Suspense,
+  useEffect,
+  useState,
+} from "react";
 import { Link, useLocation } from "react-router";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -76,9 +82,7 @@ const Art = () => {
     }, 1000);
   };
 
-  const handleSubmitComment = (
-    e: MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleSubmitComment = (e: ReactMouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!Asset) return;
 

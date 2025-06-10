@@ -6,17 +6,15 @@ import moment from "moment";
 const Posts = lazy(() => import("../Posts"));
 
 interface IProps {
-  defaultTab: "Posts" | "Likes" | "Draft Posts" | "Scheduled Posts";
-  tabs: ("Posts" | "Likes" | "Draft Posts" | "Scheduled Posts")[];
+  defaultTab: string;
+  tabs: string[];
 }
 
 interface ITab {
-  tab: "Posts" | "Likes" | "Draft Posts" | "Scheduled Posts";
+  tab: string;
   title: string;
-  selectedTab: "Posts" | "Likes" | "Draft Posts" | "Scheduled Posts";
-  handleTabClick: (
-    tab: "Posts" | "Likes" | "Draft Posts" | "Scheduled Posts",
-  ) => void;
+  selectedTab: string;
+  handleTabClick: (tab: string) => void;
 }
 
 const Tabs = ({ defaultTab, tabs }: IProps) => {
@@ -44,9 +42,7 @@ const Tabs = ({ defaultTab, tabs }: IProps) => {
     }
   }, [postsList]);
 
-  function handleTabClick(
-    tab: "Posts" | "Likes" | "Draft Posts" | "Scheduled Posts",
-  ) {
+  function handleTabClick(tab: string) {
     setProfileSelectedTab(tab);
   }
 

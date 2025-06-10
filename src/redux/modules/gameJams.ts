@@ -29,6 +29,27 @@ export const loadJams = createAsyncThunk(
   },
 );
 
+export const participateInJam = createAsyncThunk(
+  "gameJams/participate",
+  async (jamId: number | undefined, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("gameJams/load"));
+
+      const res = await api.post(`/games/jams/${jamId}/participate/`);
+
+      console.log(res.data);
+
+      // return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data); //TODO: errors should be in Error redux module
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
 const initialState = {
   Jams: [] as IJam[],
 };

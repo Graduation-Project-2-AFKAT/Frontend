@@ -203,7 +203,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
         as="div"
         className="relative z-50"
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        onClose={(open) => {
+        onClose={(_) => {
           // Only close modal on Escape key, not outside clicks
           if (event?.type === "keydown") {
             onClose();

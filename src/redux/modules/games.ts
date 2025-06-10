@@ -7,11 +7,11 @@ import { IComment, IGame } from "../../interfaces";
 
 export const loadGames = createAsyncThunk(
   "games/loadAll",
-  async (_, { dispatch, rejectWithValue }) => {
+  async (tags: string | undefined, { dispatch, rejectWithValue }) => {
     try {
       dispatch(startLoading("games/load"));
 
-      const res = await api.get("/games");
+      const res = await api.get(`/games${tags ? `?tag=${tags}` : ""}`);
 
       return res.data;
     } catch (err: unknown) {
@@ -146,6 +146,7 @@ export const createGame = createAsyncThunk(
       });
 
       console.log(res.data);
+
       dispatch(
         showAlert({
           msg: "Game uploaded successfully! Our team will review it shortly.",
@@ -175,7 +176,7 @@ export const updateGame = createAsyncThunk(
     try {
       dispatch(startLoading("Games/update"));
 
-      const res = await api.patch(`/games/${gameData.get("id")}`, gameData, {
+      const res = await api.patch(`/games/${gameData.get("id")}/`, gameData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

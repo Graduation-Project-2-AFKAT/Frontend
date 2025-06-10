@@ -11,7 +11,7 @@ const BlockedUsers = () => {
 
         <div className="w-full px-5">
           <button
-            className="border-primary hover:bg-primary w-full rounded-lg border-2 py-1 font-bold duration-50 hover:text-black active:scale-99"
+            className="border-primary hover:bg-primary hover:text-primary-content w-full rounded-lg border-2 py-2 font-bold duration-50 active:scale-98"
             onClick={() => setShowModal((prev) => !prev)}
           >
             Block User

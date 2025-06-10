@@ -1,5 +1,4 @@
-import { lazy, Suspense, useState } from "react";
-const Posts = lazy(() => import("../Posts"));
+import { useState, memo } from "react";
 
 interface IProps {
   defaultTab: "Featured" | "Newest" | "Top Rated";
@@ -72,4 +71,4 @@ const Tab = ({ tab, title, selectedTab, handleTabClick }: ITab) => {
   );
 };
 
-export default GamesTabs;
+export default memo(GamesTabs);

@@ -1,36 +1,48 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router";
 import { Gamepad } from "lucide-react";
+import { useDebugValue, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router";
+import GameCard from "../components/GameCard";
+import GamesTabs from "../components/games/GamesTabs";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { loadGames } from "../redux/modules/games";
-import GameCard from "../components/GameCard";
-import Tabs from "../components/games/GamesTabs";
-import Board from "../components/ui/Board";
+import { IGame } from "../interfaces";
 
 const Games = () => {
   const { isLoading } = useAppSelector((state) => state.loading);
   const { Games } = useAppSelector((state) => state.games);
   const dispatch = useAppDispatch();
 
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [gamesToShow, setGamesToShow] = useState<IGame[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  useEffect(() => {
-    dispatch(loadGames());
-  }, [dispatch]);
+  useDebugValue(selectedTags ? "Online" : "Offline");
 
   const tags = [
     "Action",
-    "Horror",
-    "Puzzle",
-    "Cards",
     "Adventure",
     "RPG",
-    "Shooting",
-    "Arcade",
-    "Survival",
+    "Strategy",
+    "Simulation",
+    "Sports",
+    "Puzzle",
+    "Racing",
+    "Fighting",
+    "Shooter",
+    "Horror",
+    "Cards Game",
+    "Educational",
   ];
+
+  useEffect(() => {
+    const tags = selectedTags.join("&tag=");
+
+    dispatch(loadGames(tags));
+  }, [selectedTags, dispatch]);
+
+  useEffect(() => {
+    if (Games) {
+      setGamesToShow(Games);
+    }
+  }, [Games]);
 
   const handleTagToggle = (tag: string) => {
     const newTags = selectedTags.includes(tag)
@@ -40,44 +52,17 @@ const Games = () => {
     setSelectedTags(newTags);
   };
 
-  //TODO refetch data whenever selectedTags change
-  useEffect(() => {
-    // let tagsParams = "";
-    // if (selectedTags.length > 0) {
-    //   tagsParams += "?tag=";
-    // }
-    //
-    // tagsParams += selectedTags.join("&tag=");
-    // console.log(window.location.origin + window.location.pathname + tagsParams);
-  }, [selectedTags]);
-
-  useEffect(() => {
-    const main = document.querySelector("main") as HTMLDivElement;
-
-    const handleScroll = () => {
-      const currentScrollY = main.scrollTop;
-
-      if (currentScrollY > lastScrollY) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
-
-      setLastScrollY(currentScrollY);
-    };
-
-    main.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => main.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  const tabs = useMemo(() => {
+    return ["Featured", "Newest", "Top Rated"] as (
+      | "Featured"
+      | "Newest"
+      | "Top Rated"
+    )[];
+  }, []);
 
   return (
     <main className="w-full overflow-y-auto pt-0 lg:gap-10">
-      <header
-        className={`border-b-primary bg-neutral/5 sticky top-0 z-2 flex items-center justify-between border-b-2 px-10 py-6 backdrop-blur-3xl transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-[110%]"
-        }`}
-      >
+      <header className="border-b-primary bg-neutral/5 flex items-center justify-between border-b-2 px-10 py-6">
         <p>Share Your Games With The World!</p>
         <Link
           to={`${window.location.pathname}/publish`}
@@ -93,34 +78,34 @@ const Games = () => {
           {/* //TODO make selected "text-primary" */}
           {tags.length > 0 &&
             tags.map((tag) => (
-              <button
+              <li
                 key={tag}
-                // href={
-                //   window.location.origin +
-                //   window.location.pathname +
-                //   `?tag=${tag}`
-                // }
-                className={`rounded-full px-4 py-1 text-sm transition-colors ${
+                className={`rounded-full px-4 py-1 text-sm transition-colors hover:cursor-pointer ${
                   selectedTags.includes(tag)
-                    ? "bg-primary border-primary border text-black"
-                    : "hover:border-primary/50 border border-white/30 bg-white/5"
+                    ? "bg-primary border-primary text-base-200 border"
+                    : "hover:border-primary bg-primary-content/5 border-primary-content/30 border"
                 }`}
                 onClick={() => {
                   handleTagToggle(tag);
                 }}
               >
-                {tag}
-              </button>
+                <button
+                // href={
+                //   window.location.origin +
+                //   window.location.pathname +
+                //   `?tag=${tag}`
+                // }
+                >
+                  {tag}
+                </button>
+              </li>
             ))}
         </ul>
       </div>
 
       <section className="col-span-2 space-y-6 scroll-smooth md:mx-auto md:w-[85%] lg:w-full lg:px-10">
         <div className="border-b border-white/10" />
-        <Tabs
-          defaultTab="Featured"
-          tabs={["Featured", "Newest", "Top Rated"]}
-        />
+        <GamesTabs defaultTab="Featured" tabs={tabs} />
 
         {isLoading ? (
           <div className="flex h-64 items-center justify-center">
@@ -138,19 +123,19 @@ const Games = () => {
                   r="10"
                   stroke="currentColor"
                   strokeWidth="4"
-                ></circle>
+                />
                 <path
                   className="opacity-75"
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
+                />
               </svg>
               <span>Loading Games...</span>
             </div>
           </div>
         ) : (
           <ul className="grid-games my-10 grid gap-10 px-10 md:px-0">
-            {Games.map((game) => {
+            {gamesToShow.map((game) => {
               return <GameCard key={game.id} game={game} />;
             })}
           </ul>

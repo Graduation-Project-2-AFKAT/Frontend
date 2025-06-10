@@ -1,4 +1,4 @@
-import { EllipsisVertical, MessageSquare, Trophy } from "lucide-react";
+import { MessageSquare, Trophy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { toast } from "react-toastify";
@@ -133,7 +133,7 @@ const Profile = () => {
   return (
     <div className="w-full overflow-auto" id="profile">
       {isLoading && !type.startsWith("posts") ? (
-        <div className="bg-primary/50 absolute inset-0 top-0 z-50 flex items-center justify-center">
+        <div className="bg-neutral/50 absolute inset-0 top-0 z-50 flex items-center justify-center">
           <div className="flex flex-col items-center justify-center gap-2">
             <div className="border-primary h-15 w-15 animate-spin rounded-full border-t-2 border-b-2" />
             <span>Loading...</span>
@@ -174,10 +174,10 @@ const Profile = () => {
                   Joined 3 months ago
                   <span className="mt-1 inline-block h-1 w-1 rounded-full bg-white"></span>
                   <ul className="grid grid-cols-2 gap-x-2 text-center text-xs">
-                    <li className="bg-primary rounded px-1 py-1 font-bold">
+                    <li className="bg-secondary text-secondary-content rounded px-1 py-1 font-bold">
                       GMR
                     </li>
-                    <li className="bg-primary rounded px-1 py-1 font-bold">
+                    <li className="bg-secondary text-secondary-content rounded px-1 py-1 font-bold">
                       Online
                     </li>
                   </ul>
@@ -206,10 +206,10 @@ const Profile = () => {
 
               <div className="space-y- flex flex-col items-center">
                 <ul className="grid grid-cols-2 gap-x-2 pb-2 text-center text-xs">
-                  <li className="bg-primary rounded px-1 py-1 font-bold">
+                  <li className="bg-secondary text-secondary-content rounded px-1 py-1 font-bold">
                     GMR
                   </li>
-                  <li className="bg-primary rounded px-1 py-1 font-bold">
+                  <li className="bg-secondary text-secondary-content rounded px-1 py-1 font-bold">
                     Online
                   </li>
                 </ul>
@@ -240,8 +240,8 @@ const Profile = () => {
               <div className="flex w-full items-center justify-between gap-x-2 px-5 md:px-0">
                 {isOwner ? (
                   <Link
-                    to={`/profile/edit`}
-                    className="border-primary hover:bg-primary w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black"
+                    to={`edit`}
+                    className="btn btn-secondary w-full rounded-md border py-2 text-center text-sm font-bold duration-100"
                   >
                     Edit profile
                   </Link>
@@ -253,30 +253,6 @@ const Profile = () => {
                     {userData?.is_following ? "Unfollow" : "Follow"}
                   </button>
                 )}
-
-                <button
-                  onClick={() =>
-                    (
-                      document.getElementById(
-                        "profile-dialog",
-                      ) as HTMLDialogElement
-                    )?.showModal()
-                  }
-                  className="hover:bg-primary hover:border-primary w-full rounded-md border py-2 text-center text-sm font-bold duration-100 hover:text-black"
-                >
-                  About
-                </button>
-                <dialog
-                  id="profile-dialog"
-                  className="absolute m-auto rounded-lg p-6 backdrop:bg-black/50"
-                >
-                  <h2 className="mb-4 text-xl font-bold">Edit Profile</h2>
-                  <form method="dialog">
-                    <button className="cursor-pointer rounded border px-4 py-2">
-                      Close
-                    </button>
-                  </form>
-                </dialog>
               </div>
             </div>
           </header>
@@ -284,7 +260,7 @@ const Profile = () => {
           <section className="grid min-h-screen w-full gap-x-10 bg-[#23202A] px-10 pt-10 xl:px-15 xl:pt-12">
             {/* Left Section */}
             <div
-              className="sticky top-20 hidden h-fit translate-y-0 space-y-10 rounded-lg border border-white/10 bg-[#2A2731] py-10 pt-4 duration-250 xl:block"
+              className="bg-base-content/5 sticky top-20 hidden h-fit translate-y-0 space-y-10 rounded-lg border border-white/10 py-10 pt-4 duration-250 xl:block"
               id={window.innerWidth >= 1280 ? "LSection" : undefined}
             >
               <div className="flex w-full flex-col gap-x-4 px-5 text-center">
@@ -300,10 +276,10 @@ const Profile = () => {
                   />
 
                   <ul className="grid grid-cols-2 gap-x-2 text-xs">
-                    <li className="bg-primary rounded px-1 py-1 font-bold">
+                    <li className="bg-secondary text-secondary-content rounded px-1 py-1 font-bold">
                       GMR
                     </li>
-                    <li className="bg-primary rounded px-1 py-1 font-bold">
+                    <li className="bg-secondary text-secondary-content rounded px-1 py-1 font-bold">
                       Online
                     </li>
                   </ul>
@@ -354,8 +330,8 @@ const Profile = () => {
                 <div className="flex items-center justify-between space-x-2">
                   {isOwner ? (
                     <Link
-                      to={`/profile/edit`}
-                      className="border-primary hover:bg-primary w-full rounded-md border-2 py-2 text-center text-sm font-bold duration-100 hover:text-black"
+                      to={`edit`}
+                      className="btn btn-secondary w-full rounded-md border-2 py-2 text-center text-sm font-bold duration-100"
                     >
                       Edit profile
                     </Link>
@@ -369,7 +345,7 @@ const Profile = () => {
                   )}
                 </div>
 
-                <div className="flex w-full flex-col space-y-3 rounded-lg border border-white/10 bg-[#2A2731] px-5 py-5">
+                <div className="bg-base-content/5 flex w-full flex-col space-y-3 rounded-lg border border-white/10 px-5 py-5">
                   <h1 className="text-lg font-bold">Your invite link</h1>
                   <div className="flex items-center gap-x-2">
                     <input
@@ -380,7 +356,7 @@ const Profile = () => {
                       readOnly
                     />
                     <button
-                      className="hover:bg-primary hover:border-primary cursor-pointer rounded border px-3 py-1.5 text-sm font-medium transition-colors hover:text-black"
+                      className="hover:bg-secondary hover:border-secondary text-secondary-content cursor-pointer rounded border px-3 py-1.5 text-sm font-medium transition-colors"
                       onClick={() => {
                         navigator.clipboard.writeText(
                           (
@@ -403,7 +379,7 @@ const Profile = () => {
 
                 {/* left section to right on smaller screens */}
                 <div
-                  className="sticky top-20 h-fit translate-y-0 space-y-5 rounded-lg border border-white/10 bg-[#222028] py-5 pt-0 duration-300 xl:hidden"
+                  className="bg-base-content/5 sticky top-20 h-fit translate-y-0 space-y-5 rounded-lg border border-white/10 py-5 pt-0 duration-300 xl:hidden"
                   id={window.innerWidth < 1280 ? "LSection" : undefined}
                 >
                   <div className="flex w-full flex-col gap-x-4 px-5 text-center">
@@ -419,10 +395,10 @@ const Profile = () => {
                       />
 
                       <ul className="grid -translate-y-3 grid-cols-2 gap-x-2 text-xs">
-                        <li className="bg-primary rounded px-1 py-1 font-bold">
+                        <li className="bg-secondary text-secondary-content rounded px-1 py-1 font-bold">
                           GMR
                         </li>
-                        <li className="bg-primary rounded px-1 py-1 font-bold">
+                        <li className="bg-secondary text-secondary-content rounded px-1 py-1 font-bold">
                           Online
                         </li>
                       </ul>

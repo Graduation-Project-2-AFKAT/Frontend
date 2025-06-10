@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link } from "react-router";
 import { IGame } from "../interfaces";
 
@@ -12,7 +13,7 @@ const GameCard = ({ game, className }: IProps) => {
   return (
     <Link
       to={`${id}`}
-      className={`${className} outline-primary bg-neutral/5 border-primary/25 aspect-[4/5] rounded-2xl border shadow-md drop-shadow-md duration-50 md:rounded-lg lg:hover:outline-2 lg:hover:outline-dashed`}
+      className={`${className} outline-primary bg-base-content/2.5 border-primary/25 aspect-[4/5] rounded-2xl border shadow-md drop-shadow-md duration-50 md:rounded-lg lg:hover:outline-2 lg:hover:outline-dashed`}
     >
       <div className="flex h-full flex-col justify-between">
         <div className="h-full overflow-hidden">
@@ -30,11 +31,13 @@ const GameCard = ({ game, className }: IProps) => {
 
               <div className="ml-2 flex flex-col">
                 <small className="font-bold opacity-70">{username}</small>
-                <span className="font-bold">{title}</span>
+                <span className="block max-w-[120px] truncate font-bold">
+                  {title}
+                </span>
               </div>
             </div>
 
-            <div className="self-start rounded-md bg-black/20 px-3 py-1.5 text-sm font-bold">
+            <div className="bg-neutral/20 self-start rounded-md border border-white/25 px-3 py-1.5 text-sm font-bold">
               FREE
             </div>
           </div>
@@ -89,7 +92,7 @@ const GameCard = ({ game, className }: IProps) => {
                 //   window.location.pathname +
                 //   `?tag=${tag}`
                 // } //TODO tag button filter games
-                className={`hover:border-primary rounded-full border border-white/75 bg-white/5 px-4 py-1 text-sm transition-colors`}
+                className={`hover:border-primary bg-primary-content/5 rounded-full border border-white/75 px-4 py-1 text-sm transition-colors`}
               >
                 {tags[0]}
               </button>
@@ -101,4 +104,4 @@ const GameCard = ({ game, className }: IProps) => {
   );
 };
 
-export default GameCard;
+export default memo(GameCard);

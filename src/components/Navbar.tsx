@@ -1,4 +1,4 @@
-import { LogOut } from "lucide-react";
+import { LogOut, Trophy } from "lucide-react";
 import { useState } from "react";
 import { Link, NavLink } from "react-router";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -36,7 +36,7 @@ const Navbar = ({
 
   return (
     //TODO make underline white/100 when selected
-    <nav className="fixed z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015]/10 px-8 shadow-[1px_1px_5px_rgba(0,0,0,0.5)] drop-shadow-md backdrop-blur-sm">
+    <nav className="fixed z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015]/10 px-6 shadow-[1px_1px_5px_rgba(0,0,0,0.5)] drop-shadow-md backdrop-blur-sm">
       <div // Click outside any opened menu to close it
         className={`${showMiniNav || showUserMenu ? "fixed" : "hidden"} inset-0 z-5 h-screen w-screen bg-black/25`}
         onClick={() => {
@@ -49,9 +49,9 @@ const Navbar = ({
       />
 
       <div className="relative">
-        <div className="flex items-center gap-6 md:gap-0">
+        <div className="flex items-center gap-8 md:gap-0">
           <i
-            className="fa-solid fa-bars md:before:hidden"
+            className="fa-solid fa-bars hover:cursor-pointer md:before:hidden"
             onClick={handleMenuClick}
           />
 
@@ -150,7 +150,7 @@ const Navbar = ({
             )}
           </div>
 
-          <div className="bg-primary/5 mx-0 flex grow items-center rounded-md border border-white/25 py-2 pl-3 text-sm">
+          <div className="bg-base-content/5 mx-0 flex grow items-center rounded-md border border-white/25 py-2 pl-3 text-sm">
             <i className="fa-solid fa-magnifying-glass mr-4" />
             <input
               id="search-bar"
@@ -201,7 +201,7 @@ const Navbar = ({
 
             {/* user menu */}
             <div
-              className={`${showUserMenu ? "opacity-100" : "pointer-events-none opacity-0 duration-200"} absolute top-22 right-3 z-5 aspect-auto w-60 -translate-x-5 rounded-lg border border-[#8E8D92] bg-[#1D1A25] opacity-0 drop-shadow-2xl before:absolute before:-top-4.5 before:right-3 before:h-0 before:w-0 before:border-8 before:border-b-10 before:border-transparent before:border-b-[#8E8D92]`}
+              className={`${showUserMenu ? "opacity-100" : "pointer-events-none opacity-0 duration-200"} absolute top-22 right-1 z-5 aspect-auto w-60 -translate-x-5 rounded-lg border border-[#8E8D92] bg-[#1D1A25] opacity-0 drop-shadow-2xl before:absolute before:-top-4.5 before:right-3 before:h-0 before:w-0 before:border-8 before:border-b-10 before:border-transparent before:border-b-[#8E8D92]`}
             >
               <NavLink to="/profile" onClick={() => setShowUserMenu(false)}>
                 <div className="rounded-t-md px-4 pt-4 hover:bg-white/5">
@@ -216,7 +216,22 @@ const Navbar = ({
                 </div>
               </NavLink>
 
-              <div>
+              <NavLink
+                to="/achievements"
+                onClick={() => setShowUserMenu(false)}
+              >
+                <div className="rounded-t-md px-4 pt-4 hover:bg-white/5">
+                  <div className="mx-auto w-fit space-y-2">
+                    <Trophy className="w-full" size={30} />
+
+                    <p className="text-sm font-semibold">Achievements</p>
+                  </div>
+
+                  <hr className="mt-4 border-white/50" />
+                </div>
+              </NavLink>
+
+              <div className="font-light">
                 <NavLink
                   to="/profile"
                   className="block px-4 py-2.5 hover:bg-white/5"

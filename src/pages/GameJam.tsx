@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { IJam } from "../interfaces";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { loadJams } from "../redux/modules/gameJams";
+import { loadJams, participateInJam } from "../redux/modules/gameJams";
 
 import moment from "moment";
 
@@ -73,6 +73,10 @@ const GameJam = () => {
     }
   };
 
+  const participateJam = () => {
+    dispatch(participateInJam(selectedJam?.id));
+  };
+
   useEffect(() => {
     dispatch(loadJams(activeTab));
   }, [activeTab, dispatch]);
@@ -127,7 +131,7 @@ const GameJam = () => {
       <div className="grid grid-cols-1 gap-8">
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="border-primary h-12 w-12 animate-spin rounded-full border-t-2 border-b-2"></div>
+            <div className="border-primary h-12 w-12 animate-spin rounded-full border-t-2 border-b-2" />
           </div>
         ) : Jams.length > 0 ? (
           Jams.map((jam) => (
@@ -146,7 +150,7 @@ const GameJam = () => {
                 </div> */}
 
                 {/* Content */}
-                <div className="flex flex-1 flex-col justify-between p-6">
+                <div className="bg-neutral/5 flex flex-1 flex-col justify-between p-6">
                   <div className="mb-4">
                     <div className="mb-2 flex items-center justify-between">
                       <h2 className="group-hover:text-primary text-2xl font-bold transition-colors">
@@ -204,7 +208,7 @@ const GameJam = () => {
 
                     <button
                       onClick={() => selectJam(jam)}
-                      className="flex items-center rounded-md border border-white/20 bg-[#1A191F] px-4 py-2 transition-colors hover:bg-[#24222A]"
+                      className="bg-neutral-content/5 flex items-center rounded-md border border-white/20 px-4 py-2 transition-colors hover:bg-[#24222A]"
                     >
                       <span className="mr-2">View Details</span>
                       <ArrowRight size={16} />
@@ -237,25 +241,25 @@ const GameJam = () => {
       {showModal && selectedJam && (
         <>
           <div
-            className="fixed inset-0 z-50 bg-black/80"
+            className="fixed inset-0 z-50 bg-black/75"
             onClick={() => setShowModal(false)}
           />
           <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="no-scrollbar pointer-events-auto max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl border border-white/10 bg-[#16141C]">
+            <div className="no-scrollbar pointer-events-auto max-h-[80vh] w-full max-w-4xl overflow-y-auto rounded-xl border border-white/10 bg-[#16141C]">
               <div className="relative">
                 {/* Header Image */}
-                <div className="relative h-64 w-full border">
-                  {/* <img
-                    src={selectedJam.image}
+                <div className="relative h-64 w-full rounded-tl-xl">
+                  <img
+                    src={selectedJam.game_jam_thumbnail}
                     alt={selectedJam.title}
                     className="h-full w-full object-cover"
-                  /> */}
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#16141C] to-transparent" />
 
                   {/* Close Button */}
                   <button
                     onClick={() => setShowModal(false)}
-                    className="absolute top-4 right-4 rounded-full bg-black/50 p-2 transition-colors hover:bg-black/80"
+                    className="bg-error/20 hover:bg-error/50 absolute top-4 right-4 rounded-full p-2 transition-colors"
                   >
                     <X />
                   </button>
@@ -263,21 +267,19 @@ const GameJam = () => {
 
                 {/* Content */}
                 <div className="relative -mt-16 px-8 pb-10">
-                  <div className="mb-6 flex items-center">
+                  <div className="mb-8 flex items-center">
                     {/* <img
                       src={selectedJam.organizer.logo}
                       alt={selectedJam.organizer.name}
                       className="mr-3 h-12 w-12 rounded-full border-2 border-[#16141C] object-contain"
                     /> */}
 
-                    {/* <div>
+                    <div>
                       <span className="text-sm text-white/70">
                         Organized by
                       </span>
-                      <h3 className="font-medium">
-                        {selectedJam.organizer.name}
-                      </h3>
-                    </div> */}
+                      <h3 className="font-medium">{selectedJam.created_by}</h3>
+                    </div>
                   </div>
 
                   <h1 className="mb-4 text-3xl font-bold">
@@ -313,13 +315,13 @@ const GameJam = () => {
                       </div>
                     </div>
 
-                    {/* <div className="flex items-center text-white/70">
+                    <div className="flex items-center text-white/70">
                       <MapPin size={20} className="text-primary mr-3" />
                       <div>
                         <div className="font-medium text-white">Location</div>
                         <div>{selectedJam.location}</div>
                       </div>
-                    </div> */}
+                    </div>
 
                     {/* <div className="flex items-center text-white/70">
                       <Users size={20} className="text-primary mr-3" />
@@ -355,11 +357,10 @@ const GameJam = () => {
                           key={index}
                           className="hover:border-primary/50 rounded-lg border border-white/10 bg-[#1A191F] p-4 transition-colors"
                         >
-                          <div className="mb-3 flex items-center">
+                          <div className="flex items-center">
                             <Award size={18} className="text-primary mr-2" />
                             <h3 className="font-bold">{jam.prizes}</h3>
                           </div>
-                          <p className="text-white/80">{jam.prizes}</p>
                         </div>
                       ))}
                     </div>
@@ -423,10 +424,7 @@ const GameJam = () => {
                   {/* Registration Status */}
                   {activeTab === "active" && (
                     <div className="border-primary/20 mb-6 flex items-start rounded-lg border bg-[#1A191F] p-5">
-                      <AlertCircle
-                        size={20}
-                        className="text-primary mt-0.5 mr-3"
-                      />
+                      <AlertCircle size={20} className="text-primary mr-3" />
                       <div>
                         <h3 className="mb-1 font-bold">
                           This Game Jam is now active!
@@ -443,7 +441,7 @@ const GameJam = () => {
 
                   {/* Action Buttons */}
                   <div className="flex flex-col gap-4 sm:flex-row">
-                    {selectedJam.status === "past" ? (
+                    {!selectedJam.is_active ? (
                       <Link
                         to={`/jam/${selectedJam.id}/results`}
                         className="rounded-md bg-[#1A191F] px-6 py-3 text-center transition-colors hover:bg-[#24222A]"
@@ -451,15 +449,16 @@ const GameJam = () => {
                         View Results
                       </Link>
                     ) : (
-                      <button className="bg-primary hover:bg-primary/90 rounded-md px-6 py-3 text-center font-bold text-black transition-colors">
-                        {selectedJam.status === "active"
-                          ? "Join Now"
-                          : "Register"}
+                      <button
+                        className="bg-primary text-primary-content rounded-md px-6 py-3 text-center font-bold transition-opacity hover:opacity-85"
+                        onClick={participateJam}
+                      >
+                        {selectedJam.is_active ? "Join Now" : "Register"}
                       </button>
                     )}
 
                     <button
-                      className="rounded-md bg-[#1A191F] px-6 py-3 text-center transition-colors hover:bg-[#24222A]"
+                      className="rounded-md bg-[#201f26] px-6 py-3 text-center transition-colors hover:bg-[#24222A]"
                       onClick={() => {
                         const url = window.location.href + `/${selectedJam.id}`;
                         navigator.clipboard.writeText(url);
@@ -470,10 +469,10 @@ const GameJam = () => {
                     </button>
 
                     {/* //TODO might be removed */}
-                    {selectedJam.status !== "past" && (
+                    {selectedJam.is_active && (
                       <a
                         href="#"
-                        className="rounded-md bg-[#1A191F] px-6 py-3 text-center transition-colors hover:bg-[#24222A]"
+                        className="rounded-md bg-[#201f26] px-6 py-3 text-center transition-colors hover:bg-[#24222A]"
                       >
                         Add to Calendar
                       </a>

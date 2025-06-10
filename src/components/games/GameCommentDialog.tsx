@@ -16,7 +16,6 @@ const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
 
   const [comment, setComment] = useState("");
 
-  // This function just formats dates without changing state
   const formatCommentTime = (created: string, updated: string) => {
     const createdMoment = moment(created);
     const updatedMoment = moment(updated);
@@ -25,7 +24,6 @@ const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
       return "Invalid date";
     }
 
-    // Check if dates are different (ignoring milliseconds)
     const wasEdited = !createdMoment.isSame(updatedMoment, "second");
 
     return wasEdited
