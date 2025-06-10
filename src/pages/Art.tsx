@@ -1,4 +1,4 @@
-import { Download, Edit, Flag, Heart } from "lucide-react";
+import { Download, Edit, Flag, Trash } from "lucide-react";
 import moment from "moment";
 import {
   lazy,
@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   commentAsset,
+  deleteAsset,
   downloadAsset,
   loadAssetById,
   resetAsset,
@@ -44,7 +45,6 @@ const Art = () => {
 
   const [comment, setComment] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"details" | "comments">("details");
-  const [liked, setLiked] = useState(false);
   const [isReportLoading, setIsReportLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -70,8 +70,14 @@ const Art = () => {
     }
   };
 
-  const handleLike = () => {
-    setLiked(!liked);
+  const handleDelete = () => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this game? This action cannot be undone.",
+      )
+    ) {
+      dispatch(deleteAsset(Asset?.id));
+    }
   };
 
   const handleReport = () => {
@@ -96,20 +102,19 @@ const Art = () => {
     <div className="w-full overflow-y-auto">
       <div className="space-y-8 px-15 pt-8 pb-20">
         {/* Header */}
-        <header className="flex items-center justify-between">
+        <header className="mx-auto flex max-w-[68rem] items-center justify-between">
           <div className="flex flex-col space-y-3">
             <h1 className="text-3xl font-bold">{title}</h1>
             <div className="flex items-center">
               <Link to={`/profile/${user_id}`}>
                 <img
-                  src="https://randomuser.me/api/portraits/men/32.jpg"
+                  src={`${user?.userProfile.profile_image}`}
                   alt="avatar"
                   className="mr-2 h-10 w-10 rounded-full"
                 />
               </Link>
 
               <span className="text-white/70">by</span>
-              {/* //TODO redirect to profile page with author id to load their data, in profile page check if there is id on url load their data else keep your data there */}
               <Link
                 to={`/profile/${user_id}`}
                 className="hover:text-primary ml-1 font-medium"
@@ -119,12 +124,12 @@ const Art = () => {
             </div>
           </div>
 
-          <div className="flex gap-x-3">
+          <div className="flex flex-col items-end gap-x-3 gap-y-2 sm:flex-row">
             <div className="relative flex flex-col items-end">
               <button
                 onClick={handleDownload}
                 disabled={isLoading && type === "assets/download"}
-                className={`"disabled:bg-primary/70 bg-primary mb-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold text-black duration-150 disabled:cursor-not-allowed! ${!(isLoading && type === "assets/download") && "hover:scale-95"}`}
+                className={`"disabled:bg-primary/70 bg-primary text-primary-content flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold duration-150 disabled:cursor-not-allowed! ${!(isLoading && type === "assets/download") && "hover:scale-95"}`}
               >
                 {isLoading && type === "assets/download"
                   ? `Downloading...`
@@ -150,20 +155,22 @@ const Art = () => {
                   </div>
                 )}
             </div>
-            <div className="space-x-2">
-              <button
-                className={`${liked ? "border-primary text-primary" : "border-white/20 hover:border-white/50"} rounded border px-3 py-2 duration-100`}
-                onClick={handleLike}
-              >
-                <Heart size={20} className={liked ? "fill-primary" : ""} />
-              </button>
+            <div className="flex gap-x-2">
               {user_id === user?.id && (
-                <Link
-                  to={"edit"}
-                  className="inline-flex rounded border border-white/20 px-3 py-2 hover:border-white/50"
-                >
-                  <Edit size={20} />
-                </Link>
+                <>
+                  <Link
+                    to={"edit"}
+                    className="inline-flex rounded border border-white/20 px-3 py-2.5 hover:border-white/50"
+                  >
+                    <Edit size={20} />
+                  </Link>
+                  <button
+                    className="text-error hover:border-error/50 inline-flex rounded border border-white/20 px-3 py-2"
+                    onClick={handleDelete}
+                  >
+                    <Trash size={20} />
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -203,7 +210,7 @@ const Art = () => {
                 <h3 className="mb-3 text-lg font-medium">Tags</h3>
                 <div className="flex flex-wrap gap-2">
                   {tags &&
-                    tags.map((tag) => (
+                    tags.map((tag: string) => (
                       <a
                         key={tag}
                         href={`/arts?tag=${tag}`}
@@ -249,7 +256,7 @@ const Art = () => {
 
               <div className="mt-6 border-t border-white/10 pt-6">
                 <button
-                  className="flex w-full items-center justify-center gap-2 rounded border border-white/10 bg-white/5 py-2 text-white/70 hover:bg-white/10"
+                  className="flex w-full items-center justify-center gap-2 rounded border border-white/10 bg-white/5 py-2 text-white/70 hover:bg-white/10 disabled:cursor-not-allowed! disabled:opacity-80"
                   onClick={handleReport}
                   disabled={isReportLoading}
                 >

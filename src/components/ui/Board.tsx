@@ -29,6 +29,7 @@ const Board = ({
     } else if (title === "Suggestion") {
       dispatch(loadGames());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -57,16 +58,16 @@ const Board = ({
                     {leaderboard.leaderboardName}
                   </span>
                   <span className="text-base-content/70 text-xs">
-                    {leaderboard?.score || "99+"} points
+                    99+ points
                   </span>
                 </div>
               </li>
             ))}
-          {title !== "Leaderboard" &&
+          {title === "Suggestion" &&
             Games.slice(0, itemsCount).map((game, index) => (
               <li key={index} className="flex items-start gap-3 text-nowrap">
                 <Link className="avatar" to={`/games/${game.id}`}>
-                  <div className="h-16 w-16 rounded-md">
+                  <div className="border-primary/75 h-16 w-16 rounded-md border">
                     <img src={`${game.thumbnail}`} alt="Profile avatar" />
                   </div>
                 </Link>

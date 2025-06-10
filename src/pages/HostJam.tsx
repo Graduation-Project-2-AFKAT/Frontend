@@ -1,29 +1,36 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Award, Calendar, Image, Info, Trophy, Users, X } from "lucide-react";
+import {
+  Calendar,
+  Image,
+  Info,
+  Trophy,
+  Users,
+  X,
+  // ,Award
+} from "lucide-react";
 import { useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 import Input from "../components/form/Input";
 import { useAppSelector } from "../redux/hooks";
+import { IJam } from "../interfaces";
 
-interface IHostJamFormData {
-  title: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  location: string;
-  isOnline: boolean;
-  maxParticipants: number;
-  prizes: {
-    position: string;
-    prize: string;
-  }[];
+type IHostJamFormData = Pick<
+  IJam,
+  | "title"
+  | "description"
+  | "start_date"
+  | "end_date"
+  | "location"
+  | "isOnline"
+  | "participants_count"
+  | "prizes"
+> & {
   rules: string;
-  organizerName: string;
-  organizerEmail: string;
-  organizerWebsite?: string;
-}
+  organizer_name: string;
+  organizer_email: string;
+};
 
 const validationSchema = yup.object({
   title: yup.string().required("Game jam title is required"),
@@ -31,27 +38,24 @@ const validationSchema = yup.object({
     .string()
     .required("Description is required")
     .min(20, "Description must be at least 20 characters"),
-  startDate: yup.string().required("Start date is required"),
-  endDate: yup.string().required("End date is required"),
+  start_date: yup.string().required("Start date is required"),
+  end_date: yup.string().required("End date is required"),
   location: yup.string().required("Location is required"),
-  isOnline: yup.boolean(),
-  maxParticipants: yup.number().min(1, "Must allow at least 1 participant"),
-  prizes: yup
-    .array()
-    .of(
-      yup.object({
-        position: yup.string().required("Position name is required"),
-        prize: yup.string().required("Prize details are required"),
-      }),
-    )
-    .min(1, "At least one prize is required"),
+  isOnline: yup.boolean().required(),
+  participants_count: yup
+    .number()
+    .min(1, "Must allow at least 1 participant")
+    .required(),
+  prizes: yup.string().required("Prizes is required"),
   rules: yup.string().required("Rules are required"),
-  organizerName: yup.string().required("Organizer name is required"),
-  organizerEmail: yup
-    .string()
-    .email("Invalid email")
-    .required("Email is required"),
-  organizerWebsite: yup.string().url("Must be a valid URL").nullable(),
+  organizer_name: yup.string().required("Organizer name is required"),
+  organizer_email: yup.string().required("Organizer email is required"),
+  // organizerName: yup.string().required("Organizer name is required"),
+  // organizerEmail: yup
+  //   .string()
+  //   .email("Invalid email")
+  //   .required("Email is required"),
+  // organizerWebsite: yup.string().url("Must be a valid URL").nullable(),
 });
 
 const HostJam = () => {
@@ -66,17 +70,17 @@ const HostJam = () => {
     defaultValues: {
       title: "",
       description: "",
-      startDate: "",
-      endDate: "",
+      start_date: "",
+      end_date: "",
       location: "Online",
       isOnline: true,
-      maxParticipants: 100,
-      prizes: [{ position: "1st Place", prize: "" }],
+      participants_count: 1,
+      prizes: "",
       rules:
         "All games must be created during the jam period.\nTeams of up to 4 people are allowed.\nYou may use any engine or tools.\nSubmissions must include a playable build.\nThird-party assets are allowed but must be credited.",
-      organizerName: "",
-      organizerEmail: "",
-      organizerWebsite: "",
+      organizer_email: "",
+      organizer_name: "",
+      // organizerWebsite: "",
     },
   });
 
@@ -96,7 +100,6 @@ const HostJam = () => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
 
-    // Filter for image files
     const imageFile = files.find(
       (file) =>
         file.type.startsWith("image/") &&
@@ -106,13 +109,11 @@ const HostJam = () => {
     );
 
     if (imageFile) {
-      // Check file size
       if (imageFile.size > 5 * 1024 * 1024) {
         toast.error("Image size should be less than 5MB");
         return;
       }
 
-      // Process the image
       const reader = new FileReader();
       reader.onload = (event) => {
         if (type === "cover") {
@@ -151,38 +152,37 @@ const HostJam = () => {
     }
   };
 
-  const addPrize = () => {
-    const prizes = watch("prizes") || [];
-    const nextPosition = prizes.length + 1;
+  // const addPrize = () => {
+  //   const prizes = watch("prizes") || [];
+  //   const nextPosition = prizes.length + 1;
 
-    let positionText;
-    switch (nextPosition) {
-      case 1:
-        positionText = "1st Place";
-        break;
-      case 2:
-        positionText = "2nd Place";
-        break;
-      case 3:
-        positionText = "3rd Place";
-        break;
-      default:
-        positionText = `${nextPosition}th Place`;
-    }
+  //   let positionText;
+  //   switch (nextPosition) {
+  //     case 1:
+  //       positionText = "1st Place";
+  //       break;
+  //     case 2:
+  //       positionText = "2nd Place";
+  //       break;
+  //     case 3:
+  //       positionText = "3rd Place";
+  //       break;
+  //     default:
+  //       positionText = `${nextPosition}th Place`;
+  //   }
 
-    setValue("prizes", [...prizes, { position: positionText, prize: "" }]);
-  };
+  //   setValue("prizes", [...prizes, { position: positionText, prize: "" }]);
+  // };
 
-  const removePrize = (index: number) => {
-    const prizes = watch("prizes");
-    setValue(
-      "prizes",
-      prizes.filter((_, i) => i !== index),
-    );
-  };
+  // const removePrize = (index: number) => {
+  //   const prizes = watch("prizes");
+  //   setValue(
+  //     "prizes",
+  //     prizes.filter((_, i) => i !== index),
+  //   );
+  // };
 
   const onSubmit: SubmitHandler<IHostJamFormData> = (data) => {
-    console.log("submitted form");
     if (!uploadedImage) {
       toast.error("Please upload a cover image for your game jam");
       return;
@@ -192,36 +192,38 @@ const HostJam = () => {
       toast.error("Please upload an organizer logo");
       return;
     }
+    console.log("submitted form:", data);
 
-    // Validate date range
-    const start = new Date(data.startDate);
-    const end = new Date(data.endDate);
-    if (end <= start) {
-      toast.error("End date must be after the start date");
-      return;
-    }
+    // // Validate date range
+    // const start = new Date(data.start_date);
+    // const end = new Date(data.end_date);
+    // if (end <= start) {
+    //   toast.error("End date must be after the start date");
+    //   return;
+    // }
 
-    console.log({
-      ...data,
-      coverImage: uploadedImage,
-      organizerLogo: uploadedLogo,
-    });
+    // console.log({
+    //   ...data,
+    //   coverImage: uploadedImage,
+    //   organizerLogo: uploadedLogo,
+    // });
 
-    toast.success(
-      "Game jam proposal submitted! Our team will review and contact you shortly.",
-    );
+    // toast.success(
+    //   "Game jam proposal submitted! Our team will review and contact you shortly.",
+    // );
     // Here you would typically send the data to your backend
   };
 
-  const nextStep = () => {
+  const nextStep = (e: React.FormEvent) => {
+    e.preventDefault();
     const errors: string[] = [];
 
     // For step 1, validate basic details
     if (activeStep === 1) {
       const titleValue = watch("title");
       const descValue = watch("description");
-      const startDate = watch("startDate");
-      const endDate = watch("endDate");
+      const startDate = watch("start_date");
+      const endDate = watch("end_date");
       const location = watch("location");
 
       // Collect all errors
@@ -263,21 +265,24 @@ const HostJam = () => {
       }
 
       const prizes = watch("prizes");
-      if (!prizes || prizes.length === 0) {
-        errors.push("At least one prize is required");
-      } else {
-        const emptyPrizes = prizes.filter(
-          (prize) => !prize.position || !prize.prize,
-        );
-        if (emptyPrizes.length > 0) {
-          errors.push("All prizes details must be filled");
-        }
+      if (!prizes) {
+        errors.push("Prizes is required");
       }
+      // if (!prizes || prizes.length === 0) {
+      //   errors.push("At least one prize is required");
+      // } else {
+      //   const emptyPrizes = prizes.filter(
+      //     (prize) => !prize.position || !prize.prize,
+      //   );
+      //   if (emptyPrizes.length > 0) {
+      //     errors.push("All prizes details must be filled");
+      //   }
+      // }
 
-      const rules = watch("rules");
-      if (!rules) {
-        errors.push("Game jam rules are required");
-      }
+      // const rules = watch("rules");
+      // if (!rules) {
+      //   errors.push("Game jam rules are required");
+      // }
     }
 
     // If there are errors, show them all at once
@@ -435,11 +440,11 @@ const HostJam = () => {
                     id="startDate"
                     type="datetime-local"
                     className="w-full"
-                    {...register("startDate")}
+                    {...register("start_date")}
                   />
-                  {errors.startDate && (
+                  {errors.start_date && (
                     <p className="mt-1 text-xs text-red-400">
-                      {errors.startDate.message}
+                      {errors.start_date.message}
                     </p>
                   )}
                 </div>
@@ -456,11 +461,11 @@ const HostJam = () => {
                     id="endDate"
                     type="datetime-local"
                     className="w-full"
-                    {...register("endDate")}
+                    {...register("end_date")}
                   />
-                  {errors.endDate && (
+                  {errors.end_date && (
                     <p className="mt-1 text-xs text-red-400">
-                      {errors.endDate.message}
+                      {errors.end_date.message}
                     </p>
                   )}
                 </div>
@@ -502,11 +507,11 @@ const HostJam = () => {
                     type="number"
                     min="1"
                     className="w-full"
-                    {...register("maxParticipants", { valueAsNumber: true })}
+                    {...register("participants_count", { valueAsNumber: true })}
                   />
-                  {errors.maxParticipants && (
+                  {errors.participants_count && (
                     <p className="mt-1 text-xs text-red-400">
-                      {errors.maxParticipants.message}
+                      {errors.participants_count.message}
                     </p>
                   )}
                 </div>
@@ -543,7 +548,7 @@ const HostJam = () => {
                     <span className="ml-1 text-red-400">*</span>
                   </label>
                   <div
-                    className="hover:border-primary/50 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors"
+                    className="hover:border-primary/20 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors"
                     onClick={() => imageInputRef.current?.click()}
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleImageDrop(e, "cover")}
@@ -596,42 +601,41 @@ const HostJam = () => {
                     <span className="ml-1 text-red-400">*</span>
                   </label>
                   <div className="space-y-3">
-                    {watch("prizes")?.map((_, index) => (
-                      <div key={index} className="flex items-center gap-3">
-                        <div className="flex-1">
-                          <Input
-                            placeholder="Position (e.g., 1st Place)"
-                            className="w-full cursor-not-allowed bg-white/5 opacity-70"
-                            {...register(`prizes.${index}.position`)}
-                            disabled
-                          />
-                        </div>
-                        <div className="flex-[2]">
-                          <Input
-                            placeholder="Prize details (e.g., $500 + Publishing Deal)"
-                            className="w-full"
-                            {...register(`prizes.${index}.prize`)}
-                          />
-                        </div>
-                        {watch("prizes")?.length > 1 && (
-                          <button
-                            type="button"
-                            className="rounded bg-white/10 p-2 hover:bg-white/20"
-                            onClick={() => removePrize(index)}
-                          >
-                            <X size={16} />
-                          </button>
-                        )}
+                    <div className="flex items-center gap-3">
+                      {/* <div className="flex-1">
+                        <Input
+                          placeholder="Position (e.g., 1st Place)"
+                          className="w-full cursor-not-allowed bg-white/5 opacity-70"
+                          {...register(`prizes.${index}.position`)}
+                          disabled
+                        />
+                      </div> */}
+                      <div className="w-full">
+                        <Input
+                          placeholder="Prize details (e.g., $500 + Publishing Deal)"
+                          className="w-full"
+                          {...register(`prizes`)}
+                        />
                       </div>
-                    ))}
-                    <button
+                      {/* {watch("prizes")?.length > 1 && (
+                        <button
+                          type="button"
+                          className="rounded bg-white/10 p-2 hover:bg-white/20"
+                          // onClick={() => removePrize(index)}
+                        >
+                          <X size={16} />
+                        </button>
+                      )} */}
+                    </div>
+
+                    {/* <button
                       type="button"
                       className="border-primary/50 bg-primary/10 text-primary hover:bg-primary/20 hover:shadow-primary/20 mt-5 flex w-full items-center justify-center gap-2 rounded-md border border-dashed px-4 py-2.5 text-sm font-medium transition-all hover:shadow-sm"
-                      onClick={addPrize}
+                      // onClick={addPrize}
                     >
                       <Award size={18} />
                       Add Another Prize
-                    </button>
+                    </button> */}
                   </div>
                   {errors.prizes && (
                     <p className="mt-1 text-xs text-red-400">
@@ -654,12 +658,13 @@ const HostJam = () => {
                     className="focus:border-primary min-h-[150px] w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none"
                     placeholder="List the rules and guidelines for your game jam"
                     {...register("rules")}
+                    defaultValue={`All games must be created during the jam period.\nTeams of up to 4 people are allowed.\nYou may use any engine or tools.\nSubmissions must include a playable build.\nThird-party assets are allowed but must be credited.`}
                   />
-                  {errors.rules && (
+                  {/* {errors.rules && (
                     <p className="mt-1 text-xs text-red-400">
                       {errors.rules.message}
                     </p>
-                  )}
+                  )} */}
                   <p className="mt-1 text-xs text-white/50">
                     Each line will be displayed as a separate rule point
                   </p>
@@ -682,11 +687,11 @@ const HostJam = () => {
                     id="organizerName"
                     placeholder="Studio or organization name"
                     className="w-full"
-                    {...register("organizerName")}
+                    {...register("organizer_name")}
                   />
-                  {errors.organizerName && (
+                  {errors.organizer_name && (
                     <p className="mt-1 text-xs text-red-400">
-                      {errors.organizerName.message}
+                      {errors.organizer_name.message}
                     </p>
                   )}
                 </div>
@@ -704,11 +709,11 @@ const HostJam = () => {
                     type="email"
                     placeholder="Your email address"
                     className="w-full"
-                    {...register("organizerEmail")}
+                    {...register("organizer_email")}
                   />
-                  {errors.organizerEmail && (
+                  {errors.organizer_email && (
                     <p className="mt-1 text-xs text-red-400">
-                      {errors.organizerEmail.message}
+                      {errors.organizer_email.message}
                     </p>
                   )}
                 </div>
@@ -725,13 +730,13 @@ const HostJam = () => {
                     type="url"
                     placeholder="https://yourorganization.com"
                     className="w-full"
-                    {...register("organizerWebsite")}
+                    // {...register("organizerWebsite")}
                   />
-                  {errors.organizerWebsite && (
+                  {/* {errors.organizerWebsite && (
                     <p className="mt-1 text-xs text-red-400">
                       {errors.organizerWebsite.message}
                     </p>
-                  )}
+                  )} */}
                 </div>
 
                 <div className="col-span-1 md:col-span-2">
@@ -839,7 +844,7 @@ const HostJam = () => {
                 <button
                   type="button"
                   className="hover:bg-primary/80 bg-primary text-primary-content rounded px-6 py-2 font-bold"
-                  onClick={nextStep}
+                  onClick={(e) => nextStep(e)}
                 >
                   Next
                 </button>

@@ -6,32 +6,28 @@ import { toast } from "react-toastify";
 import * as yup from "yup";
 import Input from "../components/form/Input";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { IGame } from "../interfaces";
 import { createGame } from "../redux/modules/games";
 
-interface IAddGameFormData {
-  title: string;
-  description: string;
-  thumbnail: File | null;
-  tags: string[];
-  version: string;
-  price: string;
-  isMultiplayer: boolean | undefined;
-}
+type IAddGameFormData = Pick<IGame, "title" | "description">;
 
 const validationSchema = yup.object({
-  title: yup.string().required("Game title is required"),
+  title: yup
+    .string()
+    .required("Game title is required")
+    .max(20, "Title must be at most 20 characters"),
   description: yup
     .string()
     .required("Description is required")
     .min(20, "Description must be at least 20 characters"),
-  tags: yup
-    .array()
-    .min(1, "Select at least one tag")
-    .defined()
-    .of(yup.string()),
-  version: yup.string().required("Version is required"),
-  price: yup.string().required("Price is required"),
-  isMultiplayer: yup.boolean(),
+  // tags: yup
+  //   .array()
+  //   .min(1, "Select at least one tag")
+  //   .defined()
+  //   .of(yup.string()),
+  // version: yup.string().required("Version is required"),
+  // price: yup.string().required("Price is required"),
+  // isMultiplayer: yup.boolean(),
   // releaseDate: yup.string(),
 });
 
@@ -39,18 +35,17 @@ const PublishGame = () => {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<IAddGameFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       title: "",
       description: "",
-      thumbnail: null,
-      tags: [],
-      version: "1.0.0",
-      price: "Free",
-      isMultiplayer: false,
+      // thumbnail: null,
+      // tags: [],
+      // version: "1.0.0",
+      // price: "Free",
+      // isMultiplayer: false,
     },
   });
 
@@ -59,10 +54,9 @@ const PublishGame = () => {
 
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [uploadedWebGLFiles, setUploadedWebGLFiles] = useState<File | null>(
-    null,
-  );
-  const [uploadedWindowsFiles, setUploadedWindowsFiles] = useState<File | null>(
+  const [uploadedThumbnail, setUploadedThumbnail] = useState<File | null>(null);
+  const [uploadedWebGLFile, setUploadedWebGLFile] = useState<File | null>(null);
+  const [uploadedWindowsFile, setUploadedWindowsFile] = useState<File | null>(
     null,
   );
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -151,19 +145,19 @@ const PublishGame = () => {
     }
 
     if (buildType === "WebGL") {
-      setUploadedWebGLFiles(file);
+      setUploadedWebGLFile(file);
     } else if (buildType === "Windows") {
-      setUploadedWindowsFiles(file);
+      setUploadedWindowsFile(file);
     }
   };
 
   const handleRemoveFile = (buildType: string) => {
     if (buildType === "WebGL") {
-      setUploadedWebGLFiles(null);
+      setUploadedWebGLFile(null);
 
       if (WebGLfileInputRef.current) WebGLfileInputRef.current.value = "";
     } else if (buildType === "Windows") {
-      setUploadedWindowsFiles(null);
+      setUploadedWindowsFile(null);
 
       if (WindowsfileInputRef.current) WindowsfileInputRef.current.value = "";
     }
@@ -189,7 +183,7 @@ const PublishGame = () => {
         return;
       }
 
-      setValue("thumbnail", imageFile);
+      setUploadedThumbnail(imageFile);
 
       // Process the image
       const reader = new FileReader();
@@ -211,7 +205,7 @@ const PublishGame = () => {
         return;
       }
 
-      setValue("thumbnail", file);
+      setUploadedThumbnail(file);
 
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -222,18 +216,16 @@ const PublishGame = () => {
   };
 
   const handleTagToggle = (tag: string) => {
-    // Calculate the new tags array directly
     const newTags = selectedTags.includes(tag)
       ? selectedTags.filter((t) => t !== tag)
       : [...selectedTags, tag];
 
-    // Update both the state and form value with the same new value
     setSelectedTags(newTags);
   };
 
   const onSubmit = handleSubmit((data) => {
     if (activeStep === 3) {
-      if (!uploadedWebGLFiles) {
+      if (!uploadedWebGLFile) {
         toast.error("Please make sure to upload game files (WebGl)");
         return;
       }
@@ -241,22 +233,17 @@ const PublishGame = () => {
 
     console.log(data);
     const formData = new FormData();
-    const fileFormat = uploadedWebGLFiles?.name.split(".").pop();
+    const fileFormat = uploadedWebGLFile?.name.split(".").pop();
 
     formData.append("title", data.title);
     formData.append("description", data.description);
-    formData.append("thumbnail", data.thumbnail);
     formData.append("tags", selectedTags.join(","));
-    formData.append("game_file", uploadedWebGLFiles!);
-    formData.append("fileFormat", fileFormat || "");
+    if (uploadedThumbnail) formData.append("thumbnail", uploadedThumbnail);
+    if (uploadedWebGLFile) formData.append("game_file", uploadedWebGLFile);
+    if (fileFormat) formData.append("fileFormat", fileFormat);
 
-    // TODO
     dispatch(createGame(formData));
   });
-
-  const prevStep = () => {
-    if (activeStep > 1) setActiveStep(activeStep - 1);
-  };
 
   const nextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -273,6 +260,8 @@ const PublishGame = () => {
       // Collect all errors
       if (!titleValue?.value) {
         errors.push("Please enter a game title");
+      } else if (titleValue.value.length > 20) {
+        errors.push("Title must be at most 20 characters");
       }
 
       if (!descValue?.value) {
@@ -317,6 +306,10 @@ const PublishGame = () => {
     if (activeStep < 3) {
       setActiveStep(activeStep + 1);
     }
+  };
+
+  const prevStep = () => {
+    if (activeStep > 1) setActiveStep(activeStep - 1);
   };
 
   return (
@@ -431,24 +424,24 @@ const PublishGame = () => {
                   id="version"
                   placeholder="1.0.0"
                   className="w-full"
-                  {...register("version")}
+                  // {...register("version")}
                 />
               </div>
 
-              {/* <div>
-              <label
-                className="mb-2 block text-sm font-medium"
-                htmlFor="release"
-              >
-                Release Date
-              </label>
-              <Input
-                id="release"
-                type="date"
-                className="w-full"
-                {...register("releaseDate")}
-              />
-            </div> */}
+              <div>
+                <label
+                  className="mb-2 block text-sm font-medium"
+                  htmlFor="release"
+                >
+                  Release Date
+                </label>
+                <Input
+                  id="release"
+                  type="date"
+                  className="w-full"
+                  // {...register("releaseDate")}
+                />
+              </div>
 
               <div>
                 <label
@@ -460,7 +453,7 @@ const PublishGame = () => {
                 <select
                   id="price"
                   className="focus:border-primary w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:bg-[#1E1C21]"
-                  {...register("price")}
+                  // {...register("price")}
                 >
                   <option value="Free">Free</option>
                   <option value="$0.99">$0.99</option>
@@ -478,7 +471,7 @@ const PublishGame = () => {
                   <input
                     type="checkbox"
                     className="text-primary h-4 w-4 rounded border-white/10 bg-white/5 transition-colors"
-                    {...register("isMultiplayer")}
+                    // {...register("isMultiplayer")}
                   />
                   <span className="text-sm font-medium">
                     Multiplayer Support
@@ -498,7 +491,7 @@ const PublishGame = () => {
                   <span className="ml-1 text-red-400">*</span>
                 </label>
                 <div
-                  className="hover:border-primary border-primary/50 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border-2 border-dashed bg-white/5 transition-colors"
+                  className="hover:border-primary border-primary/20 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border-2 border-dashed bg-white/5 transition-colors"
                   onClick={() => imageInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDrop={handleImageDrop}
@@ -570,9 +563,9 @@ const PublishGame = () => {
                     </button>
                   ))}
                 </div>
-                {errors.tags && (
+                {selectedTags.length === 0 && (
                   <p className="mt-1 text-xs text-red-400">
-                    {errors.tags.message}
+                    Select at least one tag
                   </p>
                 )}
               </div>
@@ -664,23 +657,23 @@ const PublishGame = () => {
               </div>
 
               {/* Uploaded Files */}
-              {(uploadedWebGLFiles || uploadedWindowsFiles) && (
+              {(uploadedWebGLFile || uploadedWindowsFile) && (
                 <div className="space-y-2">
                   <p className="text-sm font-medium">Uploaded Files</p>
                   <div className="flex justify-between px-10">
                     {/* WebGL Files */}
                     <div className="flex flex-col gap-y-2">
-                      {uploadedWebGLFiles && (
+                      {uploadedWebGLFile && (
                         <div className="flex items-center justify-between rounded bg-white/10 p-2">
                           <div className="flex items-center">
                             <Package className="mr-2 text-white/70" size={16} />
                             <span className="text-sm">
-                              {uploadedWebGLFiles.name}
+                              {uploadedWebGLFile.name}
                             </span>
                             <span className="ml-2 text-xs text-white/50">
                               (
                               {Math.round(
-                                (uploadedWebGLFiles.size / 1024 / 1024) * 10,
+                                (uploadedWebGLFile.size / 1024 / 1024) * 10,
                               ) / 10}{" "}
                               MB)
                             </span>
@@ -698,17 +691,17 @@ const PublishGame = () => {
 
                     {/* Windows Files */}
                     <div className="flex flex-col gap-y-2">
-                      {uploadedWindowsFiles && (
+                      {uploadedWindowsFile && (
                         <div className="flex items-center justify-between rounded bg-white/10 p-2">
                           <div className="flex items-center">
                             <Package className="mr-2 text-white/70" size={16} />
                             <span className="text-sm">
-                              {uploadedWindowsFiles.name}
+                              {uploadedWindowsFile.name}
                             </span>
                             <span className="ml-2 text-xs text-white/50">
                               (
                               {Math.round(
-                                (uploadedWindowsFiles.size / 1024 / 1024) * 10,
+                                (uploadedWindowsFile.size / 1024 / 1024) * 10,
                               ) / 10}{" "}
                               MB)
                             </span>
@@ -776,7 +769,7 @@ const PublishGame = () => {
             {activeStep < 3 ? (
               <button
                 type="button"
-                className="hover:bg-primary rounded bg-teal-500 px-6 py-2 font-bold text-black"
+                className="hover:bg-primary/80 bg-primary text-primary-content rounded px-6 py-2 font-bold"
                 onClick={nextStep}
               >
                 Next

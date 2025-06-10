@@ -1,36 +1,30 @@
-import { useState, useRef, useEffect } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Box, FileText, Gamepad2, Image, Info, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useLocation } from "react-router";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 import Input from "../../components/form/Input";
-import { Image, Info, X, FileText, Box, Gamepad2 } from "lucide-react";
-import { toast } from "react-toastify";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { updateGame } from "../../redux/modules/games";
+import { IGame } from "../../interfaces";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { useLocation } from "react-router";
-import { loadGameById } from "../../redux/modules/games";
+import { loadGameById, updateGame } from "../../redux/modules/games";
 
-interface IEditGameFormData {
-  id: number | null;
-  title: string;
-  description: string;
-  tags: string[];
-  releaseDate: string;
-  status: string;
-  // genre: string;
-  // platform: string;
-  thumbnail: null | File;
-}
+type IEditGameFormData = Pick<
+  IGame,
+  "id" | "title" | "description" | "created_at"
+>;
 
 const validationSchema = yup.object({
+  id: yup.number().required("Id is required"),
   title: yup.string().required("Game title is required"),
   description: yup
     .string()
     .required("Description is required")
     .min(20, "Description must be at least 20 characters"),
-  tag: yup.array().min(1, "Select at least one tag"),
-  releaseDate: yup.string().required("Release date is required"),
-  status: yup.string().required("Status is required"),
+  created_at: yup.string().required("Release date is required"),
+  // tags: yup.array().min(1, "Select at least one tag"),
+  // status: yup.string().required("Status is required"),
   // genre: yup.string().required("Genre is required"),
   // platform: yup.string().required("Platform is required"),
 });
@@ -44,26 +38,22 @@ const EditGame = () => {
   } = useForm<IEditGameFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      id: null,
+      id: undefined,
       title: "",
       description: "",
-      tags: [],
-      releaseDate: new Date().toISOString().split("T")[0],
-      status: "Released",
-      // genre: "",
-      // platform: "",
-      thumbnail: null,
+      created_at: new Date().toISOString().split("T")[0],
     },
   });
 
-  const { isLoading } = useAppSelector((state) => state.loading);
-  const { Game } = useAppSelector((state) => state.games);
   const dispatch = useAppDispatch();
+  const { Game } = useAppSelector((state) => state.games);
+  const { isLoading } = useAppSelector((state) => state.loading);
 
   const location = useLocation();
 
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedThumbnail, setUploadedThumbnail] = useState<File | null>(null);
   const [uploadedWebGLFiles, setUploadedWebGLFiles] = useState<File[] | null>(
     null,
   );
@@ -137,17 +127,7 @@ const EditGame = () => {
 
   useEffect(() => {
     if (Game) {
-      const {
-        id,
-        title,
-        description,
-        thumbnail,
-        tags,
-        // releaseDate,
-        // status,
-        // genre,
-        // platform,
-      } = Game;
+      const { id, title, description, thumbnail, tags } = Game;
 
       setValue("id", id);
       setValue("title", title);
@@ -164,6 +144,7 @@ const EditGame = () => {
         );
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Game]);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -285,7 +266,7 @@ const EditGame = () => {
         return;
       }
 
-      setValue("thumbnail", imageFile);
+      setUploadedThumbnail(imageFile);
 
       // Process the image
       const reader = new FileReader();
@@ -307,7 +288,7 @@ const EditGame = () => {
         return;
       }
 
-      setValue("thumbnail", file);
+      setUploadedThumbnail(file);
 
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -329,14 +310,19 @@ const EditGame = () => {
     console.log("Submitting game update:", data);
     const formData = new FormData();
 
-    formData.append("id", data.id);
+    formData.append("id", data.id.toString());
     formData.append("title", data.title);
     formData.append("description", data.description);
     formData.append("tags", selectedTags.join(","));
-    formData.append("releaseDate", data.releaseDate);
-    formData.append("status", data.status);
-    formData.append("genre", data.genre);
-    formData.append("platform", data.platform);
+    formData.append("releaseDate", data.created_at);
+    if (uploadedThumbnail) {
+      formData.append("thumbnail", uploadedThumbnail);
+    }
+    if (uploadedWebGLFiles) {
+      uploadedWebGLFiles.forEach((file) => {
+        formData.append("webglFiles", file);
+      });
+    }
 
     // TODO: check difference of this below between editGame.tsx and editArt.tsx
     // Add cover image if uploaded
@@ -345,11 +331,6 @@ const EditGame = () => {
     }
 
     // Add WebGL files if uploaded
-    if (uploadedWebGLFiles) {
-      uploadedWebGLFiles.forEach((file) => {
-        formData.append("webglFiles", file);
-      });
-    }
 
     // Add Windows files if uploaded
     if (uploadedWindowsFiles) {
@@ -538,7 +519,7 @@ const EditGame = () => {
                   type="date"
                   id="releaseDate"
                   className="w-full"
-                  {...register("releaseDate")}
+                  {...register("created_at")}
                 />
               </div>
 
@@ -553,7 +534,7 @@ const EditGame = () => {
                 <select
                   id="status"
                   className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
-                  {...register("status")}
+                  // {...register("status")}
                 >
                   {statusOptions.map((status) => (
                     <option key={status} value={status}>
@@ -563,7 +544,7 @@ const EditGame = () => {
                 </select>
               </div>
 
-              {/* <div>
+              <div>
                 <label
                   className="mb-2 block text-sm font-medium"
                   htmlFor="genre"
@@ -574,7 +555,7 @@ const EditGame = () => {
                 <select
                   id="genre"
                   className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
-                  {...register("genre")}
+                  // {...register("genre")}
                 >
                   <option value="">Select a genre</option>
                   {genreOptions.map((genre) => (
@@ -583,9 +564,9 @@ const EditGame = () => {
                     </option>
                   ))}
                 </select>
-              </div> */}
+              </div>
 
-              {/* <div>
+              <div>
                 <label
                   className="mb-2 block text-sm font-medium"
                   htmlFor="platform"
@@ -596,7 +577,7 @@ const EditGame = () => {
                 <select
                   id="platform"
                   className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
-                  {...register("platform")}
+                  // {...register("platform")}
                 >
                   <option value="">Select a platform</option>
                   {platformOptions.map((platform) => (
@@ -605,7 +586,7 @@ const EditGame = () => {
                     </option>
                   ))}
                 </select>
-              </div> */}
+              </div>
             </div>
           )}
 
@@ -619,7 +600,7 @@ const EditGame = () => {
                   <span className="ml-1 text-red-400">*</span>
                 </label>
                 <div
-                  className="border-primary/50 hover:border-primary flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border-2 border-dashed bg-white/5 transition-colors"
+                  className="border-primary/20 hover:border-primary flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border-2 border-dashed bg-white/5 transition-colors"
                   onClick={() => imageInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDrop={handleImageDrop}
@@ -691,9 +672,9 @@ const EditGame = () => {
                     </button>
                   ))}
                 </div>
-                {errors.tags && (
+                {selectedTags.length === 0 && (
                   <p className="mt-1 text-xs text-red-400">
-                    {errors.tags.message}
+                    Select at least one tag
                   </p>
                 )}
               </div>
@@ -938,7 +919,7 @@ const EditGame = () => {
             {activeStep < 3 ? (
               <button
                 type="button"
-                className="bg-primary hover:bg-primary/90 rounded px-6 py-2 font-bold text-black"
+                className="bg-primary text-primary-content hover:bg-primary/80 rounded px-6 py-2 font-bold"
                 onClick={nextStep}
               >
                 Next

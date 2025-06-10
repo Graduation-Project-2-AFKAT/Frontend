@@ -190,6 +190,46 @@ export const updateGame = createAsyncThunk(
         }),
       );
 
+      setTimeout(() => {
+        window.location.href = "/games";
+      }, 500);
+
+      // return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(
+        showAlert({
+          msg: error.response?.data || "Failed to create post",
+          type: "error",
+        }),
+      );
+      return rejectWithValue(error.response?.data);
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
+export const deleteGame = createAsyncThunk(
+  "Games/delete",
+  async (id: number | undefined, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("Games/delete"));
+
+      const res = await api.delete(`/games/${id}/`);
+
+      console.log(res.data);
+      dispatch(
+        showAlert({
+          msg: "Game deleted successfully.",
+          type: "success",
+        }),
+      );
+
+      setTimeout(() => {
+        window.location.href = "/games";
+      }, 500);
+
       // return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
@@ -283,9 +323,17 @@ export const rateGame = createAsyncThunk(
     try {
       dispatch(startLoading("games/rate"));
 
-      const res = await api.post(`/games/${data.gameId}/rate/`, data.rate);
+      const res = await api.post(`/games/${data.gameId}/rate/`, {
+        content: data.rate,
+      });
 
       console.log("rate:", res);
+      dispatch(
+        showAlert({
+          msg: `${data.rate === 0 ? "Your rate has been removed." : `Rated ${data.rate} stars.`}`,
+          type: "success",
+        }),
+      );
 
       // return res.data;
     } catch (err: unknown) {

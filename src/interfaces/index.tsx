@@ -51,16 +51,20 @@ export interface IPost {
 export interface IGame {
   id: number;
   user_id: number;
+  username: string;
   title: string;
   description: string;
-  username: string;
   user_rating: number;
   tags: string[];
+  created_at: string;
+  updated_at: string;
   download_count: number;
   rating: number;
-  game_file: string;
   thumbnail: string;
-  comments: string[];
+  game_file: string;
+  game_file_win: string;
+  webgl_index_path: string;
+  // comments: string[];
 }
 
 export interface IAchievement {
@@ -107,9 +111,9 @@ export interface IComment {
   id: number;
   game?: number;
   art?: number;
-  user: number;
-  content: string;
+  user_id: number;
   username: string;
+  content: string;
   created_at: string;
   updated_at: string;
 }

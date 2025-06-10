@@ -9,7 +9,7 @@ export interface IMembershipFormData {
   role: "developer" | "designer" | "admin";
   experience: string;
   portfolio: string;
-  skills: string[];
+  // skills: string[];
   motivation: string;
   references: string;
 }
@@ -31,13 +31,13 @@ const BecomeAMember = () => {
       .string()
       .required("Experience is required")
       .min(20, "Please provide more details about your experience"),
-    portfolio: yup.string().url("Must be a valid URL"),
-    skills: yup.array().min(2, "Select at least 2 skills"),
+    portfolio: yup.string().url("Must be a valid URL").required(),
     motivation: yup
       .string()
       .required("Please tell us why you want to join")
       .min(20, "Your answer should be at least 20 characters"),
-    references: yup.string(),
+    references: yup.string().required(),
+    // skills: yup.array().min(2, "Select at least 2 skills"),
   });
 
   const {
@@ -46,17 +46,14 @@ const BecomeAMember = () => {
     setValue,
     formState: { errors },
     reset,
-    setError,
-    clearErrors,
   } = useForm<IMembershipFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       role: undefined,
       experience: "",
-      portfolio: "",
-      skills: [],
+      portfolio: undefined,
       motivation: "",
-      references: "",
+      references: undefined,
     },
   });
 
@@ -110,7 +107,6 @@ const BecomeAMember = () => {
     setSelectedRole(role);
     setValue("role", role);
     setSelectedSkills([]);
-    setValue("skills", []);
   };
 
   const handleSkillToggle = (skill: string) => {
@@ -119,42 +115,33 @@ const BecomeAMember = () => {
       : [...selectedSkills, skill];
 
     setSelectedSkills(updatedSkills);
-    setValue("skills", updatedSkills);
 
-    if (updatedSkills.length >= 2) {
-      clearErrors("skills");
-    } else {
-      setError("skills", {
-        type: "manual",
-        message: "Select at least 2 skills",
-      });
-    }
+    // if (updatedSkills.length >= 2) {
+    //   clearErrors("skills");
+    // } else {
+    //   setError("skills", {
+    //     type: "manual",
+    //     message: "Select at least 2 skills",
+    //   });
+    // }
   };
 
   const addCustomSkill = () => {
     if (customSkill && !selectedSkills.includes(customSkill)) {
       const updatedSkills = [...selectedSkills, customSkill];
       setSelectedSkills(updatedSkills);
-      setValue("skills", updatedSkills);
+      // setValue("skills", updatedSkills);
       setCustomSkill("");
 
-      if (updatedSkills.length >= 2) {
-        clearErrors("skills");
-      }
+      // if (updatedSkills.length >= 2) {
+      //   clearErrors("skills");
+      // }
     }
   };
 
   const handleRemoveCustomSkill = (skill: string) => {
     const updatedSkills = selectedSkills.filter((s) => s !== skill);
     setSelectedSkills(updatedSkills);
-    setValue("skills", updatedSkills);
-
-    if (updatedSkills.length < 2) {
-      setError("skills", {
-        type: "manual",
-        message: "Select at least 2 skills",
-      });
-    }
   };
 
   const onSubmit = async (data: IMembershipFormData) => {
@@ -369,9 +356,9 @@ const BecomeAMember = () => {
                     Add
                   </button>
                 </div>
-                {errors.skills && (
+                {selectedSkills.length < 2 && (
                   <p className="mt-1 text-sm text-red-400">
-                    {errors.skills.message}
+                    Select at least 2 skills
                   </p>
                 )}
 
@@ -435,7 +422,7 @@ const BecomeAMember = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="bg-primary hover:bg-primary rounded px-6 py-3 font-medium text-black transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                  className="bg-primary hover:bg-primary/80 text-primary-content rounded px-6 py-3 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {submitting ? "Submitting..." : "Submit Application"}
                 </button>

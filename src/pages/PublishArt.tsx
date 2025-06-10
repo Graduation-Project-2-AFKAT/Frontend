@@ -7,28 +7,23 @@ import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { createAsset } from "../redux/modules/assets";
+import { IAsset } from "../interfaces";
 
-interface IAddArtFormData {
-  title: string;
-  description: string;
-  thumbnail: File | null;
-  model_file: File | null;
-  tags: string[];
-  price: string;
-  fileFormat: string;
-  license: string;
-}
+type IAddArtFormData = Pick<IAsset, "title" | "description">;
 
 const validationSchema = yup.object({
-  title: yup.string().required("Asset title is required"),
+  title: yup
+    .string()
+    .required("Asset title is required")
+    .max(20, "Title must be at most 20 characters"),
   description: yup
     .string()
     .required("Description is required")
     .min(20, "Description must be at least 20 characters"),
-  tag: yup.array().min(1, "Select at least one tag"),
-  fileFormat: yup.string().required("File format is required"),
-  license: yup.string().required("License is required"),
-  price: yup.string().required("Price is required"),
+  // tags: yup.array().min(1, "Select at least one tag"),
+  // fileFormat: yup.string().required("File format is required"),
+  // license: yup.string().required("License is required"),
+  // price: yup.string().required("Price is required"),
 });
 
 const PublishArt = () => {
@@ -36,18 +31,17 @@ const PublishArt = () => {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = useForm<IAddArtFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       title: "",
       description: "",
-      thumbnail: null,
-      model_file: null,
-      tags: [],
-      license: "Standard Commercial License",
-      price: "Free",
-      fileFormat: "GLTF",
+      // model_file: null,
+      // thumbnail: null,
+      // tags: [],
+      // license: "Standard Commercial License",
+      // price: "Free",
+      // fileFormat: "GLTF",
     },
   });
 
@@ -57,6 +51,7 @@ const PublishArt = () => {
 
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedThumbnail, setUploadedThumbnail] = useState<File | null>(null);
   const [uploadedModelFile, setUploadedModelFile] = useState<File | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
@@ -143,7 +138,7 @@ const PublishArt = () => {
       return;
     }
 
-    const validFileExtensions = [".gltf", ".glb", ".zip", ".rar"];
+    const validFileExtensions = [".gltf", ".glb"];
 
     const extension = file.name
       .substring(file.name.lastIndexOf("."))
@@ -155,7 +150,7 @@ const PublishArt = () => {
           <h1 className="mb-2 font-bold">Invalid file format</h1>
           <p className="font-light">
             Please upload a valid 3D model file or compressed archive (GLTF,
-            GLB, ZIP, etc.)
+            GLB, etc.)
           </p>
         </div>,
       );
@@ -188,7 +183,7 @@ const PublishArt = () => {
         return;
       }
 
-      setValue("thumbnail", imageFile);
+      setUploadedThumbnail(imageFile);
 
       // Process the image
       const reader = new FileReader();
@@ -210,7 +205,7 @@ const PublishArt = () => {
         return;
       }
 
-      setValue("thumbnail", file);
+      setUploadedThumbnail(file);
 
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -231,7 +226,7 @@ const PublishArt = () => {
   const onSubmit = handleSubmit((data) => {
     if (activeStep === 3) {
       if (!uploadedModelFile) {
-        toast.error("Please upload a 3D model file");
+        toast.error("Please make sure to upload 3D model file");
         return;
       }
     }
@@ -242,12 +237,11 @@ const PublishArt = () => {
 
     formData.append("title", data.title);
     formData.append("description", data.description);
-    formData.append("thumbnail", data.thumbnail);
     formData.append("tags", selectedTags.join(","));
-    formData.append("model_file", uploadedModelFile!);
-    formData.append("fileFormat", fileFormat || "");
+    if (uploadedThumbnail) formData.append("thumbnail", uploadedThumbnail);
+    if (uploadedModelFile) formData.append("model_file", uploadedModelFile);
+    if (fileFormat) formData.append("fileFormat", fileFormat);
 
-    // TODO
     dispatch(createAsset(formData));
   });
 
@@ -256,16 +250,17 @@ const PublishArt = () => {
     e.stopPropagation();
 
     const errors: string[] = [];
-    // For step 1, validate title, description
+
     if (activeStep === 1) {
       const titleValue = document.getElementById("title") as HTMLInputElement;
       const descValue = document.getElementById(
         "description",
       ) as HTMLTextAreaElement;
 
-      // Collect all errors
       if (!titleValue?.value) {
         errors.push("Please enter an asset title");
+      } else if (titleValue.value.length > 20) {
+        errors.push("Title must be at most 20 characters");
       }
 
       if (!descValue?.value) {
@@ -275,7 +270,6 @@ const PublishArt = () => {
       }
     }
 
-    // For step 2, validate image and tags
     if (activeStep === 2) {
       if (!uploadedImage) {
         errors.push("Please upload a cover image");
@@ -286,7 +280,6 @@ const PublishArt = () => {
       }
     }
 
-    // If there are errors, show them all at once
     if (errors.length > 0) {
       toast.error(
         <div>
@@ -298,14 +291,13 @@ const PublishArt = () => {
           </ul>
         </div>,
         {
-          autoClose: 5000, // Give users more time to read all errors
+          autoClose: 5000,
           className: "error-toast",
         },
       );
       return;
     }
 
-    // If all validations pass, increment the step
     if (activeStep < 3) {
       setActiveStep(activeStep + 1);
     }
@@ -390,7 +382,7 @@ const PublishArt = () => {
                 />
                 {errors.title && (
                   <p className="mt-1 text-xs text-red-400">
-                    {errors.title.message}
+                    {errors?.title?.message}
                   </p>
                 )}
               </div>
@@ -427,7 +419,7 @@ const PublishArt = () => {
                 <select
                   id="fileFormat"
                   className="focus:border-primary w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:bg-[#1E1C21]"
-                  {...register("fileFormat")}
+                  // {...register("fileFormat")}
                 >
                   {fileFormats.map((format) => (
                     <option key={format} value={format}>
@@ -448,7 +440,7 @@ const PublishArt = () => {
                 <select
                   id="license"
                   className="focus:border-primary w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:bg-[#1E1C21]"
-                  {...register("license")}
+                  // {...register("license")}
                 >
                   {licenses.map((license) => (
                     <option key={license} value={license}>
@@ -469,7 +461,7 @@ const PublishArt = () => {
                 <select
                   id="price"
                   className="focus:border-primary w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:bg-[#1E1C21]"
-                  {...register("price")}
+                  // {...register("price")}
                 >
                   <option value="Free">Free</option>
                   <option value="$4.99">$4.99</option>
@@ -493,7 +485,7 @@ const PublishArt = () => {
                   <span className="ml-1 text-red-400">*</span>
                 </label>
                 <div
-                  className="hover:border-primary border-primary/50 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border-2 border-dashed bg-white/5 transition-colors"
+                  className="hover:border-primary border-primary/20 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border-2 border-dashed bg-white/5 transition-colors"
                   onClick={() => imageInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDrop={handleImageDrop}
@@ -565,9 +557,9 @@ const PublishArt = () => {
                     </button>
                   ))}
                 </div>
-                {errors.tags && (
+                {selectedTags.length === 0 && (
                   <p className="mt-1 text-xs text-red-400">
-                    {errors.tags.message}
+                    Select at least one tag
                   </p>
                 )}
               </div>
@@ -594,7 +586,7 @@ const PublishArt = () => {
                       Click to upload or drag and drop your 3D model file
                     </p>
                     <p className="text-center text-sm text-white/50">
-                      Supports GLTF, GLB and ZIP/RAR archives
+                      Supports GLTF, GLB
                     </p>
                     <p className="mt-1 text-center text-xs text-white/40">
                       Maximum file size: 100MB
@@ -607,7 +599,7 @@ const PublishArt = () => {
                 type="file"
                 ref={modelFileInputRef}
                 className="hidden"
-                accept=".gltf,.glb,.zip"
+                accept=".gltf,.glb"
                 multiple={false}
                 onChange={(e) => {
                   if (e.target.files) {
@@ -698,7 +690,7 @@ const PublishArt = () => {
             {activeStep < 3 ? (
               <button
                 type="button"
-                className="bg-primary hover:bg-primary rounded px-6 py-2 font-bold text-black"
+                className="bg-primary text-primary-content hover:bg-primary/80 rounded px-6 py-2 font-bold"
                 onClick={nextStep}
               >
                 Next

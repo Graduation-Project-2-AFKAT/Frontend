@@ -3,10 +3,14 @@ import moment from "moment";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { loadAssetComments } from "../../redux/modules/assets";
+import { IAsset, IComment } from "../../interfaces";
 
 const ArtComments = () => {
   const dispatch = useAppDispatch();
-  const { Asset, Comments } = useAppSelector((state) => state.assets);
+  const { Asset, Comments } = useAppSelector((state) => state.assets) as {
+    Asset: IAsset;
+    Comments: IComment[];
+  };
 
   useEffect(() => {
     if (Asset && Comments.length === 0) {
@@ -47,55 +51,57 @@ const ArtComments = () => {
       <h3 className="text-xl font-semibold">Comments ({Comments.length})</h3>
 
       {Comments.length > 0 &&
-        Comments.map(({ id, username, content, created_at, updated_at }) => (
-          <div
-            key={id}
-            className="rounded-lg border border-white/10 bg-[#16141C] p-5"
-          >
-            <div className="flex gap-x-4">
-              <img
-                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`}
-                alt={username}
-                className="h-10 w-10 rounded-full"
-              />
+        Comments.map(
+          ({ id, username, content, created_at, updated_at }: IComment) => (
+            <div
+              key={id}
+              className="rounded-lg border border-white/10 bg-[#16141C] p-5"
+            >
+              <div className="flex gap-x-4">
+                <img
+                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`}
+                  alt={username}
+                  className="h-10 w-10 rounded-full"
+                />
 
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{username}</p>
-                    <p className="text-xs text-white/50">@{username}</p>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">{username}</p>
+                      <p className="text-xs text-white/50">@{username}</p>
+                    </div>
+                    <span className="text-xs text-white/50">
+                      {formatCommentTime(created_at, updated_at)}
+                    </span>
                   </div>
-                  <span className="text-xs text-white/50">
-                    {formatCommentTime(created_at, updated_at)}
-                  </span>
-                </div>
 
-                <p className="mt-3 text-white/90">{content}</p>
+                  <p className="mt-3 text-white/90">{content}</p>
 
-                <div className="mt-4 flex items-center gap-6">
-                  <button className="flex items-center gap-1.5 text-white/70 hover:text-white">
-                    <ThumbsUp
-                      size={16}
-                      className="transition-transform hover:-translate-y-0.5"
-                    />
-                    <span className="text-xs">{15 - id}</span>
-                  </button>
+                  <div className="mt-4 flex items-center gap-6">
+                    <button className="flex items-center gap-1.5 text-white/70 hover:text-white">
+                      <ThumbsUp
+                        size={16}
+                        className="transition-transform hover:-translate-y-0.5"
+                      />
+                      <span className="text-xs">{15 - id}</span>
+                    </button>
 
-                  <button className="flex items-center gap-1.5 text-white/70 hover:text-white">
-                    <ThumbsDown
-                      size={16}
-                      className="transition-transform hover:translate-y-0.5"
-                    />
-                  </button>
+                    <button className="flex items-center gap-1.5 text-white/70 hover:text-white">
+                      <ThumbsDown
+                        size={16}
+                        className="transition-transform hover:translate-y-0.5"
+                      />
+                    </button>
 
-                  <button className="text-xs text-white/70 hover:text-white">
-                    Reply
-                  </button>
+                    <button className="text-xs text-white/70 hover:text-white">
+                      Reply
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ),
+        )}
     </div>
   );
 };

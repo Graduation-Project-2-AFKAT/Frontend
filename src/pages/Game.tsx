@@ -4,6 +4,7 @@ import {
   Heart,
   MessageSquare,
   Star,
+  Trash,
   Undo2,
 } from "lucide-react";
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
@@ -12,6 +13,7 @@ import { toast } from "react-toastify";
 import Board from "../components/ui/Board";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
+  deleteGame,
   downloadGame,
   // gameRatings,
   loadGameById,
@@ -29,6 +31,7 @@ const Game = () => {
   const { Game } = useAppSelector((state) => state.games);
   const { user } = useAppSelector((state) => state.users);
   const { isLoading, type } = useAppSelector((state) => state.loading);
+  const { show, type: alertType } = useAppSelector((state) => state.alerts);
   const { downloadProgress, estimatedTime } = useAppSelector(
     (state) => state.games,
   );
@@ -77,19 +80,24 @@ const Game = () => {
     if (isNumber) {
       dispatch(loadGameById(endPath.toString()));
     }
+  }, [dispatch, location.pathname]);
 
-    console.log(endPath);
-  }, [location.pathname]);
+  useEffect(() => {
+    if (show && alertType === "error") {
+      setUserRating(0);
+    }
+  }, [show, alertType]);
 
   const handleRating = useCallback(
     (value: number) => {
       if (!Game) return;
 
-      dispatch(rateGame({ rate: value, gameId: Game.id }));
       if (userRating === value) {
         setUserRating(0);
+        dispatch(rateGame({ rate: 0, gameId: Game.id }));
       } else {
         setUserRating(value);
+        dispatch(rateGame({ rate: value, gameId: Game.id }));
       }
     },
     [userRating, Game, dispatch],
@@ -98,6 +106,16 @@ const Game = () => {
   const handleDownload = () => {
     if (id) {
       dispatch(downloadGame({ id: id, gameTitle: title, gameFile: game_file }));
+    }
+  };
+
+  const handleDelete = () => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this game? This action cannot be undone.",
+      )
+    ) {
+      dispatch(deleteGame(Game?.id));
     }
   };
 
@@ -114,17 +132,17 @@ const Game = () => {
         <div className="grid-game grid grid-cols-2 gap-x-10 px-10 py-5">
           {/* Left Section */}
           <div className="col-span-2 mt-3 h-fit pt-5 pb-2 xl:col-span-1 xl:py-0">
-            <div className="flex items-center justify-between px-2 xl:px-0">
+            <div className="grid grid-cols-3 items-center justify-between px-2 xl:px-0">
               <Link
                 to={`/games`}
-                className="m-0 flex items-center gap-2 text-lg font-bold text-white hover:opacity-80 xl:m-5"
+                className="text-primary-content m-0 flex items-center gap-2 text-lg font-bold text-nowrap hover:opacity-80 xl:col-span-2 xl:mx-2 xl:my-5"
               >
-                <Undo2 />
+                <Undo2 size={20} className="w-10" />
                 Go Back
               </Link>
 
               <div className="flex flex-col items-center xl:hidden">
-                <h1 className="text-2xl">{title}</h1>
+                <h1 className="text-center text-2xl">{title}</h1>
                 <div>
                   by:{" "}
                   <Link to={`/profile/${Game?.user_id}`}>
@@ -135,7 +153,7 @@ const Game = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-x-3">
+              <div className="flex flex-col items-end justify-end gap-x-2 gap-y-1 lg:flex-row lg:items-center">
                 <div className="flex flex-col items-end xl:hidden">
                   <button
                     onClick={handleDownload}
@@ -168,12 +186,20 @@ const Game = () => {
                   )}
 
                 {Game?.user_id === user?.id && (
-                  <Link
-                    to={"edit"}
-                    className="inline-flex rounded border border-white/20 px-3 py-2 hover:border-white/50"
-                  >
-                    <Edit size={20} />
-                  </Link>
+                  <div className="inline-flex gap-x-2 xl:hidden">
+                    <Link
+                      to={"edit"}
+                      className="inline-flex rounded border border-white/20 px-3 py-2.5 hover:border-white/50"
+                    >
+                      <Edit size={20} />
+                    </Link>
+                    <button
+                      className="text-error hover:border-error/50 inline-flex rounded border border-white/20 px-3 py-2"
+                      onClick={handleDelete}
+                    >
+                      <Trash size={20} />
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
@@ -227,16 +253,16 @@ const Game = () => {
               <div>
                 <h1 className="text-2xl">{title}</h1>
                 <div>
-                  by: {/* //TODO href below */}
+                  by:{" "}
                   <Link to={`profile/${Game?.user_id}`}>
-                    <span className="underline-offset-2 hover:underline">
+                    <span className="text-primary underline-offset-2 hover:underline">
                       @{creator}
                     </span>
                   </Link>
                 </div>
               </div>
 
-              <div className="flex items-center gap-x-3">
+              <div className="flex items-center gap-x-2">
                 <div className="flex flex-col items-end">
                   <button
                     onClick={handleDownload}
@@ -269,12 +295,20 @@ const Game = () => {
                 </div>
 
                 {Game?.user_id === user?.id && (
-                  <Link
-                    to={"edit"}
-                    className="inline-flex rounded border border-white/20 px-3 py-2 hover:border-white/50"
-                  >
-                    <Edit size={20} />
-                  </Link>
+                  <>
+                    <Link
+                      to={"edit"}
+                      className="inline-flex rounded border border-white/20 px-3 py-2 hover:border-white/50"
+                    >
+                      <Edit size={20} />
+                    </Link>
+                    <button
+                      className="text-error hover:border-error/50 inline-flex rounded border border-white/20 px-3 py-2"
+                      onClick={handleDelete}
+                    >
+                      <Trash size={20} />
+                    </button>
+                  </>
                 )}
               </div>
             </div>
@@ -371,7 +405,7 @@ const Game = () => {
                   <div
                     className="pointer-events-none absolute flex overflow-hidden"
                     style={{
-                      width: `${(user_rating / 5) * 100}%`,
+                      width: `${((user_rating !== null ? user_rating : userRating) / 5) * 100}%`,
                       willChange: "width",
                       transition: "width 0.2s ease-out",
                     }}

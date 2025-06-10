@@ -20,12 +20,13 @@ const Home = () => {
 
   useEffect(() => {
     if (postsToShow) {
-      const filteredPosts = postsList.filter((post) =>
+      const filteredPosts = postsList.filter((post: IPost) =>
         moment(post.published_at).fromNow().split(" ").includes("ago"),
       );
 
       setPostsToShow(filteredPosts);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postsList]);
 
   return (

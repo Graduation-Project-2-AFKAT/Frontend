@@ -8,29 +8,22 @@ import * as yup from "yup";
 import Input from "../../components/form/Input";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { loadAssetById, updateAsset } from "../../redux/modules/assets";
+import { IAsset } from "../../interfaces";
 
-interface IAddArtFormData {
-  id: number | null;
-  author: string;
-  title: string;
-  description: string;
-  tags: string[];
-  price: string;
-  fileFormat: string;
-  license: string;
-  thumbnail: null | File;
-}
+type IAddArtFormData = Pick<IAsset, "id" | "title" | "description">;
 
 const validationSchema = yup.object({
+  id: yup.number().required("Id is required"),
+  // author: yup.string().required("Author is required"),
   title: yup.string().required("Asset title is required"),
   description: yup
     .string()
     .required("Description is required")
     .min(20, "Description must be at least 20 characters"),
-  tag: yup.array().min(1, "Select at least one tag"),
-  fileFormat: yup.string().required("File format is required"),
-  license: yup.string().required("License is required"),
-  price: yup.string().required("Price is required"),
+  // tags: yup.array().of(yup.string()).default([]).min(1, "Select at least one tag").required(),
+  // fileFormat: yup.string().required("File format is required"),
+  // license: yup.string().required("License is required"),
+  // price: yup.string().required("Price is required"),
 });
 
 const EditArt = () => {
@@ -42,22 +35,21 @@ const EditArt = () => {
   } = useForm<IAddArtFormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      id: null,
-      author: "",
+      id: undefined,
       title: "",
       description: "",
-      tags: [],
-      thumbnail: null,
     },
   });
 
   const dispatch = useAppDispatch();
   const { Asset } = useAppSelector((state) => state.assets);
+  const { isLoading } = useAppSelector((state) => state.loading);
 
   const location = useLocation();
 
   const [activeStep, setActiveStep] = useState(1);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedThumbnail, setUploadedThumbnail] = useState<File | null>(null);
   const [uploadedModelFile, setUploadedModelFile] = useState<File | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
@@ -88,6 +80,16 @@ const EditArt = () => {
   ];
 
   useEffect(() => {
+    if (!Asset) {
+      const pathParts = location.pathname.split("/");
+      const assetId = pathParts[pathParts.length - 2];
+
+      dispatch(loadAssetById(assetId));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (Asset) {
       const { id, title, description, thumbnail, tags } = Asset;
 
@@ -105,16 +107,8 @@ const EditArt = () => {
         );
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Asset]);
-
-  useEffect(() => {
-    if (!Asset) {
-      const pathParts = location.pathname.split("/");
-      const assetId = pathParts[pathParts.length - 2];
-
-      dispatch(loadAssetById(assetId));
-    }
-  }, []);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -218,7 +212,7 @@ const EditArt = () => {
         return;
       }
 
-      setValue("thumbnail", imageFile);
+      setUploadedThumbnail(imageFile);
 
       // Process the image
       const reader = new FileReader();
@@ -240,7 +234,7 @@ const EditArt = () => {
         return;
       }
 
-      setValue("thumbnail", file);
+      setUploadedThumbnail(file);
 
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -260,19 +254,20 @@ const EditArt = () => {
 
   const onSubmit = handleSubmit((data) => {
     const formData = new FormData();
-    const fileFormat = uploadedModelFile?.name.split(".").pop();
 
-    formData.append("id", data.id);
+    formData.append("id", data.id.toString());
     formData.append("title", data.title);
     formData.append("description", data.description);
-    formData.append("thumbnail", data.thumbnail);
     formData.append("tags", selectedTags.join(","));
-    formData.append("model_file", uploadedModelFile!);
-    formData.append("fileFormat", fileFormat || "");
+    if (uploadedThumbnail) {
+      formData.append("thumbnail", uploadedThumbnail);
+    }
+    if (uploadedModelFile) {
+      formData.append("model_file", uploadedModelFile);
+    }
 
     console.log("Submitting game update:", data);
-    console.log("thumbnail:", data.thumbnail);
-    // TODO
+
     dispatch(updateAsset(formData));
   });
 
@@ -348,9 +343,9 @@ const EditArt = () => {
       >
         {/* Header */}
         <div className="w-full border-b border-white/10 p-6">
-          <h1 className="text-2xl font-bold">Upload Your 3D Asset</h1>
+          <h1 className="text-2xl font-bold">Edit Your 3D Asset</h1>
           <p className="text-sm text-white/70">
-            Share your 3D models with creatives and developers worldwide
+            Update your 3D model details to better showcase your work
           </p>
         </div>
 
@@ -452,7 +447,7 @@ const EditArt = () => {
                 <select
                   id="fileFormat"
                   className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
-                  {...register("fileFormat")}
+                  // {...register("fileFormat")}
                 >
                   {fileFormats.map((format) => (
                     <option key={format} value={format}>
@@ -473,7 +468,7 @@ const EditArt = () => {
                 <select
                   id="license"
                   className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
-                  {...register("license")}
+                  // {...register("license")}
                 >
                   {licenses.map((license) => (
                     <option key={license} value={license}>
@@ -494,7 +489,7 @@ const EditArt = () => {
                 <select
                   id="price"
                   className="w-full rounded border border-white/10 bg-white/5 px-4 py-2 text-white transition-colors outline-none focus:border-teal-400 focus:bg-[#1E1C21]"
-                  {...register("price")}
+                  // {...register("price")}
                 >
                   <option value="Free">Free</option>
                   <option value="$4.99">$4.99</option>
@@ -518,7 +513,7 @@ const EditArt = () => {
                   <span className="ml-1 text-red-400">*</span>
                 </label>
                 <div
-                  className="flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border border-dashed border-white/30 bg-white/5 transition-colors hover:border-teal-400/50"
+                  className="hover:border-primary border-primary/20 flex aspect-video w-full max-w-3xl cursor-pointer flex-col items-center justify-center self-center rounded border-2 border-dashed bg-white/5 transition-colors"
                   onClick={() => imageInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDrop={handleImageDrop}
@@ -590,9 +585,9 @@ const EditArt = () => {
                     </button>
                   ))}
                 </div>
-                {errors.tags && (
+                {selectedTags.length === 0 && (
                   <p className="mt-1 text-xs text-red-400">
-                    {errors.tags.message}
+                    Select at least one tag
                   </p>
                 )}
               </div>
@@ -722,7 +717,7 @@ const EditArt = () => {
             {activeStep < 3 ? (
               <button
                 type="button"
-                className="bg-primary hover:bg-primary rounded px-6 py-2 font-bold text-black"
+                className="bg-primary text-primary-content hover:bg-primary/80 rounded px-6 py-2 font-bold"
                 onClick={nextStep}
               >
                 Next
@@ -730,9 +725,35 @@ const EditArt = () => {
             ) : (
               <button
                 type="submit"
-                className="bg-primary hover:bg-primary rounded px-6 py-2 font-bold text-black"
+                className="bg-primary hover:bg-primary text-primary-content rounded px-6 py-2 font-bold disabled:cursor-not-allowed! disabled:opacity-50"
+                disabled={isLoading}
               >
-                Submit 3D Asset
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <svg
+                      className="text-primary-content h-4 w-4 animate-spin"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    <span>Submitting...</span>
+                  </div>
+                ) : (
+                  <span>Submit 3D Asset</span>
+                )}
               </button>
             )}
           </div>

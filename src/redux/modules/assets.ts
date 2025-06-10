@@ -195,6 +195,46 @@ export const updateAsset = createAsyncThunk(
         }),
       );
 
+      setTimeout(() => {
+        window.location.href = "/arts";
+      }, 500);
+
+      // return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(
+        showAlert({
+          msg: error.response?.data || "Failed to create post",
+          type: "error",
+        }),
+      );
+      return rejectWithValue(error.response?.data);
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
+export const deleteAsset = createAsyncThunk(
+  "Assets/delete",
+  async (id: number | undefined, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("Assets/delete"));
+
+      const res = await api.delete(`/arts/${id}/`);
+
+      console.log(res.data);
+      dispatch(
+        showAlert({
+          msg: "Asset deleted successfully.",
+          type: "success",
+        }),
+      );
+
+      setTimeout(() => {
+        window.location.href = "/arts";
+      }, 500);
+
       // return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;

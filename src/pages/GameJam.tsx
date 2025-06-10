@@ -4,10 +4,10 @@ import {
   Award,
   Calendar,
   Clock,
-  Users,
   Trophy,
   MapPin,
   X,
+  // Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -134,7 +134,7 @@ const GameJam = () => {
             <div className="border-primary h-12 w-12 animate-spin rounded-full border-t-2 border-b-2" />
           </div>
         ) : Jams.length > 0 ? (
-          Jams.map((jam) => (
+          Jams.map((jam: IJam) => (
             <div
               key={jam.id}
               className="group transform overflow-hidden rounded-xl border border-white/10 bg-[#16141C] transition-all duration-300 hover:translate-y-[-4px] hover:border-black/10 hover:shadow-lg hover:shadow-black/50"
@@ -352,7 +352,7 @@ const GameJam = () => {
                   <div className="mb-8">
                     <h2 className="mb-4 text-xl font-bold">Prizes</h2>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {Jams.map((jam, index) => (
+                      {Jams.map((jam: IJam, index: number) => (
                         <div
                           key={index}
                           className="hover:border-primary/50 rounded-lg border border-white/10 bg-[#1A191F] p-4 transition-colors"

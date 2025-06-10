@@ -22,6 +22,8 @@ interface CreatePostModalProps {
   onClose: () => void;
 }
 
+type IPostCreateForm = Pick<IPost, "title" | "content">;
+
 const validationSchema = yup.object({
   title: yup.string().trim().required("Post title is required").max(100),
   content: yup.string().trim().required("Post content is required").max(256),
@@ -34,7 +36,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
     reset,
     watch,
     formState: { errors },
-  } = useForm<Partial<IPost>>({
+  } = useForm<IPostCreateForm>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       title: "",
@@ -449,7 +451,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                       <hr className="group-hover:border-primary absolute top-0 right-0 w-[140%] origin-top-right -rotate-45 border transition-colors" />
                     </div>
 
-                    {Object.keys(themes).length && <LoadThemes />}
+                    {Object.keys(themes).length > 0 && <LoadThemes />}
                   </div>
 
                   {/* Actions */}

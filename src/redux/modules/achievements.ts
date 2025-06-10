@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
-import api from "../../config/axios.config.ts";
+import api from "../../config/axios.config";
 import { IAchievement } from "../../interfaces";
-import { showAlert } from "./alerts.ts";
-import { startLoading, stopLoading } from "./loading.ts";
+import { showAlert } from "./alerts";
+import { startLoading, stopLoading } from "./loading";
 
 const url = "https://afkat-a734fcb61a41.herokuapp.com/api/v1/games/afk-service";
 

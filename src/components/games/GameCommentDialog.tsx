@@ -3,6 +3,7 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { commentGame, loadGameComments } from "../../redux/modules/games";
+import { IComment, IGame } from "../../interfaces";
 
 interface GameCommentDialogProps {
   onClose: () => void;
@@ -12,7 +13,10 @@ const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((state) => state.loading);
   const { user } = useAppSelector((state) => state.users);
-  const { Game, Comments } = useAppSelector((state) => state.games);
+  const { Game, Comments } = useAppSelector((state) => state.games) as {
+    Game: IGame;
+    Comments: IComment[];
+  };
 
   const [comment, setComment] = useState("");
 
@@ -130,7 +134,13 @@ const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
             <>
               <hr className="w-full opacity-15" />
               {Comments.map(
-                ({ id, username, content, created_at, updated_at }) => (
+                ({
+                  id,
+                  username,
+                  content,
+                  created_at,
+                  updated_at,
+                }: IComment) => (
                   <div key={id}>
                     <div className="flex gap-x-5 rounded px-10 py-6">
                       <img
