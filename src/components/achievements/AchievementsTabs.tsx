@@ -30,9 +30,17 @@ const AchievementsTabs = ({ defaultTab, tabs }: IProps) => {
 
   useEffect(() => {
     if (user && Achievements.length === 0) {
-      dispatch(loadPlayerAchievements(user.id));
+      // TODO use user.id like: loadPlayerAchievements(user.id)
+      dispatch(loadPlayerAchievements());
     }
-  }, [user, Achievements, dispatch]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // TODO fetch data depending on selectedTab
+  // useEffect(() => {
+  //   dispatch(loadPlayerAchievements(user.id));
+  // }, [selectedTab]);
 
   function handleTabClick(tab: "All" | "Latest" | "CS:GO") {
     setSelectedTab(tab);

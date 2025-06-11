@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 import { IJam } from "../interfaces";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { loadJams, participateInJam } from "../redux/modules/gameJams";
@@ -21,8 +20,14 @@ import moment from "moment";
 const GameJam = () => {
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((state) => state.loading);
+  const { user } = useAppSelector((state) => state.users);
   const { Jams } = useAppSelector((state) => state.gameJams);
 
+  const [action, setAction] = useState(
+    Jams.map((jam) => jam.participants.some((p) => p === user?.id.toString()))
+      ? "leave"
+      : "join",
+  );
   const [activeTab, setActiveTab] = useState<"active" | "upcoming" | "past">(
     "active",
   );
@@ -74,7 +79,11 @@ const GameJam = () => {
   };
 
   const participateJam = () => {
-    dispatch(participateInJam(selectedJam?.id));
+    dispatch(participateInJam({ action, jamId: selectedJam?.id }));
+
+    setTimeout(() => {
+      setAction(action === "join" ? "leave" : "join");
+    }, 1000);
   };
 
   useEffect(() => {
@@ -128,7 +137,7 @@ const GameJam = () => {
       </div>
 
       {/* Content */}
-      <div className="grid grid-cols-1 gap-8">
+      <div className="grid grid-cols-1! gap-8">
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
             <div className="border-primary h-12 w-12 animate-spin rounded-full border-t-2 border-b-2" />
@@ -187,10 +196,10 @@ const GameJam = () => {
                         </span>
                       </div>
 
-                      {/* <div className="flex items-center text-white/70">
+                      <div className="flex items-center justify-self-end text-white/70">
                         <MapPin size={16} className="mr-2" />
                         <span>{jam.location}</span>
-                      </div> */}
+                      </div>
 
                       <div className="flex items-center text-white/70">
                         <Trophy size={16} className="mr-2" />
@@ -202,7 +211,8 @@ const GameJam = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <span className="text-sm text-white/70">
-                        By {jam.created_by}
+                        By{" "}
+                        <span className="text-primary">{jam.created_by}</span>
                       </span>
                     </div>
 
@@ -453,29 +463,37 @@ const GameJam = () => {
                         className="bg-primary text-primary-content rounded-md px-6 py-3 text-center font-bold transition-opacity hover:opacity-85"
                         onClick={participateJam}
                       >
-                        {selectedJam.is_active ? "Join Now" : "Register"}
+                        {isLoading ? (
+                          <div className="flex items-center space-x-2">
+                            <svg
+                              className="text-primary-content h-4 w-4 animate-spin"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                                fill="none"
+                              />
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              />
+                            </svg>
+                            <span>
+                              {action === "join" ? "Joining..." : "Leaving..."}
+                            </span>
+                          </div>
+                        ) : (
+                          <span>
+                            {action === "join" ? "Join Now" : "Leave"}
+                          </span>
+                        )}
                       </button>
-                    )}
-
-                    <button
-                      className="rounded-md bg-[#201f26] px-6 py-3 text-center transition-colors hover:bg-[#24222A]"
-                      onClick={() => {
-                        const url = window.location.href + `/${selectedJam.id}`;
-                        navigator.clipboard.writeText(url);
-                        toast.success("Link copied to clipboard!");
-                      }}
-                    >
-                      Share
-                    </button>
-
-                    {/* //TODO might be removed */}
-                    {selectedJam.is_active && (
-                      <a
-                        href="#"
-                        className="rounded-md bg-[#201f26] px-6 py-3 text-center transition-colors hover:bg-[#24222A]"
-                      >
-                        Add to Calendar
-                      </a>
                     )}
                   </div>
                 </div>

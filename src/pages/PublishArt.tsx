@@ -20,10 +20,6 @@ const validationSchema = yup.object({
     .string()
     .required("Description is required")
     .min(20, "Description must be at least 20 characters"),
-  // tags: yup.array().min(1, "Select at least one tag"),
-  // fileFormat: yup.string().required("File format is required"),
-  // license: yup.string().required("License is required"),
-  // price: yup.string().required("Price is required"),
 });
 
 const PublishArt = () => {
@@ -36,12 +32,6 @@ const PublishArt = () => {
     defaultValues: {
       title: "",
       description: "",
-      // model_file: null,
-      // thumbnail: null,
-      // tags: [],
-      // license: "Standard Commercial License",
-      // price: "Free",
-      // fileFormat: "GLTF",
     },
   });
 
@@ -231,13 +221,16 @@ const PublishArt = () => {
       }
     }
 
-    console.log(data);
     const formData = new FormData();
     const fileFormat = uploadedModelFile?.name.split(".").pop();
 
     formData.append("title", data.title);
     formData.append("description", data.description);
-    formData.append("tags", selectedTags.join(","));
+    if (selectedTags.length > 0) {
+      selectedTags.map((tag) => {
+        formData.append("tags", tag);
+      });
+    }
     if (uploadedThumbnail) formData.append("thumbnail", uploadedThumbnail);
     if (uploadedModelFile) formData.append("model_file", uploadedModelFile);
     if (fileFormat) formData.append("fileFormat", fileFormat);
@@ -365,7 +358,7 @@ const PublishArt = () => {
         <div className="w-full flex-1 p-6">
           {/* Step 1: Basic Info */}
           {activeStep === 1 && (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1! gap-6 md:grid-cols-2!">
               <div className="col-span-1 md:col-span-2">
                 <label
                   className="mb-2 block text-sm font-medium"
@@ -382,7 +375,7 @@ const PublishArt = () => {
                 />
                 {errors.title && (
                   <p className="mt-1 text-xs text-red-400">
-                    {errors?.title?.message}
+                    {errors.title.message}
                   </p>
                 )}
               </div>
@@ -414,7 +407,6 @@ const PublishArt = () => {
                   htmlFor="fileFormat"
                 >
                   File Format
-                  <span className="ml-1 text-red-400">*</span>
                 </label>
                 <select
                   id="fileFormat"
@@ -435,7 +427,6 @@ const PublishArt = () => {
                   htmlFor="license"
                 >
                   License
-                  <span className="ml-1 text-red-400">*</span>
                 </label>
                 <select
                   id="license"
@@ -456,7 +447,6 @@ const PublishArt = () => {
                   htmlFor="price"
                 >
                   Price
-                  <span className="ml-1 text-red-400">*</span>
                 </label>
                 <select
                   id="price"

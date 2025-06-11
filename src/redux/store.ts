@@ -2,8 +2,11 @@ import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./modules";
 // import { setAuthToken } from "../utils";
 
+const isProduction = import.meta.env.MODE === "production";
+
 const store = configureStore({
   reducer: rootReducer,
+  devTools: !isProduction,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

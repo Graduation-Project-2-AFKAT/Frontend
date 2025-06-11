@@ -31,13 +31,18 @@ export const loadJams = createAsyncThunk(
 
 export const participateInJam = createAsyncThunk(
   "gameJams/participate",
-  async (jamId: number | undefined, { dispatch, rejectWithValue }) => {
+  async (
+    data: { action: string; jamId: number | undefined },
+    { dispatch, rejectWithValue },
+  ) => {
     try {
       dispatch(startLoading("gameJams/load"));
 
-      const res = await api.post(`/games/jams/${jamId}/participate/`);
+      await api.post(`/games/jams/${data.jamId}/participate/`, {
+        action: data.action,
+      });
 
-      console.log(res.data);
+      // console.log(res.data);
 
       // return res.data;
     } catch (err: unknown) {

@@ -117,16 +117,12 @@ const Profile = () => {
   }, [location.pathname, isLoading, author, user]);
 
   const handleFollow = () => {
-    try {
-      if (author) {
-        if (userData?.is_following) {
-          dispatch(unfollowUser(author.id.toString()));
-        } else {
-          dispatch(followUser(author.id.toString()));
-        }
+    if (author) {
+      if (userData?.is_following) {
+        dispatch(unfollowUser(author.id.toString()));
+      } else {
+        dispatch(followUser(author.id.toString()));
       }
-    } catch (err) {
-      console.log(err);
     }
   };
 

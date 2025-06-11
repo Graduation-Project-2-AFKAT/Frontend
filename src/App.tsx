@@ -10,6 +10,8 @@ const Home = lazy(() => import("./pages/Home"));
 const Profile = lazy(() => import("./pages/Profile"));
 const EditProfile = lazy(() => import("./pages/profile/EditProfile"));
 const BecomeAMember = lazy(() => import("./pages/BecomeAMember"));
+const Achievements = lazy(() => import("./pages/Achievements"));
+const Leaderboards = lazy(() => import("./pages/Leaderboards"));
 const Games = lazy(() => import("./pages/Games"));
 const Game = lazy(() => import("./pages/Game"));
 const PublishGame = lazy(() => import("./pages/PublishGame"));
@@ -48,7 +50,7 @@ function App() {
   useEffect(() => {
     if (localStorage.getItem("access_token") && !user) {
       dispatch(loadMyUser());
-      console.log("user loaded - Layout.tsx");
+      console.log("user loaded - Layout");
     }
   }, [user, isAuth, dispatch]);
 
@@ -143,6 +145,22 @@ function App() {
               element={
                 <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
                   <BecomeAMember />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/achievements"
+              element={
+                <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
+                  <Achievements />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/leaderboards"
+              element={
+                <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
+                  <Leaderboards />
                 </ProtectedRoute>
               }
             />

@@ -9,19 +9,21 @@ interface IProps {
 const AchievementCard = ({ achievement }: IProps) => {
   return (
     <div
-      className={`border-base-content/10 bg-base-200 hover:border-base-content/50 relative rounded-lg border p-4 shadow transition-colors hover:shadow-md ${
-        !achievement.achievementName ? "opacity-75" : ""
+      className={`bg-base-200 relative rounded-lg border p-4 shadow transition-colors hover:shadow-md ${
+        !achievement.isCompleted
+          ? "border-white/25 opacity-60 hover:border-white/70"
+          : "border-primary/50 hover:border-primary/80"
       }`}
     >
       <div className="flex h-full items-center gap-4">
-        <div className="bg-base-300 relative aspect-square w-1/4 flex-shrink-0 rounded-lg">
+        <div className="bg-base-300 relative aspect-square w-1/4 flex-shrink-0 self-start rounded-lg">
           {!achievement.isCompleted && (
             <div className="absolute inset-0 z-1 flex items-center justify-center rounded-lg bg-black/50">
               <Lock size={30} />
             </div>
           )}
           <img
-            src={`https://images.ui8.net/uploads/ui8-mockup-4_1727751577700.png`}
+            src={achievement.achievementIconURL}
             alt={achievement.achievementName}
             className={`h-full w-full rounded-lg object-cover ${!achievement.isCompleted ? "grayscale filter" : ""}`}
           />
@@ -36,7 +38,7 @@ const AchievementCard = ({ achievement }: IProps) => {
             </span>
           </div>
 
-          <div className="h-full indent-2 text-sm opacity-80">
+          <div className="h-full text-start text-sm opacity-80">
             {achievement.achievementDescription}
           </div>
         </div>

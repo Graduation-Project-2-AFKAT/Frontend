@@ -11,9 +11,9 @@ interface IProps {
 }
 
 const Posts = ({ posts }: IProps) => {
-  const { isLoading, type } = useAppSelector((state) => state.loading);
-  // const { Posts } = useAppSelector((state) => state.posts);
   const dispatch = useAppDispatch();
+  const { isLoading, type } = useAppSelector((state) => state.loading);
+
   const location = useLocation();
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const Posts = ({ posts }: IProps) => {
         dispatch(loadMyPosts());
       }
     } else {
-      dispatch(loadPosts());
+      dispatch(loadPosts({}));
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -35,7 +35,10 @@ const Posts = ({ posts }: IProps) => {
 
   return (
     <ul className="mb-25 space-y-6">
-      {isLoading && type.startsWith("posts") ? (
+      {isLoading &&
+      type !== "posts/like" &&
+      type !== "posts/delete" &&
+      !type.includes("comment") ? (
         <div className="flex flex-col items-center justify-center space-y-10 pb-12">
           <SkeletonPosts />
         </div>

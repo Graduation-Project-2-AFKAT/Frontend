@@ -197,7 +197,7 @@ const BecomeAMember = () => {
           {/* Role Selection */}
           <div className="mb-8">
             <h2 className="mb-4 text-xl font-semibold">Choose your role</h2>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="grid grid-cols-1! gap-4 sm:grid-cols-3!">
               <div
                 className={`flex cursor-pointer flex-col items-center rounded-lg p-6 transition-all ${
                   selectedRole === "developer"

@@ -313,7 +313,11 @@ const EditGame = () => {
     formData.append("id", data.id.toString());
     formData.append("title", data.title);
     formData.append("description", data.description);
-    formData.append("tags", selectedTags.join(","));
+    if (selectedTags.length > 0) {
+      selectedTags.map((tag) => {
+        formData.append("tags", tag);
+      });
+    }
     formData.append("releaseDate", data.created_at);
     if (uploadedThumbnail) {
       formData.append("thumbnail", uploadedThumbnail);
@@ -464,7 +468,7 @@ const EditGame = () => {
         <div className="w-full flex-1 p-6">
           {/* Step 1: Basic Info */}
           {activeStep === 1 && (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1! gap-6 md:grid-cols-2!">
               <div className="col-span-1 md:col-span-2">
                 <label
                   className="mb-2 block text-sm font-medium"

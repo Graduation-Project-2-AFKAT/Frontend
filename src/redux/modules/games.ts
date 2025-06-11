@@ -7,11 +7,18 @@ import { startLoading, stopLoading } from "./loading";
 
 export const loadGames = createAsyncThunk(
   "games/loadAll",
-  async (tags: string | undefined, { dispatch, rejectWithValue }) => {
+  async (
+    params: { tags?: string; search?: string },
+    { dispatch, rejectWithValue },
+  ) => {
     try {
       dispatch(startLoading("games/load"));
 
-      const res = await api.get(`/games${tags ? `?tag=${tags}` : ""}`);
+      const res = await api.get(
+        `/games${params.tags ? `?tag=${params.tags}` : params.search ? `?search=${params.search}` : ""}`,
+      );
+
+      // console.log(res.data);
 
       return res.data;
     } catch (err: unknown) {
@@ -56,7 +63,6 @@ export const downloadGame = createAsyncThunk(
     console.log("downloading game...");
     dispatch(startLoading("games/download"));
 
-    // Add progress state to your slice
     dispatch(setDownloadProgress({ downloadProgress: 0, estimatedTime: null }));
 
     try {
@@ -84,20 +90,18 @@ export const downloadGame = createAsyncThunk(
         },
       });
 
-      console.log("Downloading game file...");
-
-      // Get filename by using default game title
-      const fileName = gameTitle.replace(" ", "-");
+      const fileName = gameTitle.replace(/ /g, "-");
 
       const gameFilePathParts = gameFile.split(".");
       const gameExtension = gameFilePathParts[gameFilePathParts.length - 1];
+      console.log("Downloading game file...");
 
       const filename = `${fileName}.${gameExtension}`;
 
-      // Create a blob from the binary data
-      const blob = new Blob([res.data]);
+      const blob = new Blob([res.data], {
+        type: res.headers["content-type"] || "application/octet-stream",
+      });
 
-      // Create a download link and trigger download
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -105,24 +109,15 @@ export const downloadGame = createAsyncThunk(
       document.body.appendChild(link);
       link.click();
 
-      // Clean up
       link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(url);
 
       dispatch(
         showAlert({ msg: "Download completed successfully", type: "success" }),
       );
-
-      // Reset progress after complete
-      dispatch(
-        setDownloadProgress({ downloadProgress: 0, estimatedTime: null }),
-      );
-
-      return { id, filename };
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
-      // Reset progress on error
       dispatch(
         setDownloadProgress({ downloadProgress: 0, estimatedTime: null }),
       );
@@ -171,7 +166,7 @@ export const createGame = createAsyncThunk(
 );
 
 export const updateGame = createAsyncThunk(
-  "Games/update",
+  "games/update",
   async (gameData: FormData, { dispatch, rejectWithValue }) => {
     try {
       dispatch(startLoading("Games/update"));
@@ -211,7 +206,7 @@ export const updateGame = createAsyncThunk(
 );
 
 export const deleteGame = createAsyncThunk(
-  "Games/delete",
+  "games/delete",
   async (id: number | undefined, { dispatch, rejectWithValue }) => {
     try {
       dispatch(startLoading("Games/delete"));
@@ -324,18 +319,18 @@ export const rateGame = createAsyncThunk(
       dispatch(startLoading("games/rate"));
 
       const res = await api.post(`/games/${data.gameId}/rate/`, {
-        content: data.rate,
+        rating: data.rate,
       });
 
-      console.log("rate:", res);
-      dispatch(
-        showAlert({
-          msg: `${data.rate === 0 ? "Your rate has been removed." : `Rated ${data.rate} stars.`}`,
-          type: "success",
-        }),
-      );
+      // console.log("rate:", res);
+      // dispatch(
+      //   showAlert({
+      //     msg: `${data.rate === 0 ? "Your rate has been removed." : `Rated ${data.rate} stars.`}`,
+      //     type: "success",
+      //   }),
+      // );
 
-      // return res.data;
+      return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
@@ -394,6 +389,13 @@ export const gamesSlice = createSlice({
 
     builder.addCase(commentGame.fulfilled, (state, action) => {
       state.Comments = [action.payload, ...state.Comments];
+    });
+
+    builder.addCase(rateGame.fulfilled, (state, action) => {
+      if (state.Game) {
+        state.Game.user_rating = action.payload.rating.rating;
+        state.Game.rating = action.payload.game_avg_rating;
+      }
     });
   },
 });

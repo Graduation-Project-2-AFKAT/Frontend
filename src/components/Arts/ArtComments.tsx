@@ -27,7 +27,6 @@ const ArtComments = () => {
       return "Invalid date";
     }
 
-    // Check if dates are different (ignoring milliseconds)
     const wasEdited = !createdMoment.isSame(updatedMoment, "second");
 
     return wasEdited
@@ -83,7 +82,7 @@ const ArtComments = () => {
                         size={16}
                         className="transition-transform hover:-translate-y-0.5"
                       />
-                      <span className="text-xs">{15 - id}</span>
+                      <span className="text-xs">{Math.abs(15 - id)}</span>
                     </button>
 
                     <button className="flex items-center gap-1.5 text-white/70 hover:text-white">

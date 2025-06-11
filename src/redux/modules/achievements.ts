@@ -9,12 +9,16 @@ const url = "https://afkat-a734fcb61a41.herokuapp.com/api/v1/games/afk-service";
 
 export const loadPlayerAchievements = createAsyncThunk(
   "achievements/player-view",
-  async (userId: number, { dispatch, rejectWithValue }) => {
+  async (
+    // TODO: use userId: number
+    _,
+    { dispatch, rejectWithValue },
+  ) => {
     try {
       dispatch(startLoading("achievements/load-player"));
 
       const res = await api.get(
-        `${url}/afk_services/afk_player_achievements/player/${userId}`,
+        `${url}/afk_services/afk_player_achievements/game/9/player/1`,
       );
 
       //   console.log(res);
@@ -69,43 +73,6 @@ export const achievementSlice = createSlice({
     builder.addCase(loadPlayerAchievements.rejected, (state) => {
       state.Achievements = [];
     });
-    // builder.addCase(unfollowUser.fulfilled, (state, action) => {
-    //   if (action.payload === 200 && state.author) {
-    //     state.author.is_following = false;
-    //     state.author.followers_count--;
-    //   }
-    // });
-    // builder.addMatcher(
-    //   isAnyOf(loadMyUser.fulfilled, updateUserProfile.fulfilled),
-    //   (state, action) => {
-    //     state.isAuth = true;
-    //     state.user = action.payload;
-    //   },
-    // );
-    // builder.addMatcher(
-    //   isAnyOf(loginUser.fulfilled, registerUser.fulfilled),
-    //   (state, action) => {
-    //     const token = {
-    //       access: action.payload.access,
-    //       refresh: action.payload.refresh,
-    //     };
-    //     setAuthToken(token);
-    //     state.token = token;
-    //     state.user = action.payload.user;
-    //     state.isAuth = true;
-    //   },
-    // );
-    // builder.addMatcher(
-    //   isAnyOf(
-    //     loginUser.rejected,
-    //     registerUser.rejected,
-    //     loadMyUser.rejected,
-    //     updateUserProfile.rejected,
-    //   ),
-    //   (state) => {
-    //     resetAuthState(state);
-    //   },
-    // );
   },
 });
 

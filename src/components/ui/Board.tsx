@@ -28,7 +28,7 @@ const Board = ({
     if (title === "Leaderboard") {
       dispatch(loadLeaderboards());
     } else if (title === "Suggestion") {
-      dispatch(loadGames());
+      dispatch(loadGames({}));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -52,7 +52,7 @@ const Board = ({
             Leaderboards.slice(0, 3).map(
               (leaderboard: ILeaderboard, index: number) => (
                 <li key={index} className="flex items-start gap-3">
-                  <div className="from-primary/70 to-secondary/70 flex h-16 w-16 items-center justify-center overflow-hidden rounded-md bg-gradient-to-br font-bold text-white">
+                  <div className="from-primary/70 to-secondary/70 flex h-16 w-16 items-center justify-center overflow-hidden rounded-md border border-white/75 bg-gradient-to-br font-bold text-white">
                     #{index + 1}
                   </div>
                   <div className="flex flex-col">
@@ -68,9 +68,9 @@ const Board = ({
             )}
           {title === "Suggestion" &&
             Games.slice(0, itemsCount).map((game: IGame, index: number) => (
-              <li key={index} className="flex items-start gap-3 text-nowrap">
+              <li key={index} className="flex items-start gap-3">
                 <Link className="avatar" to={`/games/${game.id}`}>
-                  <div className="border-primary/75 h-16 w-16 rounded-md border">
+                  <div className="h-16 w-16 rounded-md border border-white/75">
                     <img src={`${game.thumbnail}`} alt="Profile avatar" />
                   </div>
                 </Link>

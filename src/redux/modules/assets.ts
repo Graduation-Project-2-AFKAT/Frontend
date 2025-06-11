@@ -7,11 +7,16 @@ import { startLoading, stopLoading } from "./loading";
 
 export const loadAssets = createAsyncThunk(
   "assets/loadAll",
-  async (_, { dispatch, rejectWithValue }) => {
+  async (
+    params: { tags?: string; search?: string },
+    { dispatch, rejectWithValue },
+  ) => {
     try {
       dispatch(startLoading("assets/load"));
 
-      const res = await api.get("/arts");
+      const res = await api.get(
+        `/arts${params.tags ? `?tag=${params.tags}` : params.search ? `?search=${params.search}` : ""}`,
+      );
 
       // console.log(res.data);
 

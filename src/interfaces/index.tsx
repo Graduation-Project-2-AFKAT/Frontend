@@ -39,6 +39,8 @@ export interface IPost {
   slug: string;
   summary: string;
   content: string;
+  likes_count: number;
+  is_liked_by_user: boolean;
   image: string;
   theme: string;
   theme_zoom_number: number;
@@ -46,6 +48,15 @@ export interface IPost {
   created_at: string;
   modified_at: string;
   published_at: string;
+  comments?: IPostComment[];
+}
+
+export interface IPostComment {
+  id: number;
+  creator: { username: string; profile_url: string };
+  content: string;
+  modified_at: string;
+  created_at: string;
 }
 
 export interface IGame {
@@ -83,6 +94,13 @@ export interface ILeaderboard {
   id: number;
   gameId: number;
   leaderboardName: string;
+}
+
+export interface ILeaderboardEntry {
+  userId: number;
+  playerName: string;
+  score: number;
+  rank: number;
 }
 
 // export interface IAchievement {

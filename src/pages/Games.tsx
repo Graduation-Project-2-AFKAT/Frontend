@@ -35,7 +35,7 @@ const Games = () => {
   useEffect(() => {
     const tags = selectedTags.join("&tag=");
 
-    dispatch(loadGames(tags));
+    dispatch(loadGames({ tags: tags }));
   }, [selectedTags, dispatch]);
 
   useEffect(() => {
@@ -83,7 +83,7 @@ const Games = () => {
                 className={`rounded-full px-4 py-1 text-sm transition-colors hover:cursor-pointer ${
                   selectedTags.includes(tag)
                     ? "bg-primary border-primary text-base-200 border"
-                    : "hover:border-primary bg-primary-content/5 border-primary-content/30 border"
+                    : "hover:border-primary bg-base-content/5 border-primary/30 border"
                 }`}
                 onClick={() => {
                   handleTagToggle(tag);

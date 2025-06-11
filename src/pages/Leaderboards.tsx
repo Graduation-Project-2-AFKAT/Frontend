@@ -9,30 +9,16 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppSelector } from "../redux/hooks";
-
-interface LeaderboardEntry {
-  id: number;
-  user_id: number;
-  username: string;
-  profile_image: string;
-  points: number;
-  rank: number;
-  badges: number;
-  level: number;
-  game_name?: string;
-  achievements: number;
-}
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { loadLeaderboardsEntries } from "../redux/modules/leaderboards";
 
 const Leaderboards = () => {
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const { isLoading } = useAppSelector((state) => state.loading);
   const { user } = useAppSelector((state) => state.users);
+  const { Entries } = useAppSelector((state) => state.leaderboards);
 
-  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>(
-    [],
-  );
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [timeRange, setTimeRange] = useState<string>("all-time");
@@ -40,147 +26,10 @@ const Leaderboards = () => {
   const [isTimeMenuOpen, setIsTimeMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    setTimeout(() => {
-      const mockData: LeaderboardEntry[] = [
-        {
-          id: 1,
-          user_id: 1,
-          username: "GameMaster99",
-          profile_image: "https://i.pravatar.cc/150?img=1",
-          points: 12500,
-          rank: 1,
-          badges: 32,
-          level: 90,
-          achievements: 128,
-          game_name: "CS:GO",
-        },
-        {
-          id: 2,
-          user_id: 2,
-          username: "PixelNinja",
-          profile_image: "https://i.pravatar.cc/150?img=2",
-          points: 10800,
-          rank: 2,
-          badges: 28,
-          level: 85,
-          achievements: 110,
-          game_name: "Valorant",
-        },
-        {
-          id: 3,
-          user_id: 3,
-          username: "LegendaryGamer",
-          profile_image: "https://i.pravatar.cc/150?img=3",
-          points: 9750,
-          rank: 3,
-          badges: 25,
-          level: 78,
-          achievements: 95,
-          game_name: "Minecraft",
-        },
-        {
-          id: 4,
-          user_id: 4,
-          username: "VictoryRoyale",
-          profile_image: "https://i.pravatar.cc/150?img=4",
-          points: 8900,
-          rank: 4,
-          badges: 23,
-          level: 72,
-          achievements: 89,
-          game_name: "Fortnite",
-        },
-        {
-          id: 5,
-          user_id: 5,
-          username: "ProSniper",
-          profile_image: "https://i.pravatar.cc/150?img=5",
-          points: 8200,
-          rank: 5,
-          badges: 21,
-          level: 68,
-          achievements: 82,
-          game_name: "CS:GO",
-        },
-        {
-          id: 6,
-          user_id: 6,
-          username: "EliteGamer",
-          profile_image: "https://i.pravatar.cc/150?img=6",
-          points: 7800,
-          rank: 6,
-          badges: 20,
-          level: 65,
-          achievements: 78,
-          game_name: "Valorant",
-        },
-        {
-          id: 7,
-          user_id: 7,
-          username: "MasterBuilder",
-          profile_image: "https://i.pravatar.cc/150?img=7",
-          points: 7200,
-          rank: 7,
-          badges: 18,
-          level: 60,
-          achievements: 72,
-          game_name: "Minecraft",
-        },
-        {
-          id: 8,
-          user_id: 8,
-          username: "BattleRoyale",
-          profile_image: "https://i.pravatar.cc/150?img=8",
-          points: 6800,
-          rank: 8,
-          badges: 17,
-          level: 58,
-          achievements: 68,
-          game_name: "Fortnite",
-        },
-        {
-          id: 9,
-          user_id: 9,
-          username: "SharpshotHero",
-          profile_image: "https://i.pravatar.cc/150?img=9",
-          points: 6400,
-          rank: 9,
-          badges: 16,
-          level: 55,
-          achievements: 64,
-          game_name: "CS:GO",
-        },
-        {
-          id: 10,
-          user_id: 10,
-          username: "TacticalOps",
-          profile_image: "https://i.pravatar.cc/150?img=10",
-          points: 6000,
-          rank: 10,
-          badges: 15,
-          level: 52,
-          achievements: 60,
-          game_name: "Valorant",
-        },
-      ];
-      setLeaderboardData(mockData);
-    }, 1000);
-  }, [timeRange, activeFilter]);
+    dispatch(loadLeaderboardsEntries());
 
-  const filteredData = leaderboardData.filter((entry) => {
-    const matchesSearch = entry.username
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-
-    const matchesFilter =
-      activeFilter === "all" ||
-      entry.game_name?.toLowerCase() === activeFilter.toLowerCase();
-    return matchesSearch && matchesFilter;
-  });
-
-  const currentUserRank = leaderboardData.find(
-    (entry) => entry.user_id === user?.id,
-  );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getRankDecoration = (rank: number) => {
     switch (rank) {
@@ -353,22 +202,22 @@ const Leaderboards = () => {
 
         {/* Top 3 podium (for larger screens) */}
         <div className="mb-10 hidden md:block">
-          {filteredData.length >= 3 && (
+          {Entries.length >= 3 && (
             <div className="flex items-end justify-center gap-6">
               {/* 2nd place */}
               <div className="flex flex-col items-center">
                 <div className="mb-2 h-32 w-32 overflow-hidden rounded-full border-4 border-gray-400">
                   <img
-                    src={filteredData[1].profile_image}
-                    alt={filteredData[1].username}
+                    src={`https://i.pravatar.cc/150?img=${Entries[1].userId}`}
+                    alt={Entries[1].playerName}
                     className="h-full w-full object-cover"
                   />
                 </div>
                 <div className="bg-base-200 flex h-40 w-40 flex-col items-center justify-center rounded-lg border border-gray-400/20 p-4 shadow-lg">
                   <Medal className="mb-2 text-gray-400" size={32} />
-                  <span className="font-bold">{filteredData[1].username}</span>
+                  <span className="font-bold">{Entries[1].playerName}</span>
                   <span className="text-primary font-bold">
-                    {filteredData[1].points.toLocaleString()} pts
+                    {Entries[1].score.toLocaleString()} pts
                   </span>
                 </div>
               </div>
@@ -377,22 +226,22 @@ const Leaderboards = () => {
               <div className="flex flex-col items-center">
                 <div className="mb-2 h-40 w-40 overflow-hidden rounded-full border-4 border-yellow-400">
                   <img
-                    src={filteredData[0].profile_image}
-                    alt={filteredData[0].username}
+                    src={`https://i.pravatar.cc/150?img=${Entries[0].userId}`}
+                    alt={Entries[0].playerName}
                     className="h-full w-full object-cover"
                   />
                 </div>
                 <div className="from-base-200 to-base-300 flex h-52 w-52 flex-col items-center justify-center rounded-lg border border-yellow-400/20 bg-gradient-to-b p-4 shadow-lg">
                   <Trophy className="mb-2 text-yellow-400" size={40} />
                   <span className="text-xl font-bold">
-                    {filteredData[0].username}
+                    {Entries[0].playerName}
                   </span>
                   <span className="text-primary text-xl font-bold">
-                    {filteredData[0].points.toLocaleString()} pts
+                    {Entries[0].score.toLocaleString()} pts
                   </span>
                   <div className="mt-2 flex items-center gap-2">
                     <Star className="text-yellow-400" size={16} />
-                    <span>Level {filteredData[0].level}</span>
+                    <span>Level {Entries[0].rank}</span>
                   </div>
                 </div>
               </div>
@@ -401,16 +250,16 @@ const Leaderboards = () => {
               <div className="flex flex-col items-center">
                 <div className="mb-2 h-28 w-28 overflow-hidden rounded-full border-4 border-amber-700">
                   <img
-                    src={filteredData[2].profile_image}
-                    alt={filteredData[2].username}
+                    src={`https://i.pravatar.cc/150?img=${Entries[2].userId}`}
+                    alt={Entries[2].playerName}
                     className="h-full w-full object-cover"
                   />
                 </div>
                 <div className="bg-base-200 flex h-36 w-36 flex-col items-center justify-center rounded-lg border border-amber-700/20 p-4 shadow-lg">
                   <Medal className="mb-2 text-amber-700" size={30} />
-                  <span className="font-bold">{filteredData[2].username}</span>
+                  <span className="font-bold">{Entries[2].playerName}</span>
                   <span className="text-primary font-bold">
-                    {filteredData[2].points.toLocaleString()} pts
+                    {Entries[2].score.toLocaleString()} pts
                   </span>
                 </div>
               </div>
@@ -428,13 +277,13 @@ const Leaderboards = () => {
           </div>
 
           {/* Table body */}
-          {filteredData.length > 0 ? (
+          {Entries.length > 0 ? (
             <div className="divide-base-content/10 divide-y">
-              {filteredData.slice(3).map((entry) => (
+              {Entries.slice(3).map((entry) => (
                 <div
-                  key={entry.id}
+                  key={entry.userId}
                   className={`hover:bg-base-300 grid grid-cols-9 px-5 py-4 md:px-6 ${
-                    entry.user_id === user?.id
+                    entry.userId === user?.id
                       ? "bg-primary/10 border-primary border-x-4 border-y"
                       : ""
                   }`}
@@ -447,20 +296,20 @@ const Leaderboards = () => {
                   {/* Player */}
                   <div className="col-span-2 flex items-center md:col-span-5">
                     <Link
-                      to={`/profile/${entry.user_id}`}
+                      to={`/profile/${entry.userId}`}
                       className="flex items-center"
                     >
                       <div className="mr-3 h-10 w-10 overflow-hidden rounded-full">
                         <img
-                          src={entry.profile_image}
-                          alt={entry.username}
+                          src={`https://i.pravatar.cc/150?img=${entry.userId}`}
+                          alt={entry.playerName}
                           className="h-full w-full object-cover"
                         />
                       </div>
                       <div>
-                        <div className="font-bold">{entry.username}</div>
+                        <div className="font-bold">{entry.playerName}</div>
                         <div className="text-base-content/70 text-xs">
-                          {entry.game_name}
+                          CS:GO
                         </div>
                       </div>
                     </Link>
@@ -469,7 +318,7 @@ const Leaderboards = () => {
                   {/* Points */}
                   <div className="col-span-2 col-start-7 mt-0 flex items-center justify-center md:justify-center">
                     <span className="text-primary font-bold">
-                      {entry.points.toLocaleString()}
+                      {entry.score.toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -487,53 +336,6 @@ const Leaderboards = () => {
             </div>
           )}
         </div>
-
-        {/* Current user's rank (if not in the visible list) */}
-        {currentUserRank &&
-          !filteredData.some((entry) => entry.user_id === user?.id) && (
-            <div className="border-primary bg-base-200 mt-6 rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="bg-primary/20 flex h-10 w-10 items-center justify-center rounded-full">
-                    <span className="font-bold">{currentUserRank.rank}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="mr-3 h-10 w-10 overflow-hidden rounded-full">
-                      <img
-                        src={user?.userProfile.profile_image}
-                        alt={user?.username}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <div className="font-bold">You</div>
-                      <div className="text-base-content/70 text-xs">
-                        {currentUserRank.game_name}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-8">
-                  <div className="text-center">
-                    <div className="text-primary font-bold">
-                      {currentUserRank.points.toLocaleString()}
-                    </div>
-                    <div className="text-base-content/70 text-xs">Points</div>
-                  </div>
-                  <div className="text-center">
-                    <div>{currentUserRank.level}</div>
-                    <div className="text-base-content/70 text-xs">Level</div>
-                  </div>
-                  <div className="text-center">
-                    <div>{currentUserRank.achievements}</div>
-                    <div className="text-base-content/70 text-xs">
-                      Achievements
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
       </div>
     </main>
   );
