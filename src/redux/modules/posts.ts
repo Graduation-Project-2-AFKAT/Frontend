@@ -173,9 +173,9 @@ export const commentPost = createAsyncThunk(
         ],
       });
 
-      console.log("comment:", res.data);
+      // console.log("comment:", res.data);
 
-      // return res.data;
+      return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
       dispatch(showAlert({ msg: error.response?.data, type: "error" }));
@@ -221,7 +221,13 @@ const initialState = {
 export const postsSlice = createSlice({
   name: "posts",
   initialState,
-  reducers: {},
+  reducers: {
+    clearPostComments: (state) => {
+      if (state.Post) {
+        state.Post.comments = [];
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(createPost.fulfilled, (state, action) => {
       if (action.payload) {
@@ -231,6 +237,12 @@ export const postsSlice = createSlice({
 
     builder.addCase(loadPostComments.fulfilled, (state, action) => {
       state.Post = action.payload;
+    });
+
+    builder.addCase(commentPost.fulfilled, (state, action) => {
+      if (state.Post) {
+        state.Post.comments = action.payload.comments;
+      }
     });
 
     builder.addCase(deletePost.fulfilled, (state, action) => {
@@ -270,6 +282,6 @@ export const postsSlice = createSlice({
   },
 });
 
-// export const { setDownloadProgress } = postsSlice.actions;
+export const { clearPostComments } = postsSlice.actions;
 
 export default postsSlice.reducer;

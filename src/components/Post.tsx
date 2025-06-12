@@ -5,7 +5,11 @@ import { Suspense, lazy, memo, useCallback, useEffect, useState } from "react"; 
 import { Link } from "react-router";
 import { IPost } from "../interfaces";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { deletePost, likePost } from "../redux/modules/posts";
+import {
+  clearPostComments,
+  deletePost,
+  likePost,
+} from "../redux/modules/posts";
 
 const PostCommentDialog = lazy(() => import("./PostCommentDialog"));
 
@@ -146,7 +150,10 @@ const Post = ({ post }: IProps) => {
             <img
               src={post.image}
               alt={post.image.split("/").pop()}
-              className={`h-full rounded-lg border border-white/20 object-fill`}
+              className={`h-full w-auto rounded-lg border border-white/20 object-fill`}
+              width={800}
+              height={600}
+              loading="lazy"
             />
           </div>
         )}
@@ -169,11 +176,14 @@ const Post = ({ post }: IProps) => {
               </span>
             </button>
 
-            <button>
+            <button
+              aria-label="View comments"
+              className="group flex space-x-2"
+              onClick={() => setShowDialog(true)}
+            >
               <MessageSquare
                 fill={showDialog ? "white" : "transparent"}
                 className={`${post.theme ? "drop-shadow-[1px_1px_5px_rgba(0,0,0,1)]" : ""}`}
-                onClick={() => setShowDialog(true)}
               />
             </button>
           </div>
@@ -223,7 +233,13 @@ const Post = ({ post }: IProps) => {
             </div>
           }
         >
-          <PostCommentDialog post={post} onClose={() => setShowDialog(false)} />
+          <PostCommentDialog
+            post={post}
+            onClose={() => {
+              dispatch(clearPostComments());
+              setShowDialog(false);
+            }}
+          />
         </Suspense>
       )}
       {showShareModal && (

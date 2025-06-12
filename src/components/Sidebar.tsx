@@ -93,38 +93,38 @@ const Sidebar = ({
       </div>
 
       <aside
-        className={`group fixed top-0 ${showSidebar ? "-left-0" : "-left-22"} z-10 flex h-screen flex-col items-center justify-between bg-[#121015] px-0 py-20 text-2xl transition-all md:pb-8`}
+        className={`fixed top-0 ${showSidebar ? "-left-0" : "-left-22"} z-10 flex h-screen flex-col items-center justify-between bg-[#121015] px-0 py-20 text-2xl transition-all md:pb-8`}
       >
         <div
           className={`md:space-y- relative space-y-5 rounded-lg p-4 whitespace-nowrap transition-colors ease-in`}
         >
           <div
-            className={`${selectedTab === "home" ? "text-primary" : ""} group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Home']`}
+            className={`${selectedTab === "home" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Home']`}
             onClick={() => handleClick("home")}
           >
             <i className="fa-solid fa-house" />
           </div>
           <div
-            className={`${selectedTab === "games" ? "text-primary" : ""} group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Games']`}
+            className={`${selectedTab === "games" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Games']`}
             onClick={() => handleClick("games")}
           >
             <Gamepad2 size={25} />
           </div>
           <div
-            className={`${selectedTab === "assets" ? "text-primary" : ""} group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Assets']`}
+            className={`${selectedTab === "assets" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Assets']`}
             onClick={() => handleClick("assets")}
           >
             <Boxes size={25} />
           </div>
           <div
-            className={`${selectedTab === "gameJams" ? "text-primary" : ""} group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Game_Jams']`}
+            className={`${selectedTab === "gameJams" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Game_Jams']`}
             onClick={() => handleClick("gameJams")}
           >
             <i className="fa-solid fa-award" />
           </div>
           <hr className="mx-2 opacity-25" />
           <div
-            className={`${selectedTab === "create" ? "text-primary" : ""} group tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Create_a_community']`}
+            className={`${selectedTab === "create" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Create_a_community']`}
             onClick={() => handleClick("create")}
           >
             <i className="fa-solid fa-plus" />
