@@ -166,7 +166,7 @@ const Arts = () => {
               </div>
             )}
 
-            {Assets.length > 0 && (
+            {/* {Assets.length > 0 && (
               <div className="my-10 flex justify-center">
                 <button
                   className="hover:border-primary/50 rounded-lg border border-white/10 bg-white/5 px-6 py-2"
@@ -175,7 +175,7 @@ const Arts = () => {
                   Load More
                 </button>
               </div>
-            )}
+            )} */}
           </>
         )}
       </div>
