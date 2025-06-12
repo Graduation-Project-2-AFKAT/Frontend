@@ -347,7 +347,7 @@ const Profile = () => {
                     <input
                       type="text"
                       id="invite-link"
-                      value={`AFK@T.com/profile/${userData?.username}`}
+                      value={`${window.location.origin}/profile/${userData?.id}`}
                       className="w-full rounded border border-white/25 px-3 py-1.5 text-sm transition-colors outline-none focus-within:border-white"
                       readOnly
                     />
