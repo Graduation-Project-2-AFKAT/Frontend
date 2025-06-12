@@ -271,7 +271,7 @@ const Profile = () => {
                     className="absolute -top-28 aspect-square w-25 rounded-full border-2 object-cover"
                   />
 
-                  <ul className="grid grid-cols-2 gap-x-2 text-xs">
+                  <ul className="grid grid-cols-2! gap-x-2 text-xs">
                     <li className="bg-secondary text-secondary-content rounded px-1 py-1 font-bold">
                       GMR
                     </li>
@@ -281,7 +281,7 @@ const Profile = () => {
                   </ul>
                 </div>
 
-                <div className="grid grid-cols-3">
+                <div className="grid grid-cols-3!">
                   <small className="flex flex-col">
                     <span className="text-xl font-bold">
                       {userData?.following_count}
@@ -390,7 +390,7 @@ const Profile = () => {
                         className="absolute aspect-square w-20 -translate-y-28 rounded-full border object-cover text-xs"
                       />
 
-                      <ul className="grid -translate-y-3 grid-cols-2 gap-x-2 text-xs">
+                      <ul className="grid -translate-y-3 grid-cols-2! gap-x-2 text-xs">
                         <li className="bg-secondary text-secondary-content rounded px-1 py-1 font-bold">
                           GMR
                         </li>
@@ -400,7 +400,7 @@ const Profile = () => {
                       </ul>
                     </div>
 
-                    <div className="grid grid-cols-3">
+                    <div className="grid grid-cols-3!">
                       <small className="flex flex-col">
                         <span className="text-xl font-bold">0</span>
                         <span className="opacity-50">Following</span>
