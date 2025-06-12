@@ -82,7 +82,7 @@ const AchievementsTabs = ({ defaultTab, tabs }: IProps) => {
               </div>
             }
           >
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1! gap-4 md:grid-cols-2! xl:grid-cols-3!">
               {achievementsToShow.map((achievement) => (
                 <AchievementCard
                   key={achievement.id}
