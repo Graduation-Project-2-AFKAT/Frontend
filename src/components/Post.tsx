@@ -245,7 +245,7 @@ const Post = ({ post }: IProps) => {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2! gap-3">
               <button
                 className="flex items-center justify-center gap-2 rounded-lg bg-[#1877F2] p-3 text-white hover:bg-[#1877F2]/90"
                 onClick={() => {
