@@ -504,7 +504,7 @@ const GameJam = () => {
       )}
 
       {/* Call to Action */}
-      <div className="mt-16 rounded-xl bg-gradient-to-r from-teal-500/20 to-purple-500/20 p-8 text-center">
+      <div className="from-primary/20 to-secondary-500/20 mt-16 rounded-xl bg-gradient-to-r p-8 text-center">
         <h2 className="mb-2 text-2xl font-bold">
           Want to host your own Game Jam?
         </h2>

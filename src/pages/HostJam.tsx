@@ -674,7 +674,7 @@ const HostJam = () => {
 
             {/* Step 3: Organizer Information */}
             {activeStep === 3 && (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1! gap-6 md:grid-cols-2!">
                 <div className="col-span-1 md:col-span-2">
                   <label
                     className="mb-2 block text-sm font-medium"
