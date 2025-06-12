@@ -270,7 +270,7 @@ const Leaderboards = () => {
         {/* Leaderboard table */}
         <div className="bg-base-200 border-base-content/10 overflow-hidden rounded-lg border shadow-md">
           {/* Table header */}
-          <div className="border-base-content/10 bg-base-300 grid grid-cols-9 border-b px-5 py-4">
+          <div className="border-base-content/10 bg-base-300 grid grid-cols-9! border-b px-5 py-4">
             <div className="col-span-1 font-bold">Rank</div>
             <div className="col-span-5 font-bold">Player</div>
             <div className="col-span-2 text-center font-bold">Points</div>
@@ -282,7 +282,7 @@ const Leaderboards = () => {
               {Entries.slice(3).map((entry) => (
                 <div
                   key={entry.userId}
-                  className={`hover:bg-base-300 grid grid-cols-9 px-5 py-4 md:px-6 ${
+                  className={`hover:bg-base-300 grid grid-cols-9! px-5 py-4 md:px-6 ${
                     entry.userId === user?.id
                       ? "bg-primary/10 border-primary border-x-4 border-y"
                       : ""
