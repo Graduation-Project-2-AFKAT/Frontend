@@ -15,7 +15,7 @@ export const loadLeaderboards = createAsyncThunk(
 
       const res = await api.get(`${url}/afk_services/afk_leaderboard`);
 
-      console.log(res);
+      // console.log(res);
 
       return res.data;
     } catch (err: unknown) {
