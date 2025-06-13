@@ -245,7 +245,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                   backgroundPosition: "top center",
                 }}
               >
-                <form className="bg-black/25 py-6" onSubmit={onSubmit}>
+                <form className="relative bg-black/25 py-6" onSubmit={onSubmit}>
                   {/* Background controls */}
                   {postTheme && (
                     <div className="absolute top-4 left-4 flex gap-2">

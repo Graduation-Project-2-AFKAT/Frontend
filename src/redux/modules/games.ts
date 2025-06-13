@@ -134,13 +134,13 @@ export const createGame = createAsyncThunk(
     try {
       dispatch(startLoading("games/create"));
 
-      const res = await api.post(`/games/`, gameData, {
+      await api.post(`/games/`, gameData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      console.log(res.data);
+      // console.log(res.data);
 
       dispatch(
         showAlert({

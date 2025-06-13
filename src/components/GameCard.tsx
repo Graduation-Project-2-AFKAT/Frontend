@@ -7,7 +7,7 @@ interface IProps {
   className?: string;
 }
 
-const GameCard = ({ game, className }: IProps) => {
+const GameCard = ({ game, className = "" }: IProps) => {
   const { id, title, username, tags, thumbnail } = game;
 
   return (

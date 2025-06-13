@@ -98,7 +98,7 @@ const Post = ({ post }: IProps) => {
       <li
         className={`${!post.theme ? "border-white/10" : "border-0"} outline-primary bg-base-content/5 grid border bg-cover shadow-md drop-shadow-md duration-50 md:rounded-xl lg:hover:outline-2 lg:hover:outline-dashed`}
         style={{
-          gridTemplate: `60px 50px ${post.image ? "300px" : "auto"} auto auto / 1fr 1fr 1fr`,
+          gridTemplate: `60px 50px ${post.image ? "auto" : "auto"} auto auto / 1fr 1fr 1fr`,
           backgroundImage: post.theme ? `url('${post.theme}')` : "none",
           backgroundPosition: "center",
           backgroundSize: `${post.theme_zoom_number}%`,
@@ -150,9 +150,9 @@ const Post = ({ post }: IProps) => {
             <img
               src={post.image}
               alt={post.image.split("/").pop()}
-              className={`h-full w-auto rounded-lg border border-white/20 object-fill`}
+              className={`max-h-66 w-auto rounded-lg border border-white/20 object-fill`}
               width={800}
-              height={600}
+              height={300}
               loading="lazy"
             />
           </div>

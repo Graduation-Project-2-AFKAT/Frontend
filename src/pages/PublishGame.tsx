@@ -231,7 +231,6 @@ const PublishGame = () => {
       }
     }
 
-    console.log(data);
     const formData = new FormData();
     const fileFormat = uploadedWebGLFile?.name.split(".").pop();
 
@@ -244,6 +243,11 @@ const PublishGame = () => {
     }
     if (uploadedThumbnail) formData.append("thumbnail", uploadedThumbnail);
     if (uploadedWebGLFile) formData.append("game_file", uploadedWebGLFile);
+    if (uploadedWindowsFile) {
+      formData.append("game_file_win", uploadedWindowsFile);
+    } else {
+      formData.append("game_file_win", "");
+    }
     if (fileFormat) formData.append("fileFormat", fileFormat);
 
     dispatch(createGame(formData));

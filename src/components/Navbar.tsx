@@ -102,10 +102,10 @@ const Navbar = ({
       <div className="relative h-full">
         <NavLink
           to="/"
-          className="underlineNav flex h-full items-center gap-8 md:gap-0"
+          className="underlineNav flex h-full items-center gap-2 md:gap-0"
         >
           <i
-            className="fa-solid fa-bars hover:cursor-pointer md:before:hidden"
+            className="fa-solid fa-bars pl-6 hover:cursor-pointer md:before:hidden lg:pl-3"
             onClick={handleMenuClick}
           />
 
@@ -247,7 +247,7 @@ const Navbar = ({
             </ul>
 
             <div className="flex items-center gap-x-5 lg:hidden">
-              <i className="fa-solid fa-bell underlineNav w-10 cursor-pointer text-center text-2xl after:-bottom-7" />
+              <i className="fa-solid fa-bell underlineNav w-10 cursor-pointer text-center text-2xl after:-bottom-7 max-[500px]:before:hidden" />
               <i
                 className="fa-solid fa-circle-user hidden cursor-pointer pr-1 text-3xl lg:pr-0 lg:before:hidden"
                 onClick={() => {
