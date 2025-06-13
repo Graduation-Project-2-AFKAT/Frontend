@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { loadLeaderboards } from "../../redux/modules/leaderboards";
 import { loadGames } from "../../redux/modules/games";
 import { Link } from "react-router";
+import { IGame, ILeaderboard } from "../../interfaces";
 
 interface IProps {
   title?: string;
@@ -27,7 +28,7 @@ const Board = ({
     if (title === "Leaderboard") {
       dispatch(loadLeaderboards());
     } else if (title === "Suggestion") {
-      dispatch(loadGames());
+      dispatch(loadGames({}));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -48,26 +49,28 @@ const Board = ({
         >
           {title === "Leaderboard" &&
             Leaderboards.length > 0 &&
-            Leaderboards.slice(0, 3).map((leaderboard, index) => (
-              <li key={index} className="flex items-start gap-3">
-                <div className="from-primary/70 to-secondary/70 flex h-16 w-16 items-center justify-center overflow-hidden rounded-md bg-gradient-to-br font-bold text-white">
-                  #{index + 1}
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-semibold">
-                    {leaderboard.leaderboardName}
-                  </span>
-                  <span className="text-base-content/70 text-xs">
-                    99+ points
-                  </span>
-                </div>
-              </li>
-            ))}
+            Leaderboards.slice(0, 3).map(
+              (leaderboard: ILeaderboard, index: number) => (
+                <li key={index} className="flex items-start gap-3">
+                  <div className="from-primary/70 to-secondary/70 flex h-16 w-16 items-center justify-center overflow-hidden rounded-md border border-white/75 bg-gradient-to-br font-bold text-white">
+                    #{index + 1}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-semibold">
+                      {leaderboard.leaderboardName}
+                    </span>
+                    <span className="text-base-content/70 text-xs">
+                      99+ points
+                    </span>
+                  </div>
+                </li>
+              ),
+            )}
           {title === "Suggestion" &&
-            Games.slice(0, itemsCount).map((game, index) => (
-              <li key={index} className="flex items-start gap-3 text-nowrap">
+            Games.slice(0, itemsCount).map((game: IGame, index: number) => (
+              <li key={index} className="flex items-start gap-3">
                 <Link className="avatar" to={`/games/${game.id}`}>
-                  <div className="border-primary/75 h-16 w-16 rounded-md border">
+                  <div className="h-16 w-16 rounded-md border border-white/75">
                     <img src={`${game.thumbnail}`} alt="Profile avatar" />
                   </div>
                 </Link>

@@ -1,24 +1,23 @@
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 import moment from "moment";
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { commentGame, loadGameComments } from "../../redux/modules/games";
-import { IComment, IGame } from "../../interfaces";
+import { MouseEvent, useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { IPost, IPostComment } from "../interfaces";
+import { commentPost, loadPostComments } from "../redux/modules/posts";
 
-interface GameCommentDialogProps {
+interface PostCommentDialogProps {
   onClose: () => void;
+  post: IPost;
 }
 
-const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
+const PostCommentDialog = ({ onClose, post }: PostCommentDialogProps) => {
   const dispatch = useAppDispatch();
   const { isLoading, type } = useAppSelector((state) => state.loading);
   const { user } = useAppSelector((state) => state.users);
-  const { Game, Comments } = useAppSelector((state) => state.games) as {
-    Game: IGame;
-    Comments: IComment[];
-  };
+  const { Post } = useAppSelector((state) => state.posts);
 
   const [comment, setComment] = useState("");
+  const [comments, setComments] = useState<IPostComment[] | null>(null);
 
   const formatCommentTime = (created: string, updated: string) => {
     const createdMoment = moment(created);
@@ -36,24 +35,33 @@ const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
   };
 
   useEffect(() => {
-    if (Game && Comments.length === 0) {
-      dispatch(loadGameComments(Game.id));
+    if (post.id !== Post?.id) {
+      dispatch(loadPostComments(post.id.toString()));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Game]);
+  }, [post]);
 
-  const handleSubmitComment = () => {
-    if (!Game) return;
+  useEffect(() => {
+    if (Post && Post.comments) {
+      setComments(Post.comments);
+    }
+  }, [Post]);
 
-    const commentData = { comment: comment, gameId: Game.id };
-    dispatch(commentGame(commentData));
+  const handleSubmitComment = (
+    e: React.FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>,
+  ) => {
+    e.preventDefault();
+    if (!post) return;
+
+    const commentData = { comment: comment, postId: post.id.toString() };
+    dispatch(commentPost(commentData));
 
     setComment("");
   };
 
   return (
     <div
-      className="absolute inset-0 top-0 z-50 items-center justify-center overflow-y-auto bg-black/50"
+      className="absolute inset-0 top-0 z-50 mb-0 items-center justify-center overflow-y-auto bg-black/50"
       onClick={onClose}
     >
       <div
@@ -76,6 +84,7 @@ const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
             className={
               "fa-solid fa-circle-user aspect-square w-12 rounded-full border border-white object-cover"
             }
+            alt="User profile"
           />
           <textarea
             className="w-full rounded-md border border-white/25 p-3 text-sm duration-300 outline-none focus-within:border-white/100"
@@ -93,14 +102,13 @@ const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
           />
         </div>
 
-        {/* Submit button */}
         <div className="mt-5 flex justify-end px-5">
           <button
-            onClick={handleSubmitComment}
-            disabled={!comment.trim()}
+            onClick={(e) => handleSubmitComment(e)}
             className="bg-primary text-primary-content rounded px-4 py-1.5 font-medium disabled:opacity-50"
+            disabled={!comment.trim()}
           >
-            {isLoading && type === "games/comment" ? (
+            {isLoading && type === "posts/comment" ? (
               <div className="flex items-center space-x-2">
                 <svg
                   className="text-primary-content h-4 w-4 animate-spin"
@@ -155,23 +163,23 @@ const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
                 ))}
               </div>
             </>
-          ) : Comments.length > 0 ? (
+          ) : comments && comments.length > 0 ? (
             <>
               <hr className="w-full opacity-15" />
-              {Comments.map(
+              {comments.map(
                 ({
                   id,
-                  username,
+                  creator: { username },
                   content,
+                  modified_at,
                   created_at,
-                  updated_at,
-                }: IComment) => (
+                }: IPostComment) => (
                   <div key={id}>
                     <div className="flex gap-x-5 rounded px-10 py-6">
                       <img
                         src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`}
                         alt={username}
-                        className="h-10 w-10 rounded-full"
+                        className="h-10 w-10 rounded-full object-cover"
                       />
 
                       <div className="flex w-full flex-col justify-between gap-y-3">
@@ -183,7 +191,7 @@ const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
                             </span>
                           </p>
                           <small className="opacity-50">
-                            {formatCommentTime(created_at, updated_at)}
+                            {formatCommentTime(created_at, modified_at)}
                           </small>
                         </div>
 
@@ -232,4 +240,4 @@ const GameCommentDialog = ({ onClose }: GameCommentDialogProps) => {
   );
 };
 
-export default GameCommentDialog;
+export default PostCommentDialog;

@@ -6,8 +6,8 @@ const initialState = {
   type: "info",
 };
 
-export const alertSlice = createSlice({
-  name: "alert",
+const alertsSlice = createSlice({
+  name: "alerts",
   initialState,
   reducers: {
     showAlert: (state, action) => {
@@ -23,5 +23,5 @@ export const alertSlice = createSlice({
   },
 });
 
-export const { showAlert, resetAlertMsg } = alertSlice.actions;
-export default alertSlice.reducer;
+export const { showAlert, resetAlertMsg } = alertsSlice.actions;
+export default alertsSlice.reducer;

@@ -1,10 +1,10 @@
-import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
-import { setAuthToken } from "../../utils";
-import api from "../../config/axios.config.ts";
-import { showAlert } from "./alerts.ts";
+import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
+import api from "../../config/axios.config";
 import { IForm, IUser } from "../../interfaces";
-import { startLoading, stopLoading } from "./loading.ts";
+import { setAuthToken } from "../../utils";
+import { showAlert } from "./Alerts";
+import { startLoading, stopLoading } from "./loading";
 
 export const registerUser = createAsyncThunk(
   "users/register",

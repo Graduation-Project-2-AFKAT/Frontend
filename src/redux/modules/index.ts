@@ -1,14 +1,14 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import loadingReducer from "./loading";
-import alertReducer from "./alerts";
-import themeReducer from "./themes";
-import userReducer from "./users";
 import achievementsReducer from "./achievements";
-import leaderboardsReducer from "./leaderboards";
-import postsReducer from "./posts";
-import gamesReducer from "./games";
+import alertReducer from "./Alerts";
 import assetsReducer from "./assets";
 import gameJamsReducer from "./gameJams";
+import gamesReducer from "./games";
+import leaderboardsReducer from "./leaderboards";
+import loadingReducer from "./loading";
+import postsReducer from "./posts";
+import themeReducer from "./themes";
+import userReducer from "./users";
 
 export default combineReducers({
   loading: loadingReducer,

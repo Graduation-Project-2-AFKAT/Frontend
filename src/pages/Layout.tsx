@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { AlertMessages } from "../interfaces";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { resetAlertMsg } from "../redux/modules/alerts";
+import { resetAlertMsg } from "../redux/modules/Alerts";
 
 const RootLayout = () => {
   const location = useLocation();

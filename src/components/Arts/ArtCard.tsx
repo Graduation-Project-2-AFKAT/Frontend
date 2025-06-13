@@ -20,7 +20,7 @@ const ArtCard = ({ asset }: IProps) => {
             alt={title}
             className="h-full w-full rounded-t-lg object-cover transition-transform group-hover:scale-105"
           />
-          <div className="absolute top-2 right-2 rounded bg-white/10 px-3 py-1 text-sm">
+          <div className="absolute top-2 right-2 rounded border border-white/50 bg-black/50 px-3 py-1 text-sm text-white">
             FREE
           </div>
         </div>

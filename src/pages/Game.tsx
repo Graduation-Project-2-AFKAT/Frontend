@@ -20,6 +20,7 @@ import {
   rateGame,
   resetGame,
 } from "../redux/modules/games";
+import debounce from "lodash.debounce";
 
 const GameCommentDialog = lazy(
   () => import("../components/games/GameCommentDialog"),
@@ -31,7 +32,7 @@ const Game = () => {
   const { Game } = useAppSelector((state) => state.games);
   const { user } = useAppSelector((state) => state.users);
   const { isLoading, type } = useAppSelector((state) => state.loading);
-  const { show, type: alertType } = useAppSelector((state) => state.alerts);
+  const { type: alertType } = useAppSelector((state) => state.alerts);
   const { downloadProgress, estimatedTime } = useAppSelector(
     (state) => state.games,
   );
@@ -41,17 +42,58 @@ const Game = () => {
     description = "",
     username: creator = "",
     rating = 0,
-    game_file = "",
     thumbnail = "",
     // tags = [],
     user_rating = 0,
+    game_file_win = "",
+    webgl_index_path = "",
     // download_count = 0,
   } = Game || {};
 
   const [favorite, setFavorite] = useState(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [userRating, setUserRating] = useState<number>(rating);
+  const [showFullButton, setShowFullButton] = useState(true);
+  const [userRating, setUserRating] = useState<number>(user_rating);
   const [isGameLoaded, setIsGameLoaded] = useState(false);
+  const [debouncedRating, setDebouncedRating] = useState<number>(user_rating);
+
+  const debouncedRatingHandler = useCallback(
+    (ratingValue: number) => {
+      const debouncedFn = debounce((value: number) => {
+        setDebouncedRating(value);
+      }, 500);
+      debouncedFn(ratingValue);
+      return debouncedFn;
+    },
+    [setDebouncedRating],
+  );
+
+  const handleRating = useCallback(
+    (value: number) => {
+      if (!Game) return;
+
+      setUserRating(value);
+    },
+    [Game],
+  );
+
+  const handleDownload = () => {
+    if (id) {
+      dispatch(
+        downloadGame({ id: id, gameTitle: title, gameFile: game_file_win }),
+      );
+    }
+  };
+
+  const handleDelete = () => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this game? This action cannot be undone.",
+      )
+    ) {
+      dispatch(deleteGame(Game?.id));
+    }
+  };
 
   useEffect(() => {
     if (!Game) {
@@ -67,11 +109,28 @@ const Game = () => {
       toast.warn(location.state?.message);
     }
 
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        setShowFullButton(true);
+      }
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
     return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
       dispatch(resetGame());
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (userRating === 0) {
+      setUserRating(user_rating);
+      setDebouncedRating(user_rating);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user_rating]);
 
   useEffect(() => {
     const endPath = location.pathname.split("/").pop();
@@ -79,45 +138,32 @@ const Game = () => {
 
     if (isNumber) {
       dispatch(loadGameById(endPath.toString()));
+      setIsGameLoaded(false);
     }
   }, [dispatch, location.pathname]);
 
   useEffect(() => {
-    if (show && alertType === "error") {
-      setUserRating(0);
+    const debouncedFn = debouncedRatingHandler(userRating);
+
+    return () => {
+      debouncedFn.cancel();
+    };
+  }, [userRating, debouncedRatingHandler]);
+
+  useEffect(() => {
+    if (Game?.id && debouncedRating !== user_rating) {
+      dispatch(rateGame({ rate: debouncedRating, gameId: Game.id }));
     }
-  }, [show, alertType]);
 
-  const handleRating = useCallback(
-    (value: number) => {
-      if (!Game) return;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedRating, dispatch]);
 
-      if (userRating === value) {
-        setUserRating(0);
-        dispatch(rateGame({ rate: 0, gameId: Game.id }));
-      } else {
-        setUserRating(value);
-        dispatch(rateGame({ rate: value, gameId: Game.id }));
-      }
-    },
-    [userRating, Game, dispatch],
-  );
-
-  const handleDownload = () => {
-    if (id) {
-      dispatch(downloadGame({ id: id, gameTitle: title, gameFile: game_file }));
+  useEffect(() => {
+    if (alertType === "error" && type === "games/rate") {
+      setUserRating(user_rating);
     }
-  };
-
-  const handleDelete = () => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this game? This action cannot be undone.",
-      )
-    ) {
-      dispatch(deleteGame(Game?.id));
-    }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type, alertType]);
 
   return (
     <div className="w-full overflow-y-auto">
@@ -135,7 +181,7 @@ const Game = () => {
             <div className="grid grid-cols-3 items-center justify-between px-2 xl:px-0">
               <Link
                 to={`/games`}
-                className="text-primary-content m-0 flex items-center gap-2 text-lg font-bold text-nowrap hover:opacity-80 xl:col-span-2 xl:mx-2 xl:my-5"
+                className="m-0 flex items-center gap-2 text-lg font-bold text-nowrap text-white hover:opacity-80 xl:col-span-2 xl:mx-2 xl:my-5"
               >
                 <Undo2 size={20} className="w-10" />
                 Go Back
@@ -153,18 +199,20 @@ const Game = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col items-end justify-end gap-x-2 gap-y-1 lg:flex-row lg:items-center">
+              <div className="flex flex-col items-end justify-end gap-x-2 gap-y-1 xl:flex-row xl:items-center">
                 <div className="flex flex-col items-end xl:hidden">
-                  <button
-                    onClick={handleDownload}
-                    disabled={isLoading && type === "games/download"}
-                    className={`"disabled:bg-primary/70 bg-primary text-primary-content my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold duration-150 hover:opacity-80 disabled:cursor-not-allowed! ${!(isLoading && type === "games/download") && "active:scale-95"}`}
-                  >
-                    {isLoading && type === "games/download"
-                      ? `Downloading...`
-                      : `Download`}
-                    <Download width={18} />
-                  </button>
+                  {game_file_win && (
+                    <button
+                      className={`"disabled:bg-primary/70 bg-primary text-primary-content my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold duration-150 hover:opacity-80 disabled:cursor-not-allowed! ${!(isLoading && type === "games/download") && "active:scale-95"}`}
+                      onClick={handleDownload}
+                      disabled={isLoading && type === "games/download"}
+                    >
+                      {isLoading && type === "games/download"
+                        ? `Downloading...`
+                        : `Download`}
+                      <Download width={18} />
+                    </button>
+                  )}
                 </div>
 
                 {/* Progress bar - only show when downloading */}
@@ -254,7 +302,7 @@ const Game = () => {
                 <h1 className="text-2xl">{title}</h1>
                 <div>
                   by:{" "}
-                  <Link to={`profile/${Game?.user_id}`}>
+                  <Link to={`/profile/${Game?.user_id}`}>
                     <span className="text-primary underline-offset-2 hover:underline">
                       @{creator}
                     </span>
@@ -264,16 +312,18 @@ const Game = () => {
 
               <div className="flex items-center gap-x-2">
                 <div className="flex flex-col items-end">
-                  <button
-                    onClick={handleDownload}
-                    disabled={isLoading && type === "games/download"}
-                    className={`"disabled:bg-primary/70 bg-primary text-primary-content my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold duration-150 hover:opacity-80 disabled:cursor-wait ${!(isLoading && type === "games") && "active:scale-95"}`}
-                  >
-                    {isLoading && type === "games/download"
-                      ? `Downloading...`
-                      : `Download`}
-                    <Download width={18} />
-                  </button>
+                  {game_file_win && (
+                    <button
+                      className={`"disabled:bg-primary/70 bg-primary text-primary-content my-1 flex items-center gap-x-2 rounded px-4 py-2 text-sm font-bold duration-150 hover:opacity-80 disabled:cursor-wait ${!(isLoading && type === "games") && "active:scale-95"}`}
+                      onClick={handleDownload}
+                      disabled={isLoading && type === "games/download"}
+                    >
+                      {isLoading && type === "games/download"
+                        ? `Downloading...`
+                        : `Download`}
+                      <Download width={18} />
+                    </button>
+                  )}
 
                   {/* Progress bar - only show when downloading */}
                   {isLoading &&
@@ -314,39 +364,115 @@ const Game = () => {
             </div>
 
             <div className="relative aspect-video w-full rounded-lg border">
-              {!isGameLoaded ? (
-                <div
-                  className="flex h-full w-full flex-col items-center justify-center rounded-lg bg-[#1A191F]"
-                  style={{
-                    backgroundImage: thumbnail ? `url(${thumbnail})` : "none",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                >
-                  <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50">
-                    <button
-                      onClick={() => setIsGameLoaded(true)}
-                      className="group flex flex-col items-center gap-2 transition-transform duration-200 hover:scale-105"
-                    >
-                      <div className="bg-primary hover:bg-primary/90 shadow-primary/30 flex h-20 w-20 items-center justify-center rounded-full shadow-lg">
-                        <i className="fa-solid fa-play translate-x-0.5 text-4xl text-gray-300 transition-colors" />
-                      </div>
-                      <span className="group-hover:text-primary text-2xl font-medium text-white transition-colors">
-                        Play Game
-                      </span>
-                    </button>
+              {webgl_index_path ? (
+                !isGameLoaded ? (
+                  <div
+                    className="flex h-full w-full flex-col items-center justify-center rounded-lg bg-[#1A191F]"
+                    style={{
+                      backgroundImage: thumbnail ? `url(${thumbnail})` : "none",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  >
+                    <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50">
+                      <button
+                        className="group flex flex-col items-center gap-2 transition-transform duration-200 hover:scale-105"
+                        onClick={() => setIsGameLoaded(true)}
+                      >
+                        <div className="bg-primary hover:bg-primary/90 shadow-primary/30 flex h-20 w-20 items-center justify-center rounded-full shadow-lg">
+                          <i className="fa-solid fa-play translate-x-0.5 text-4xl text-gray-300 transition-colors" />
+                        </div>
+                        <span className="group-hover:text-primary text-2xl font-medium text-white transition-colors">
+                          Play Game
+                        </span>
+                      </button>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="relative h-full w-full">
+                    <iframe
+                      src={webgl_index_path}
+                      className="h-full w-full rounded-lg"
+                      title={title || "Game view"}
+                      loading="lazy"
+                      allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                      allowFullScreen
+                      sandbox="allow-scripts allow-same-origin allow-popups allow-presentation allow-forms allow-fullscreen"
+                    />
+
+                    {showFullButton && (
+                      <button
+                        className={`${document.fullscreenElement ? "hidden" : ""} absolute right-4 bottom-4 rounded-full bg-black/60 p-2 transition-colors hover:bg-black/80`}
+                        onClick={() => {
+                          const iframeContainer = document.querySelector(
+                            ".relative.h-full.w-full",
+                          );
+                          const iframe = document.querySelector("iframe");
+
+                          if (document.fullscreenElement) {
+                            setShowFullButton(true);
+                            document.exitFullscreen();
+                          } else if (iframe && iframeContainer) {
+                            setShowFullButton(false);
+                            iframe.focus();
+                            iframeContainer
+                              .requestFullscreen({ navigationUI: "hide" })
+                              .catch((err) => {
+                                toast.error(
+                                  "Fullscreen failed: " + err.message,
+                                );
+                              });
+                          }
+                        }}
+                        aria-label="Toggle fullscreen"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
+                          <path d="M21 8V5a2 2 0 0 0-2-2h-3"></path>
+                          <path d="M3 16v3a2 2 0 0 0 2 2h3"></path>
+                          <path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                )
               ) : (
-                <div className="h-full w-full">
-                  <iframe
-                    src={`https://afkat-bucket.s3.amazonaws.com/games/${id}/index.html`}
-                    className="h-full w-full rounded-lg"
-                    title={title || "Game view"}
-                    loading="lazy"
-                    allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    sandbox="allow-scripts allow-same-origin"
-                  />
+                <div className="flex h-full w-full flex-col items-center justify-center rounded-lg bg-[#1A191F]">
+                  <div className="flex flex-col items-center gap-4 p-6 text-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="64"
+                      height="64"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-gray-400"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                    </svg>
+                    <h3 className="text-xl font-semibold text-white">
+                      No WebGL Available
+                    </h3>
+                    <p className="max-w-md text-gray-400">
+                      This game doesn't have a WebGL version available for
+                      browser play. Please download the game to play on your
+                      computer.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
@@ -405,7 +531,7 @@ const Game = () => {
                   <div
                     className="pointer-events-none absolute flex overflow-hidden"
                     style={{
-                      width: `${((user_rating !== null ? user_rating : userRating) / 5) * 100}%`,
+                      width: `${(userRating / 5) * 100}%`,
                       willChange: "width",
                       transition: "width 0.2s ease-out",
                     }}

@@ -1,17 +1,22 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { showAlert } from "./alerts.ts";
 import { AxiosError } from "axios";
-import api from "../../config/axios.config.ts";
-import { startLoading, stopLoading } from "./loading.ts";
-import { IAsset, IComment } from "../../interfaces/index.tsx";
+import api from "../../config/axios.config";
+import { IAsset, IComment } from "../../interfaces/index";
+import { showAlert } from "./Alerts";
+import { startLoading, stopLoading } from "./loading";
 
 export const loadAssets = createAsyncThunk(
   "assets/loadAll",
-  async (_, { dispatch, rejectWithValue }) => {
+  async (
+    params: { tags?: string; search?: string },
+    { dispatch, rejectWithValue },
+  ) => {
     try {
       dispatch(startLoading("assets/load"));
 
-      const res = await api.get("/arts");
+      const res = await api.get(
+        `/arts${params.tags ? `?tag=${params.tags}` : params.search ? `?search=${params.search}` : ""}`,
+      );
 
       // console.log(res.data);
 

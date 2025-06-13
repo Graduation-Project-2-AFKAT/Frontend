@@ -29,7 +29,7 @@ const Tabs = ({ defaultTab, tabs }: IProps) => {
       const filteredPosts = [] as IPost[];
       const filteredScheduledPosts = [] as IPost[];
 
-      postsList.map((post) => {
+      postsList.map((post: IPost) => {
         if (moment(post.published_at).fromNow().split(" ").includes("ago")) {
           filteredPosts.push(post);
         } else {

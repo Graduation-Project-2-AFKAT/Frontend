@@ -4,19 +4,25 @@ import Input from "../components/form/Input";
 import Posts from "../components/Posts";
 import Board from "../components/ui/Board";
 import { IPost } from "../interfaces";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { Link } from "react-router";
+import { loadPosts } from "../redux/modules/posts";
 
 const CreatePostModal = lazy(
   () => import("../components/modals/CreatePostModal"),
 );
 
 const Home = () => {
+  const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.users);
   const { Posts: postsList } = useAppSelector((state) => state.posts);
 
   const [postsToShow, setPostsToShow] = useState<IPost[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  useEffect(() => {
+    dispatch(loadPosts({}));
+  }, []);
 
   useEffect(() => {
     if (postsToShow) {

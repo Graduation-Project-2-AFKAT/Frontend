@@ -8,14 +8,16 @@ import { IAsset } from "../interfaces";
 
 // Sample categories for game art assets
 const categories = [
-  "3D Models",
-  "Characters",
-  "Environments",
-  "Props",
-  "Textures",
-  "UI/UX",
-  "Concept Art",
-  "Animation",
+  "Unity",
+  "Blender",
+  "Krita",
+  "Pixel Art",
+  "Aseprite",
+  "Photoshop",
+  "Unreal Engine",
+  "Maya",
+  "Illustrator",
+  "Substance 3D Modeler",
 ];
 
 const Arts = () => {
@@ -23,11 +25,11 @@ const Arts = () => {
   const { Assets } = useAppSelector((state) => state.assets);
   const dispatch = useAppDispatch();
 
-  const [activeTab, setActiveTab] = useState("All");
+  const [activeTab, setActiveTab] = useState("");
 
   useEffect(() => {
-    dispatch(loadAssets());
-  }, [dispatch]);
+    dispatch(loadAssets({ tags: activeTab }));
+  }, [activeTab, dispatch]);
 
   const scrollToTop = () => {
     const main = document.getElementById("main-elem");
@@ -71,14 +73,14 @@ const Arts = () => {
         </div>
 
         {/* Categories tabs */}
-        <div className="scrollbar-hide mb-4 flex overflow-x-auto border-b border-white/10 pb-2">
+        <div className="scrollbar-hide mb-4 flex flex-wrap justify-center overflow-x-auto border-b border-white/10 pb-0">
           <button
-            className={`px-4 py-2 whitespace-nowrap ${
-              activeTab === "All"
+            className={`flex-1 px-4 py-2 whitespace-nowrap ${
+              activeTab === ""
                 ? "text-primary border-primary border-b-2 font-bold"
                 : "text-white/70 hover:text-white"
             }`}
-            onClick={() => setActiveTab("All")}
+            onClick={() => setActiveTab("")}
           >
             All
           </button>
@@ -86,7 +88,7 @@ const Arts = () => {
           {categories.map((category) => (
             <button
               key={category}
-              className={`px-4 py-2 whitespace-nowrap ${
+              className={`flex-1 px-4 py-2 whitespace-nowrap ${
                 activeTab === category
                   ? "text-primary border-primary border-b-2 font-bold"
                   : "text-white/70 hover:text-white"
@@ -164,7 +166,7 @@ const Arts = () => {
               </div>
             )}
 
-            {Assets.length > 0 && (
+            {/* {Assets.length > 0 && (
               <div className="my-10 flex justify-center">
                 <button
                   className="hover:border-primary/50 rounded-lg border border-white/10 bg-white/5 px-6 py-2"
@@ -173,7 +175,7 @@ const Arts = () => {
                   Load More
                 </button>
               </div>
-            )}
+            )} */}
           </>
         )}
       </div>

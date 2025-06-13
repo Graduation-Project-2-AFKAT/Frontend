@@ -1,9 +1,14 @@
 import { LogOut, Trophy } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, NavLink } from "react-router";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { logout } from "../redux/modules/users";
 import Divider from "./ui/Divider";
+import { toast } from "react-toastify";
+import debounce from "lodash.debounce";
+import { loadGames } from "../redux/modules/games";
+import { loadAssets } from "../redux/modules/assets";
+import { loadPosts } from "../redux/modules/posts";
 
 interface IProps {
   showSidebar: boolean;
@@ -23,6 +28,53 @@ const Navbar = ({
   const { user, isAuth } = useAppSelector((state) => state.users);
 
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
+
+  const debouncedSearch = useCallback((value: string) => {
+    const handler = debounce((searchValue: string) => {
+      setDebouncedSearchTerm(searchValue);
+    }, 500);
+    handler(value);
+    return () => {
+      handler.cancel();
+    };
+  }, []);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setSearchValue(value);
+    debouncedSearch(value);
+  };
+
+  useEffect(() => {
+    searchBackend(debouncedSearchTerm);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchTerm]);
+
+  const searchBackend = async (term: string) => {
+    const path = window.location.pathname.split("/").filter((p) => p !== "");
+    const pathRoute =
+      path.length === 0
+        ? "home"
+        : path.includes("games")
+          ? "games"
+          : path.includes("arts")
+            ? "arts"
+            : "";
+
+    if (pathRoute === "home") {
+      if (term) dispatch(loadPosts({ search: term }));
+      else dispatch(loadPosts({}));
+    } else if (pathRoute === "games") {
+      if (term) dispatch(loadGames({ search: term }));
+      else dispatch(loadGames({}));
+    } else if (pathRoute === "arts") {
+      if (term) dispatch(loadAssets({ search: term }));
+      else dispatch(loadAssets({}));
+    }
+  };
 
   const handleMenuClick = () => {
     setShowSidebar((prev) => !prev);
@@ -35,10 +87,9 @@ const Navbar = ({
   };
 
   return (
-    //TODO make underline white/100 when selected
-    <nav className="fixed z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015]/10 px-6 shadow-[1px_1px_5px_rgba(0,0,0,0.5)] drop-shadow-md backdrop-blur-sm">
-      <div // Click outside any opened menu to close it
-        className={`${showMiniNav || showUserMenu ? "fixed" : "hidden"} inset-0 z-5 h-screen w-screen bg-black/25`}
+    <nav className="fixed z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015]/10 pr-6 shadow-[1px_1px_5px_rgba(0,0,0,0.5)] drop-shadow-md backdrop-blur-sm">
+      <div
+        className={`${showMiniNav || showUserMenu ? "fixed" : "hidden"} inset-0 z-5 h-screen w-screen bg-black/40`}
         onClick={() => {
           if (showMiniNav) {
             setShowMiniNav(false);
@@ -48,53 +99,57 @@ const Navbar = ({
         }}
       />
 
-      <div className="relative">
-        <div className="flex items-center gap-8 md:gap-0">
+      <div className="relative h-full">
+        <NavLink
+          to="/"
+          className="underlineNav flex h-full items-center gap-8 md:gap-0"
+        >
           <i
             className="fa-solid fa-bars hover:cursor-pointer md:before:hidden"
             onClick={handleMenuClick}
           />
 
-          <NavLink
-            to="/"
-            className="underlineNav flex h-10 w-auto cursor-pointer gap-4 after:-left-full after:scale-x-325"
-          >
-            <img src="/images/AFK_Buttons.svg" alt="AFK Buttons Logo" />
+          <div className="flex h-10 w-auto cursor-pointer gap-4 after:-left-full after:scale-x-325">
+            <img
+              src="/images/AFK_Buttons.webp"
+              alt="AFK Buttons Logo"
+              className="ml-6"
+            />
 
             <img
-              src="/images/logoOutlined.svg"
+              src="/images/Logo_outlined.svg"
               alt="AFKAT Logo"
               className="hidden md:inline"
             />
-          </NavLink>
-        </div>
+          </div>
+        </NavLink>
       </div>
 
       {isAuth && (
-        <div className="hidden grow items-center gap-12 md:mx-8 md:flex">
-          <ul className="hidden items-center gap-x-5 lg:flex">
-            <li>
+        <div className="hidden h-full grow items-center gap-12 md:mx-5 md:flex">
+          <ul className="hidden h-full items-center gap-x-5 lg:flex">
+            <li className="underlineNav flex h-full items-center">
               <NavLink
                 to="/games"
-                className={`underlineNav relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300`}
+                className={`relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300`}
               >
                 Games
               </NavLink>
             </li>
 
-            <li>
+            <li className="underlineNav flex h-full items-center">
               <NavLink
                 to="/arts"
-                className="underlineNav relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300"
+                className="relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300"
               >
                 Arts
               </NavLink>
             </li>
 
-            <li>
+            <li className="underlineNav flex h-full items-center">
               <NavLink
                 to="/jams"
-                className="underlineNav relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300"
+                className="relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300"
               >
                 Jams
               </NavLink>
@@ -109,9 +164,9 @@ const Navbar = ({
             />
             {showMiniNav && (
               <>
-                <div className="absolute top-full left-57.5 z-10 mt-2 w-48 rounded-md bg-[#3B3842] py-2 shadow-lg before:absolute before:-top-full before:bottom-full before:left-6 before:-z-1 before:border-r-10 before:border-b-15 before:border-l-10 before:border-[#3B3842] before:border-r-transparent before:border-l-transparent">
+                <div className="border-primary/70 before:border-b-primary/80 absolute top-full left-56.5 z-10 mt-2 w-48 rounded-md border bg-[#1D1A25] py-2 shadow-lg before:absolute before:-top-full before:bottom-full before:left-6 before:-z-1 before:border-r-10 before:border-b-15 before:border-l-10 before:border-[#3B3842] before:border-r-transparent before:border-l-transparent">
                   <ul className="text-sm">
-                    <li className="cursor-pointer hover:bg-[#1f1c24]">
+                    <li className="cursor-pointer border-b border-b-white/5 hover:bg-white/10">
                       <Link
                         to="/games"
                         className="block px-4 py-2"
@@ -122,7 +177,7 @@ const Navbar = ({
                         Games
                       </Link>
                     </li>
-                    <li className="cursor-pointer hover:bg-[#1f1c24]">
+                    <li className="cursor-pointer border-b border-b-white/5 hover:bg-white/10">
                       <Link
                         to="/arts"
                         className="block px-4 py-2"
@@ -133,7 +188,7 @@ const Navbar = ({
                         Arts
                       </Link>
                     </li>
-                    <li className="cursor-pointer hover:bg-[#1f1c24]">
+                    <li className="cursor-pointer hover:bg-white/10">
                       <Link
                         to="/jams"
                         className="block px-4 py-2"
@@ -157,15 +212,17 @@ const Navbar = ({
               type="text"
               placeholder="Search"
               className="w-full pr-4 outline-none"
+              value={searchValue}
+              onChange={handleSearchChange}
             />
           </div>
         </div>
       )}
 
-      <div>
+      <div className="flex h-full items-center">
         {isAuth ? (
-          <div className="flex items-center">
-            <ul className="hidden items-center gap-2 lg:flex">
+          <div className="flex h-full items-center">
+            <ul className="hidden h-full items-center gap-3 lg:flex">
               <li>
                 <NavLink
                   to="/membership"
@@ -175,13 +232,13 @@ const Navbar = ({
                 </NavLink>
               </li>
 
-              <li className="relative">
-                <i className="fa-solid fa-bell underlineNav w-10 cursor-pointer text-center text-xl after:-bottom-7" />
+              <li className="underlineNav relative flex h-full items-center">
+                <i className="fa-solid fa-bell w-10 cursor-pointer text-center text-xl" />
               </li>
 
-              <li>
+              <li className="underlineNav flex h-full items-center">
                 <i
-                  className="fa-solid fa-circle-user underlineNav relative w-10 cursor-pointer text-center text-3xl after:-bottom-[1.41rem]"
+                  className="fa-solid fa-circle-user relative w-10 cursor-pointer text-center text-3xl after:-bottom-[1.41rem]"
                   onClick={() => {
                     return setShowUserMenu((prev) => !prev);
                   }}
@@ -201,7 +258,7 @@ const Navbar = ({
 
             {/* user menu */}
             <div
-              className={`${showUserMenu ? "opacity-100" : "pointer-events-none opacity-0 duration-200"} absolute top-22 right-1 z-5 aspect-auto w-60 -translate-x-5 rounded-lg border border-[#8E8D92] bg-[#1D1A25] opacity-0 drop-shadow-2xl before:absolute before:-top-4.5 before:right-3 before:h-0 before:w-0 before:border-8 before:border-b-10 before:border-transparent before:border-b-[#8E8D92]`}
+              className={`${showUserMenu ? "opacity-100" : "pointer-events-none opacity-0 duration-200"} border-primary/70 before:border-b-primary/80 absolute top-22 right-1 z-5 aspect-auto w-60 -translate-x-5 rounded-lg border bg-[#1D1A25] opacity-0 drop-shadow-2xl before:absolute before:-top-4.5 before:right-3 before:h-0 before:w-0 before:border-8 before:border-b-10 before:border-transparent`}
             >
               <NavLink to="/profile" onClick={() => setShowUserMenu(false)}>
                 <div className="rounded-t-md px-4 pt-4 hover:bg-white/5">
@@ -212,7 +269,7 @@ const Navbar = ({
                     @{user?.username || "Username"}
                   </small>
 
-                  <hr className="mt-4 border-white/50" />
+                  <hr className="mt-4 border-white/10" />
                 </div>
               </NavLink>
 
@@ -227,7 +284,7 @@ const Navbar = ({
                     <p className="text-sm font-semibold">Achievements</p>
                   </div>
 
-                  <hr className="mt-4 border-white/50" />
+                  <hr className="mt-4 border-white/10" />
                 </div>
               </NavLink>
 
@@ -240,26 +297,34 @@ const Navbar = ({
                   Profile
                 </NavLink>
                 <NavLink
-                  to="/games"
+                  to="/leaderboards"
                   className="block px-4 py-2.5 hover:bg-white/5"
                   onClick={() => setShowUserMenu(false)}
                 >
-                  Games
+                  Leaderboards
                 </NavLink>
                 <NavLink
-                  to="/settings"
+                  to="/membership"
                   className="block px-4 py-2.5 hover:bg-white/5"
                   onClick={() => setShowUserMenu(false)}
                 >
-                  Settings
+                  Become a member
                 </NavLink>
 
                 <div className="px-4">
-                  <small className="btn btn-primary my-3 flex h-9 w-full cursor-pointer items-center justify-center rounded-md text-base font-semibold tracking-wider">
+                  <button
+                    className="btn btn-primary my-3 flex h-9 w-full cursor-pointer items-center justify-center rounded-md text-base font-semibold tracking-wider"
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        `${window.location.origin}/profile/${user?.id}`,
+                      );
+                      toast.info(`Your invite link copied to clipboard.`);
+                    }}
+                  >
                     Invite a friend
-                  </small>
+                  </button>
 
-                  <hr className="mt-0 border-white/50" />
+                  <hr className="mt-0 border-white/10" />
                 </div>
 
                 <div
