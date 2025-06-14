@@ -22,6 +22,8 @@ const Home = () => {
 
   useEffect(() => {
     dispatch(loadPosts({}));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -56,7 +58,7 @@ const Home = () => {
             <img
               src={user?.userProfile.profile_image}
               alt="profile pfp"
-              className="aspect-square w-15 rounded-full border text-xs"
+              className="aspect-square w-15 rounded-full border object-cover text-xs"
             />
           </Link>
 

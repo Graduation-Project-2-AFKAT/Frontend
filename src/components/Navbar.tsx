@@ -128,30 +128,42 @@ const Navbar = ({
       {isAuth && (
         <div className="hidden h-full grow items-center gap-12 md:mx-5 md:flex">
           <ul className="hidden h-full items-center gap-x-5 lg:flex">
-            <li className="underlineNav flex h-full items-center">
+            <li className="h-full">
               <NavLink
                 to="/games"
-                className={`relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300`}
+                className="underlineNav flex h-full items-center"
               >
-                Games
+                <div
+                  className={`relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300`}
+                >
+                  Games
+                </div>
               </NavLink>
             </li>
 
-            <li className="underlineNav flex h-full items-center">
+            <li className="h-full">
               <NavLink
                 to="/arts"
-                className="relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300"
+                className="underlineNav flex h-full items-center"
               >
-                Arts
+                <div
+                  className={`relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300`}
+                >
+                  Arts
+                </div>
               </NavLink>
             </li>
 
-            <li className="underlineNav flex h-full items-center">
+            <li className="h-full">
               <NavLink
                 to="/jams"
-                className="relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300"
+                className="underlineNav flex h-full items-center"
               >
-                Jams
+                <div
+                  className={`relative cursor-pointer after:-bottom-[1.57rem] hover:text-gray-300`}
+                >
+                  Jams
+                </div>
               </NavLink>
             </li>
           </ul>
