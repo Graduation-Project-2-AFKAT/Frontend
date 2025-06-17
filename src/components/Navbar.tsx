@@ -88,8 +88,9 @@ const Navbar = ({
 
   return (
     <nav className="fixed z-50 flex h-18 w-screen items-center justify-between gap-5 bg-[#121015]/10 pr-6 shadow-[1px_1px_5px_rgba(0,0,0,0.5)] drop-shadow-md backdrop-blur-sm">
+      {/* Always render this overlay but keep it invisible unless needed */}
       <div
-        className={`${showMiniNav || showUserMenu ? "fixed" : "hidden"} inset-0 z-5 h-screen w-screen bg-black/40`}
+        className={`inset-0 z-5 h-screen w-screen bg-black/40 transition-opacity ${showMiniNav || showUserMenu ? "fixed opacity-100" : "pointer-events-none fixed opacity-0"}`}
         onClick={() => {
           if (showMiniNav) {
             setShowMiniNav(false);
@@ -174,47 +175,46 @@ const Navbar = ({
               className="fa-solid fa-ellipsis-vertical cursor-pointer"
               onClick={() => setShowMiniNav((prev) => !prev)}
             />
-            {showMiniNav && (
-              <>
-                <div className="border-primary/70 before:border-b-primary/80 absolute top-full left-56.5 z-10 mt-2 w-48 rounded-md border bg-[#1D1A25] py-2 shadow-lg before:absolute before:-top-full before:bottom-full before:left-6 before:-z-1 before:border-r-10 before:border-b-15 before:border-l-10 before:border-[#3B3842] before:border-r-transparent before:border-l-transparent">
-                  <ul className="text-sm">
-                    <li className="cursor-pointer border-b border-b-white/5 hover:bg-white/10">
-                      <Link
-                        to="/games"
-                        className="block px-4 py-2"
-                        onClick={() => {
-                          setShowMiniNav(false);
-                        }}
-                      >
-                        Games
-                      </Link>
-                    </li>
-                    <li className="cursor-pointer border-b border-b-white/5 hover:bg-white/10">
-                      <Link
-                        to="/arts"
-                        className="block px-4 py-2"
-                        onClick={() => {
-                          setShowMiniNav(false);
-                        }}
-                      >
-                        Arts
-                      </Link>
-                    </li>
-                    <li className="cursor-pointer hover:bg-white/10">
-                      <Link
-                        to="/jams"
-                        className="block px-4 py-2"
-                        onClick={() => {
-                          setShowMiniNav(false);
-                        }}
-                      >
-                        Jams
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </>
-            )}
+
+            <div
+              className={`${showMiniNav ? "opacity-100" : "pointer-events-none opacity-0"} border-primary/70 before:border-b-primary/80 absolute z-10 mt-2 w-48 -translate-x-8 translate-y-6 rounded-md border bg-[#1D1A25] py-2 shadow-lg before:absolute before:-z-1 before:translate-x-6 before:-translate-y-6 before:border-r-10 before:border-b-15 before:border-l-10 before:border-[#3B3842] before:border-r-transparent before:border-l-transparent`}
+            >
+              <ul className="text-sm">
+                <li className="cursor-pointer border-b border-b-white/5 hover:bg-white/10">
+                  <Link
+                    to="/games"
+                    className="block px-4 py-2"
+                    onClick={() => {
+                      setShowMiniNav(false);
+                    }}
+                  >
+                    Games
+                  </Link>
+                </li>
+                <li className="cursor-pointer border-b border-b-white/5 hover:bg-white/10">
+                  <Link
+                    to="/arts"
+                    className="block px-4 py-2"
+                    onClick={() => {
+                      setShowMiniNav(false);
+                    }}
+                  >
+                    Arts
+                  </Link>
+                </li>
+                <li className="cursor-pointer hover:bg-white/10">
+                  <Link
+                    to="/jams"
+                    className="block px-4 py-2"
+                    onClick={() => {
+                      setShowMiniNav(false);
+                    }}
+                  >
+                    Jams
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div className="bg-base-content/5 mx-0 flex grow items-center rounded-md border border-white/25 py-2 pl-3 text-sm">
