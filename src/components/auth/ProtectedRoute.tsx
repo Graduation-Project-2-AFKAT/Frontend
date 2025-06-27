@@ -15,7 +15,6 @@ const ProtectedRoute = ({
   children,
   isAuthRoute = false,
 }: IProps) => {
-  const { isLoading } = useAppSelector((state) => state.loading);
   const { user } = useAppSelector((state) => state.users);
   const { Game } = useAppSelector((state) => state.games);
   const { Asset } = useAppSelector((state) => state.assets);
@@ -24,17 +23,6 @@ const ProtectedRoute = ({
 
   const localToken = localStorage.getItem("access_token");
   const isLoggedIn = !!localToken || isAuthenticated;
-
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex h-screen items-center justify-center">
-  //       <div className="flex flex-col items-center">
-  //         <div className="border-primary h-16 w-16 animate-spin rounded-full border-t-2 border-b-2" />
-  //         <p className="mt-4 text-gray-600">Checking authentication...</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   const urlResources = location.pathname.split("/");
   const isEdit = urlResources[urlResources.length - 1] === "edit";

@@ -40,6 +40,7 @@ const Tabs = ({ defaultTab, tabs }: IProps) => {
       setPostsToShow(filteredPosts);
       setScheduledPosts(filteredScheduledPosts);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postsList]);
 
   function handleTabClick(tab: string) {

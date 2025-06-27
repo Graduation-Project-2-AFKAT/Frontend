@@ -8,10 +8,10 @@ import SkeletonPosts from "./ui/SkeletonPosts";
 
 interface IProps {
   posts: IPost[];
-  pageType: "foryou" | "following";
+  pageType?: "foryou" | "following";
 }
 
-const Posts = ({ posts, pageType }: IProps) => {
+const Posts = ({ posts, pageType = "foryou" }: IProps) => {
   const dispatch = useAppDispatch();
   const { isLoading, type } = useAppSelector((state) => state.loading);
 
