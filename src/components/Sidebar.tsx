@@ -1,5 +1,6 @@
 import { Boxes, Gamepad2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 
 interface IProps {
   showSidebar: boolean;
@@ -87,9 +88,19 @@ const Sidebar = ({
       />
 
       <div
-        className={`absolute ${expandSidebar ? "md:left-20" : "md:-left-60"} ${showSidebar ? "left-20" : "-left-80"} border-r-primary top-0 z-10 h-full w-80 border-r-2 bg-[#2A2731] py-15 pt-30 pl-10 backdrop-blur-[2px] duration-300`}
+        className={`absolute ${expandSidebar ? "md:left-20" : "md:-left-60"} ${showSidebar ? "left-20" : "-left-80"} border-r-primary top-0 z-10 h-full w-80 border-r-2 bg-[#2A2731] py-15 pt-30 pl-5 backdrop-blur-[2px] duration-300`}
       >
-        <h1>Hi {selectedTab}</h1>
+        <div className="flex h-full items-center">
+          <div className="text-center text-gray-400">
+            <div className="mb-4 text-6xl">
+              <i className="fa-solid fa-tools" />
+            </div>
+            <h2 className="mb-2 text-xl font-semibold">Feature Coming Soon</h2>
+            <p className="text-sm opacity-75">
+              We're working hard to bring you this feature
+            </p>
+          </div>
+        </div>
       </div>
 
       <aside
@@ -98,30 +109,34 @@ const Sidebar = ({
         <div
           className={`md:space-y- relative space-y-5 rounded-lg p-4 whitespace-nowrap transition-colors ease-in`}
         >
-          <div
+          <Link
+            to={"/"}
             className={`${selectedTab === "home" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Home']`}
-            onClick={() => handleClick("home")}
+            onClick={() => setExpandSidebar(false)}
           >
             <i className="fa-solid fa-house" />
-          </div>
-          <div
+          </Link>
+          <Link
+            to={"/games"}
             className={`${selectedTab === "games" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Games']`}
-            onClick={() => handleClick("games")}
+            onClick={() => setExpandSidebar(false)}
           >
             <Gamepad2 size={25} />
-          </div>
-          <div
+          </Link>
+          <Link
+            to={"/arts"}
             className={`${selectedTab === "assets" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Assets']`}
-            onClick={() => handleClick("assets")}
+            onClick={() => setExpandSidebar(false)}
           >
             <Boxes size={25} />
-          </div>
-          <div
+          </Link>
+          <Link
+            to={"/jams"}
             className={`${selectedTab === "gameJams" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Game_Jams']`}
-            onClick={() => handleClick("gameJams")}
+            onClick={() => setExpandSidebar(false)}
           >
             <i className="fa-solid fa-award" />
-          </div>
+          </Link>
           <hr className="mx-2 opacity-25" />
           <div
             className={`${selectedTab === "create" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Create_a_community']`}
@@ -139,12 +154,13 @@ const Sidebar = ({
             <i className="fa-solid fa-earth-americas" />
           </div>
 
-          <div
+          <Link
+            to={"/profile/edit"}
             className={`${selectedTab === "settings" ? "text-primary" : ""} tooltips w-10 cursor-pointer before:font-medium before:content-['Settings']`}
-            onClick={() => handleClick("settings")}
+            onClick={() => setExpandSidebar(false)}
           >
             <i className="fa-solid fa-gear" />
-          </div>
+          </Link>
         </div>
       </aside>
     </>
