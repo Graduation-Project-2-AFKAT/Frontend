@@ -176,7 +176,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
     try {
       const formData = new FormData();
       formData.append("title", data.title || "");
-      formData.append("content", data.content || "");
+      if (data.content) formData.append("content", data.content || "");
       formData.append("published_at", new Date().toISOString());
       if (imageFile) {
         formData.append("image", imageFile);
@@ -461,12 +461,12 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                       disabled={
                         isLoading ||
                         title.length === 0 ||
-                        content.length === 0 ||
+                        // content.length === 0 ||
                         content.length > 256
                       }
                       className={`bg-primary rounded-lg border border-black px-5 py-2 font-medium text-black shadow-md shadow-black/50 transition-transform disabled:cursor-not-allowed! disabled:opacity-70 ${
                         isLoading ||
-                        content.length === 0 ||
+                        // content.length === 0 ||
                         content.length > 256
                           ? ""
                           : "hover:-translate-y-0.5 active:scale-95"

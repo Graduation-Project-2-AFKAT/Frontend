@@ -211,13 +211,14 @@ const Art = () => {
                 <div className="flex flex-wrap gap-2">
                   {tags &&
                     tags.map((tag: string) => (
-                      <a
+                      <Link
                         key={tag}
-                        href={`/arts?tag=${tag}`}
-                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm transition-colors hover:border-teal-400/50"
+                        // to={`/arts?tag=${tag}`}
+                        to={`#`}
+                        className="hover:border-primary/50 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm transition-colors"
                       >
                         {tag}
-                      </a>
+                      </Link>
                     ))}
                 </div>
               </div>

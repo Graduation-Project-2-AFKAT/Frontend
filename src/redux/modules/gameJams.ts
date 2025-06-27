@@ -29,6 +29,42 @@ export const loadJams = createAsyncThunk(
   },
 );
 
+export const createJams = createAsyncThunk(
+  "gameJams/create",
+  async (jamData: FormData, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("gameJams/create"));
+
+      await api.post(`/games/jams/`, jamData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // console.log(res.data);
+
+      dispatch(
+        showAlert({
+          msg: "Game jam created successfully! Players can now see and participate in your jam.",
+          type: "success",
+        }),
+      );
+
+      setTimeout(() => {
+        window.location.href = "/jams";
+      }, 500);
+
+      // return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data); //TODO: errors should be in Error redux module
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
 export const participateInJam = createAsyncThunk(
   "gameJams/participate",
   async (

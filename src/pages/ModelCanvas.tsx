@@ -171,7 +171,14 @@ const ModelCanvas = ({ model_file }: IProps) => {
           onPointerEnter={() => (document.body.style.cursor = "grab")}
         >
           <Suspense fallback={<Loader />}>
-            <Stage intensity={0.6} adjustCamera={false}>
+            <Stage intensity={5} adjustCamera={false}>
+              <ambientLight intensity={0.3} />
+              <directionalLight
+                position={[10, 10, 5]}
+                intensity={0.5}
+                castShadow
+              />
+              <directionalLight position={[-50, -50, -50]} intensity={0.3} />
               <group>
                 {model_file && !isLoading ? (
                   <Model url={model_file} wireframe={wireframe} />

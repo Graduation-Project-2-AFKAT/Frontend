@@ -98,7 +98,7 @@ const Post = ({ post }: IProps) => {
       <li
         className={`${!post.theme ? "border-white/10" : "border-0"} outline-primary bg-base-content/5 grid border bg-cover shadow-md drop-shadow-md duration-50 md:rounded-xl lg:hover:outline-2 lg:hover:outline-dashed`}
         style={{
-          gridTemplate: `60px 50px ${post.image ? "auto" : "auto"} auto auto / 1fr 1fr 1fr`,
+          gridTemplate: `75px auto ${post.image ? "auto" : "auto"} auto auto / 1fr 1fr 1fr`,
           backgroundImage: post.theme ? `url('${post.theme}')` : "none",
           backgroundPosition: "center",
           backgroundSize: `${post.theme_zoom_number}%`,
@@ -119,7 +119,9 @@ const Post = ({ post }: IProps) => {
               to={`/profile/${user_id}`}
               className={`${post.theme ? "drop-shadow-[1px_1px_1px_rgba(0,0,0,1)]" : ""} cursor-pointer text-sm font-bold hover:underline`}
             >
-              <span>@{username}</span>
+              <span className="inline-block max-w-[250px] truncate">
+                @{username}
+              </span>
             </Link>
           </div>
           <div
@@ -140,7 +142,7 @@ const Post = ({ post }: IProps) => {
         </div>
         <div className="col-span-3 text-center text-2xl font-bold tracking-wide">
           <span
-            className={`${post.theme ? "font-bold drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""} inline-block max-w-full break-words`}
+            className={`${post.theme ? "font-bold drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""} mt-1 mb-4 inline-block max-w-full break-words`}
           >
             {post.title}
           </span>
@@ -150,19 +152,23 @@ const Post = ({ post }: IProps) => {
             <img
               src={post.image}
               alt={post.image.split("/").pop()}
-              className={`max-h-66 w-auto rounded-lg border border-white/20 object-fill`}
+              className={`max-h-75 w-auto rounded-lg border border-white/20 object-fill`}
               width={800}
               height={300}
               loading="lazy"
             />
           </div>
         )}
+        {post.content && (
+          <div
+            className={`${post.theme ? "drop-shadow-[1px_4px_2px_rgba(0,0,0,0.7)]" : ""} ${post.image ? "text-md bg-neutral-content/5 backdrop-blur-lg" : "bg-base-content/5 min-h-50 text-xl"} col-span-3 mx-7 my-5 rounded-lg border border-white/20 px-5 py-4 text-base break-words backdrop-blur-md`}
+          >
+            {post.content}
+          </div>
+        )}
         <div
-          className={`${post.theme ? "drop-shadow-[1px_4px_2px_rgba(0,0,0,0.7)]" : ""} ${post.image ? "text-md bg-neutral-content/5 backdrop-blur-lg" : "bg-base-content/5 min-h-50 text-xl"} col-span-3 mx-7 my-5 rounded-lg border border-white/20 px-5 py-4 text-base break-words backdrop-blur-md`}
+          className={`${post.content ? "mt-2" : "mt-6"} col-span-2 flex items-end justify-start px-5 pb-7`}
         >
-          {post.content}
-        </div>
-        <div className="col-span-2 mt-2 flex items-end justify-start px-5 pb-7">
           <div className="flex space-x-8 px-2">
             <button className="group flex space-x-2" onClick={handleLikePost}>
               <Heart

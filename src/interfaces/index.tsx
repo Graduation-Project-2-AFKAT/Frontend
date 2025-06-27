@@ -41,6 +41,7 @@ export interface IPost {
   content: string;
   likes_count: number;
   is_liked_by_user: boolean;
+  user_is_following: boolean;
   image: string;
   theme: string;
   theme_zoom_number: number;

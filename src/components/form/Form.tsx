@@ -58,7 +58,7 @@ const Form = ({ label, redirect }: IProps) => {
     >
       <div className="mb-4 flex flex-1 flex-col">
         <img
-          src="/images/AFK_Buttons.svg"
+          src="/images/AFK_Buttons.webp"
           alt="AFK Buttons Logo"
           className="mt-10 h-24 w-auto duration-300 group-focus-within:scale-110"
         />

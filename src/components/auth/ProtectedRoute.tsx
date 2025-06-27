@@ -25,44 +25,51 @@ const ProtectedRoute = ({
   const localToken = localStorage.getItem("access_token");
   const isLoggedIn = !!localToken || isAuthenticated;
 
-  if (!isLoading) {
-    const urlResources = location.pathname.split("/");
-    const isEdit = urlResources[urlResources.length - 1] === "edit";
-    const pathId = urlResources[urlResources.length - 2];
-    const pathEnd = urlResources[urlResources.length - 3];
-    const isNumber = pathId && !isNaN(Number(pathId));
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex h-screen items-center justify-center">
+  //       <div className="flex flex-col items-center">
+  //         <div className="border-primary h-16 w-16 animate-spin rounded-full border-t-2 border-b-2" />
+  //         <p className="mt-4 text-gray-600">Checking authentication...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-    if (
-      isEdit &&
-      isNumber &&
-      ((pathEnd === "games" && Game && Game?.user_id !== user?.id) ||
-        (pathEnd === "arts" && Asset && Asset?.user_id !== user?.id))
-    ) {
-      const contentPath = location.pathname.replace(/\/edit$/, "");
+  const urlResources = location.pathname.split("/");
+  const isEdit = urlResources[urlResources.length - 1] === "edit";
+  const pathId = urlResources[urlResources.length - 2];
+  const pathEnd = urlResources[urlResources.length - 3];
+  const isNumber = pathId && !isNaN(Number(pathId));
 
-      return (
-        <Navigate
-          to={contentPath}
-          replace
-          state={{
-            permissionDenied: true,
-            message: "You don't have permission to edit this content",
-          }}
-        />
-      );
-    }
+  if (
+    isEdit &&
+    isNumber &&
+    ((pathEnd === "games" && Game && Game?.user_id !== user?.id) ||
+      (pathEnd === "arts" && Asset && Asset?.user_id !== user?.id))
+  ) {
+    const contentPath = location.pathname.replace(/\/edit$/, "");
 
-    // Case 1: User is not logged in and trying to access a protected route
-    if (!isLoggedIn && !isAuthRoute) {
-      console.log("redirected Case:1");
-      return <Navigate to={redirectPath} replace />;
-    }
+    return (
+      <Navigate
+        to={contentPath}
+        replace
+        state={{
+          permissionDenied: true,
+          message: "You don't have permission to edit this content",
+        }}
+      />
+    );
+  }
 
-    // Case 2: User is logged in and trying to access an auth route (login/register)
-    if (!!localToken && isAuthRoute) {
-      console.log("redirected Case:2");
-      return <Navigate to={redirectPath} replace />;
-    }
+  // Case 1: User is not logged in and trying to access a protected route
+  if (!isLoggedIn && !isAuthRoute) {
+    return <Navigate to={redirectPath} replace />;
+  }
+
+  // Case 2: User is logged in and trying to access an auth route (login/register)
+  if (!!localToken && isAuthRoute) {
+    return <Navigate to={redirectPath} replace />;
   }
 
   return <>{children}</>;

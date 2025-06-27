@@ -48,7 +48,9 @@ const GameJam = () => {
     const endDate = selectedJam?.end_date;
 
     if (startDate && endDate) {
-      return new Date(startDate).getDate() - new Date(endDate).getDay();
+      return Math.abs(
+        new Date(startDate).getDate() - new Date(endDate).getDate(),
+      );
     }
   };
 
@@ -179,7 +181,9 @@ const GameJam = () => {
                     {jam.theme && (
                       <div className="mb-3">
                         <span className="text-white/70">Theme:</span>{" "}
-                        <span className="font-medium">{jam.theme}</span>
+                        <span className="font-medium">
+                          {jam.theme.split(".")[0]}.
+                        </span>
                       </div>
                     )}
 
@@ -210,9 +214,11 @@ const GameJam = () => {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <span className="text-sm text-white/70">
+                      <span className="text-sm font-light text-white/70">
                         By{" "}
-                        <span className="text-primary">{jam.created_by}</span>
+                        <span className="text-primary font-medium">
+                          {jam.created_by.toUpperCase()}
+                        </span>
                       </span>
                     </div>
 
@@ -269,7 +275,7 @@ const GameJam = () => {
                   {/* Close Button */}
                   <button
                     onClick={() => setShowModal(false)}
-                    className="bg-error/20 hover:bg-error/50 absolute top-4 right-4 rounded-full p-2 transition-colors"
+                    className="absolute top-4 right-4 rounded-full bg-red-400/50 p-2 transition-colors hover:bg-red-400/100"
                   >
                     <X />
                   </button>
@@ -285,10 +291,12 @@ const GameJam = () => {
                     /> */}
 
                     <div>
-                      <span className="text-sm text-white/70">
+                      <span className="text-sm font-light text-white/70">
                         Organized by
                       </span>
-                      <h3 className="font-medium">{selectedJam.created_by}</h3>
+                      <h3 className="font-medium">
+                        {selectedJam.created_by.toUpperCase()}
+                      </h3>
                     </div>
                   </div>
 
@@ -300,7 +308,7 @@ const GameJam = () => {
                     <div className="mb-4">
                       <span className="text-white/70">Theme:</span>{" "}
                       <span className="text-primary font-medium">
-                        {selectedJam.theme}
+                        {selectedJam.theme.split(".")[0]}.
                       </span>
                     </div>
                   )}
@@ -452,15 +460,17 @@ const GameJam = () => {
                   {/* Action Buttons */}
                   <div className="flex flex-col gap-4 sm:flex-row">
                     {!selectedJam.is_active ? (
-                      <Link
+                      <>
+                        {/* <Link
                         to={`/jam/${selectedJam.id}/results`}
                         className="rounded-md bg-[#1A191F] px-6 py-3 text-center transition-colors hover:bg-[#24222A]"
                       >
                         View Results
-                      </Link>
+                      </Link> */}
+                      </>
                     ) : (
                       <button
-                        className="bg-primary text-primary-content rounded-md px-6 py-3 text-center font-bold transition-opacity hover:opacity-85"
+                        className={`${action === "leave" ? "text-error-content bg-red-400" : "bg-primary text-primary-content"} rounded-md px-6 py-3 text-center font-bold transition-opacity hover:opacity-85`}
                         onClick={participateJam}
                       >
                         {isLoading ? (

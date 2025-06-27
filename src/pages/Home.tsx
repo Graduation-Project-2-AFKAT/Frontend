@@ -1,11 +1,11 @@
 import moment from "moment";
 import { lazy, Suspense, useEffect, useState } from "react";
+import { Link } from "react-router";
 import Input from "../components/form/Input";
 import Posts from "../components/Posts";
 import Board from "../components/ui/Board";
 import { IPost } from "../interfaces";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { Link } from "react-router";
 import { loadPosts } from "../redux/modules/posts";
 
 const CreatePostModal = lazy(
@@ -19,6 +19,7 @@ const Home = () => {
 
   const [postsToShow, setPostsToShow] = useState<IPost[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [pageType, setPageType] = useState<"foryou" | "following">("foryou");
 
   useEffect(() => {
     dispatch(loadPosts({}));
@@ -104,16 +105,26 @@ const Home = () => {
 
         <div className="text-md flex items-center justify-between space-x-6 px-[4%] font-bold md:px-0 lg:px-[30%] lg:text-base lg:font-medium">
           <div className="flex w-full gap-4">
-            <button className="bg-primary hover:bg-primary-focus hover:bg-primary/80 text-primary-content flex-1 rounded-lg py-2 font-semibold transition-colors">
+            <button
+              className={`${pageType === "foryou" ? "bg-primary hover:bg-primary-focus hover:bg-primary/80 text-primary-content" : "hover:bg-primary/10"} border-primary flex-1 rounded-lg border-2 py-2 font-semibold transition-colors`}
+              onClick={() => {
+                if (pageType !== "foryou") setPageType("foryou");
+              }}
+            >
               For You
             </button>
-            <button className="border-primary hover:bg-primary/10 flex-1 rounded-lg border-2 py-2 transition-colors">
+            <button
+              className={`${pageType === "following" ? "bg-primary hover:bg-primary-focus hover:bg-primary/80 text-primary-content" : "hover:bg-primary/10"} border-primary flex-1 rounded-lg border-2 py-2 transition-colors`}
+              onClick={() => {
+                if (pageType !== "following") setPageType("following");
+              }}
+            >
               Following
             </button>
           </div>
         </div>
 
-        <Posts posts={postsToShow} />
+        <Posts posts={postsToShow} pageType={pageType} />
       </section>
 
       {/* Right */}

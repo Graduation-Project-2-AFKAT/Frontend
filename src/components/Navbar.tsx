@@ -114,13 +114,21 @@ const Navbar = ({
             <img
               src="/images/AFK_Buttons.webp"
               alt="AFK Buttons Logo"
-              className="ml-6"
+              className="ml-6 md:ml-0"
+              style={{
+                width: 60,
+                height: 40,
+              }}
             />
 
             <img
               src="/images/Logo_outlined.svg"
               alt="AFKAT Logo"
               className="hidden md:inline"
+              style={{
+                width: 102,
+                height: 40,
+              }}
             />
           </div>
         </NavLink>

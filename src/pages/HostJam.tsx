@@ -13,8 +13,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 import Input from "../components/form/Input";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { IJam } from "../interfaces";
+import { createJams } from "../redux/modules/gameJams";
 
 type IHostJamFormData = Pick<
   IJam,
@@ -83,10 +84,12 @@ const HostJam = () => {
       // organizerWebsite: "",
     },
   });
+  const dispatch = useAppDispatch();
 
   const { isLoading } = useAppSelector((state) => state.loading);
 
   const [activeStep, setActiveStep] = useState(1);
+  const [jamTheme, setJamTheme] = useState<File | null>(null);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedLogo, setUploadedLogo] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -140,6 +143,8 @@ const HostJam = () => {
         return;
       }
 
+      setJamTheme(file);
+
       const reader = new FileReader();
       reader.onload = (event) => {
         if (type === "cover") {
@@ -183,7 +188,7 @@ const HostJam = () => {
   // };
 
   const onSubmit: SubmitHandler<IHostJamFormData> = (data) => {
-    if (!uploadedImage) {
+    if (!jamTheme) {
       toast.error("Please upload a cover image for your game jam");
       return;
     }
@@ -192,7 +197,24 @@ const HostJam = () => {
       toast.error("Please upload an organizer logo");
       return;
     }
-    console.log("submitted form:", data);
+
+    const jamData = new FormData();
+
+    jamData.append("title", data.title);
+    jamData.append("description", data.description);
+    jamData.append("start_date", data.start_date);
+    jamData.append("end_date", data.end_date);
+    jamData.append("prizes", data.prizes);
+    if (jamTheme) {
+      jamData.append("game_jam_thumbnail", jamTheme);
+    }
+    jamData.append("theme", data.rules);
+    jamData.append("location", data.location);
+    jamData.append("created_by", data.organizer_name);
+
+    // console.log("submitted form:", data);
+
+    dispatch(createJams(jamData));
 
     // // Validate date range
     // const start = new Date(data.start_date);

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { IPost } from "../interfaces";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -8,11 +8,14 @@ import SkeletonPosts from "./ui/SkeletonPosts";
 
 interface IProps {
   posts: IPost[];
+  pageType: "foryou" | "following";
 }
 
-const Posts = ({ posts }: IProps) => {
+const Posts = ({ posts, pageType }: IProps) => {
   const dispatch = useAppDispatch();
   const { isLoading, type } = useAppSelector((state) => state.loading);
+
+  const [postsToShow, setPostsToShow] = useState<IPost[]>(posts);
 
   const location = useLocation();
 
@@ -33,6 +36,15 @@ const Posts = ({ posts }: IProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (pageType === "following") {
+      const filteredPosts = posts.filter((post) => post.user_is_following);
+      setPostsToShow(filteredPosts);
+    } else if (posts) {
+      setPostsToShow(posts);
+    }
+  }, [pageType, posts]);
+
   return (
     <ul className="mb-25 space-y-6">
       {isLoading &&
@@ -42,8 +54,8 @@ const Posts = ({ posts }: IProps) => {
         <div className="flex flex-col items-center justify-center space-y-10 pb-12">
           <SkeletonPosts />
         </div>
-      ) : posts.length > 0 ? (
-        posts.map((post) => {
+      ) : postsToShow.length > 0 ? (
+        postsToShow.map((post) => {
           return <Post key={post.id} post={post} />;
         })
       ) : (

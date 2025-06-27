@@ -49,10 +49,11 @@ function App() {
 
   useEffect(() => {
     if (localStorage.getItem("access_token") && !user) {
+      // Make sure your loadMyUser action creator properly sets and clears loading state
       dispatch(loadMyUser());
       console.log("user loaded - Layout");
     }
-  }, [user, isAuth, dispatch]);
+  }, [user, dispatch]);
 
   useEffect(() => {
     if (user) {
@@ -61,7 +62,7 @@ function App() {
     }
   }, [user]);
 
-  const options = {
+  const toastOptions = {
     theme: "dark",
     autoClose: 2500,
     position: "bottom-right" as ToastPosition,
@@ -74,8 +75,8 @@ function App() {
   };
 
   return (
-    <div>
-      <ToastContainer {...options} style={{ marginRight: "2rem" }} />
+    <div className="min-h-screen">
+      <ToastContainer {...toastOptions} style={{ marginRight: "2rem" }} />
       <Suspense fallback={<LoadingFallback isAuth={isAuth} />}>
         <Routes>
           <Route
@@ -83,6 +84,14 @@ function App() {
             element={<RootLayout />}
             errorElement={<ErrorHandler />}
           >
+            <Route
+              index
+              element={
+                <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/login"
               element={
@@ -104,15 +113,6 @@ function App() {
                   isAuthRoute={true}
                 >
                   <Register />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              index
-              element={
-                <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
-                  <Home />
                 </ProtectedRoute>
               }
             />
