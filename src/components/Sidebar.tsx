@@ -10,9 +10,9 @@ interface IProps {
 }
 
 const Sidebar = ({
-  showSidebar = false,
+  showSidebar,
   setShowSidebar,
-  expandSidebar = false,
+  expandSidebar,
   setExpandSidebar,
 }: IProps) => {
   const [selectedTab, setSelectedTab] = useState("home");
@@ -26,12 +26,6 @@ const Sidebar = ({
     language: false,
     settings: false,
   });
-
-  useEffect(() => {
-    setShowSidebar(false);
-    setExpandSidebar(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     if (!expandSidebar) {
