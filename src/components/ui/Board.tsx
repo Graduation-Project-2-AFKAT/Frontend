@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { loadLeaderboards } from "../../redux/modules/leaderboards";
 import { loadGames } from "../../redux/modules/games";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import { IGame, ILeaderboard } from "../../interfaces";
 
 interface IProps {
@@ -51,19 +51,25 @@ const Board = ({
             Leaderboards.length > 0 &&
             Leaderboards.slice(0, 3).map(
               (leaderboard: ILeaderboard, index: number) => (
-                <li key={index} className="flex items-start gap-3">
-                  <div className="from-primary/70 to-secondary/70 flex h-16 w-16 items-center justify-center overflow-hidden rounded-md border border-white/75 bg-gradient-to-br font-bold text-white">
-                    #{index + 1}
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-semibold">
-                      {leaderboard.leaderboardName}
-                    </span>
-                    <span className="text-base-content/70 text-xs">
-                      99+ points
-                    </span>
-                  </div>
-                </li>
+                <NavLink
+                  key={index}
+                  to={`/leaderboards/${leaderboard.id}`}
+                  className={"flex gap-3"}
+                >
+                  <li className="flex items-start gap-3">
+                    <div className="from-primary/70 to-secondary/70 flex h-16 w-16 items-center justify-center overflow-hidden rounded-md border border-white/75 bg-gradient-to-br font-bold text-white">
+                      #{index + 1}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-semibold">
+                        {leaderboard.leaderboardName}
+                      </span>
+                      <span className="text-base-content/70 text-xs">
+                        99+ points
+                      </span>
+                    </div>
+                  </li>
+                </NavLink>
               ),
             )}
           {title === "Suggestion" &&

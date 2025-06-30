@@ -43,7 +43,12 @@ export const loadLeaderboardEntriesById = createAsyncThunk(
       return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError;
-      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      dispatch(
+        showAlert({
+          msg: "No entries found for this leaderboard",
+          type: "warning",
+        }),
+      );
       return rejectWithValue(error.response?.data);
     } finally {
       dispatch(stopLoading());
