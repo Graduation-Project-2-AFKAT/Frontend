@@ -104,7 +104,6 @@ const Navbar = ({
         {!window.location.pathname.endsWith("/login") &&
           !window.location.pathname.endsWith("/register") && (
             <div className="underlineNav flex h-full items-center gap-2 md:gap-0">
-              {/* Hamburger menu - separate clickable area on small screens */}
               <div className="flex h-full items-center md:hidden">
                 <i
                   className="fa-solid fa-bars pl-6 hover:cursor-pointer"
@@ -112,7 +111,6 @@ const Navbar = ({
                 />
               </div>
 
-              {/* Logo - separate NavLink for navigation */}
               <NavLink to="/" className="flex h-full items-center md:pl-5">
                 <div className="flex h-10 w-auto cursor-pointer gap-4 after:-left-full after:scale-x-325">
                   <img
@@ -142,7 +140,10 @@ const Navbar = ({
         {/* When on login/register pages, show logo only */}
         {(window.location.pathname.endsWith("/login") ||
           window.location.pathname.endsWith("/register")) && (
-          <NavLink to="/" className="underlineNav flex h-full items-center">
+          <NavLink
+            to="/"
+            className="underlineNav flex h-full items-center md:pl-5"
+          >
             <div className="flex h-10 w-auto cursor-pointer gap-4 after:-left-full after:scale-x-325">
               <img
                 src="/images/AFK_Buttons.webp"
@@ -392,25 +393,21 @@ const Navbar = ({
             </div>
           </div>
         ) : (
-          <div className="flex flex-1 justify-end text-sm">
+          <div className="flex h-full flex-1 justify-end text-sm">
             <ul className="flex items-center space-x-4 text-sm">
-              <li>
-                <NavLink
-                  to="/login"
-                  className={`underlineNav rounded-lg border-2 px-3 py-1 duration-150 after:-bottom-[1.44rem]`}
-                >
-                  Login
-                </NavLink>
-              </li>
-              <Divider className="py-2.5" />
-              <li>
-                <NavLink
-                  to="/register"
-                  className={`underlineNav duration-150 after:-bottom-[1.69rem]`}
-                >
-                  Register
-                </NavLink>
-              </li>
+              <NavLink
+                to="/login"
+                className="underlineNav flex h-full items-center"
+              >
+                <li className="rounded-lg border-2 px-3 py-1">Login</li>
+              </NavLink>
+              <Divider className="max-h-6 py-2.5" />
+              <NavLink
+                to="/register"
+                className="underlineNav flex h-full items-center"
+              >
+                <li>Register</li>
+              </NavLink>
             </ul>
           </div>
         )}
