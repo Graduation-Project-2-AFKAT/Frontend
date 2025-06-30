@@ -10,9 +10,9 @@ interface IProps {
 }
 
 const Sidebar = ({
-  showSidebar,
+  showSidebar = false,
   setShowSidebar,
-  expandSidebar,
+  expandSidebar = false,
   setExpandSidebar,
 }: IProps) => {
   const [selectedTab, setSelectedTab] = useState("home");
