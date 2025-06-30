@@ -20,7 +20,7 @@ interface IProps {
 
 const Navbar = ({
   setShowSidebar,
-  showMiniNav,
+  showMiniNav = false,
   setShowMiniNav,
   setExpandSidebar,
 }: IProps) => {

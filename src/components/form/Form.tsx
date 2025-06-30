@@ -14,6 +14,7 @@ interface IProps {
 
 const Form = ({ label, redirect }: IProps) => {
   const location = useLocation();
+
   const { isLoading } = useAppSelector((state) => state.loading);
   const dispatch = useAppDispatch();
 
