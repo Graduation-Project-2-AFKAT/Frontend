@@ -96,7 +96,7 @@ const Post = ({ post }: IProps) => {
   return (
     <>
       <li
-        className={`${!post.theme ? "border-white/10" : "border-0"} outline-primary bg-base-content/5 grid border bg-cover shadow-md drop-shadow-md duration-50 md:rounded-xl lg:hover:outline-2 lg:hover:outline-dashed`}
+        className={`${!post.theme ? "border-white/10" : "border-0"} outline-primary bg-base-content/5 grid border bg-cover shadow-md drop-shadow-md duration-50 md:rounded-xl lg:hover:outline-2`}
         style={{
           gridTemplate: `75px auto ${post.image ? "auto" : "auto"} auto auto / 1fr 1fr 1fr`,
           backgroundImage: post.theme ? `url('${post.theme}')` : "none",
@@ -141,11 +141,13 @@ const Post = ({ post }: IProps) => {
           </div>
         </div>
         <div className="col-span-3 text-center text-2xl font-bold tracking-wide">
-          <span
-            className={`${post.theme ? "font-bold drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""} mt-1 mb-4 inline-block max-w-full break-words`}
-          >
-            {post.title}
-          </span>
+          <Link to={`/post/${id}`}>
+            <span
+              className={`${post.theme ? "font-bold drop-shadow-[1px_1px_3px_rgba(0,0,0,1)]" : ""} mt-1 mb-4 inline-block max-w-full cursor-pointer px-5 pt-2 break-words hover:underline`}
+            >
+              {post.title}
+            </span>
+          </Link>
         </div>
         {post.image && (
           <div className="col-span-3 mx-7 flex h-full items-center justify-center text-center">

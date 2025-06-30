@@ -169,7 +169,7 @@ const PostCommentDialog = ({ onClose, post }: PostCommentDialogProps) => {
               {comments.map(
                 ({
                   id,
-                  creator: { username },
+                  creator,
                   content,
                   modified_at,
                   created_at,
@@ -177,17 +177,17 @@ const PostCommentDialog = ({ onClose, post }: PostCommentDialogProps) => {
                   <div key={id}>
                     <div className="flex gap-x-5 rounded px-10 py-6">
                       <img
-                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`}
-                        alt={username}
+                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${creator}`}
+                        alt={creator}
                         className="h-10 w-10 rounded-full object-cover"
                       />
 
                       <div className="flex w-full flex-col justify-between gap-y-3">
                         <div className="flex justify-between">
                           <p className="text-sm font-bold">
-                            {username}{" "}
+                            {creator}{" "}
                             <span className="font-extralight opacity-50">
-                              @{username}
+                              @{creator}
                             </span>
                           </p>
                           <small className="opacity-50">

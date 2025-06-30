@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { useAppSelector } from "../redux/hooks";
 
 interface IProps {
-  model_file: string;
+  model_file: string | null;
 }
 
 const ModelCanvas = ({ model_file }: IProps) => {
@@ -85,7 +85,7 @@ const ModelCanvas = ({ model_file }: IProps) => {
                 r="10"
                 stroke="currentColor"
                 strokeWidth="4"
-              ></circle>
+              />
               <path
                 className="opacity-75"
                 fill="currentColor"
@@ -151,10 +151,10 @@ const ModelCanvas = ({ model_file }: IProps) => {
   }, []);
 
   return (
-    <section className="flex flex-col items-center">
+    <section className="mb-15 flex flex-col items-center">
       <div
         ref={canvasContainerRef}
-        className="relative aspect-video min-h-[500px] w-full max-w-[68rem] self-center overflow-hidden rounded-xl border border-white/10 bg-[#16141C]"
+        className="relative aspect-video w-full max-w-[68rem] self-center overflow-hidden rounded-xl border border-white/10 bg-[#16141C]"
       >
         <Canvas
           camera={{

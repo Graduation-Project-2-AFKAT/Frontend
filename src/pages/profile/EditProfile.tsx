@@ -248,7 +248,7 @@ const EditProfile = () => {
         </div>
       )}
 
-      <section className="grid-editprofile grid w-full flex-grow gap-x-10 bg-white/5 px-10 pt-10 text-white md:px-15 lg:px-20">
+      <section className="grid-editprofile grid w-full flex-grow gap-x-10 bg-white/5 pt-10 pl-5 text-xs text-white sm:pl-10 md:px-15 md:text-lg lg:px-20">
         {/* Left Section */}
         <div className="rounded-lg py-10 pt-10 duration-250">
           <SideTabs

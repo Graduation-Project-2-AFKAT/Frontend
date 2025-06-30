@@ -40,7 +40,7 @@ const Home = () => {
 
   return (
     <main
-      className={`${window.innerWidth < 768 ? "hide-scrollbar" : ""} bg-neutral/5 grid w-full overflow-y-auto pt-10 lg:gap-10 lg:px-10 lg:pl-15`}
+      className={`${window.innerWidth < 768 ? "hide-scrollbar" : ""} bg-neutral/5 grid w-full overflow-y-auto md:pt-10 lg:gap-10 lg:px-10 lg:pl-15`}
     >
       {/*//! You think this is a useless line right ? ...Comment it and see how important it is ;) */}
       {/* <div className="hidden lg:block"></div> */}

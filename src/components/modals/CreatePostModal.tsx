@@ -238,7 +238,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
               leaveTo="opacity-0 scale-95"
             >
               <DialogPanel
-                className={`my-20 w-full max-w-2xl transform overflow-hidden rounded-lg border border-white/10 bg-[#2A2731] bg-cover bg-center shadow-xl`}
+                className={`my-20 w-full max-w-2xl transform overflow-hidden rounded-lg bg-[#2A2731] bg-cover bg-center shadow-xl`}
                 style={{
                   backgroundImage: postTheme ? `url('${postTheme}')` : "none",
                   backgroundSize: `${bgZoom}%`,

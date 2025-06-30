@@ -33,6 +33,14 @@ const Sidebar = ({
     }
   }, [expandSidebar]);
 
+  const handleNavLinkClick = () => {
+    setExpandSidebar(false);
+    // Close sidebar on small screens when navigating to a new route
+    if (window.innerWidth <= 767) {
+      setShowSidebar(false);
+    }
+  };
+
   const handleClick = (tab: keyof typeof select) => {
     if (selectedTab === tab) {
       if (expandSidebar) {
@@ -88,7 +96,7 @@ const Sidebar = ({
       />
 
       <div
-        className={`absolute ${expandSidebar ? "md:left-20" : "md:-left-60"} ${showSidebar ? "left-20" : "-left-80"} border-r-primary top-0 z-10 h-full w-80 border-r-2 bg-[#2A2731] py-15 pt-30 pl-5 backdrop-blur-[2px] duration-300`}
+        className={`absolute ${expandSidebar ? "md:left-20" : "md:-left-60"} ${showSidebar ? "left-18" : "-left-80"} border-r-primary top-0 z-10 h-full w-80 border-r-2 bg-[#2A2731] py-15 pt-30 pl-5 backdrop-blur-[2px] duration-300`}
       >
         <div className="flex h-full items-center">
           <div className="text-center text-gray-400">
@@ -104,7 +112,7 @@ const Sidebar = ({
       </div>
 
       <aside
-        className={`fixed top-0 ${showSidebar ? "-left-0" : "-left-22"} z-10 flex h-screen flex-col items-center justify-between bg-[#121015] px-0 py-20 text-2xl transition-all md:pb-8`}
+        className={`fixed top-0 ${showSidebar ? "-left-0" : "-left-22"} z-10 flex h-screen flex-col items-center justify-between bg-[#121015] px-0 pt-20 pb-10 text-2xl transition-all md:pb-8`}
       >
         <div
           className={`md:space-y- relative space-y-5 rounded-lg p-4 whitespace-nowrap transition-colors ease-in`}
@@ -112,28 +120,28 @@ const Sidebar = ({
           <Link
             to={"/"}
             className={`${selectedTab === "home" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Home']`}
-            onClick={() => setExpandSidebar(false)}
+            onClick={handleNavLinkClick}
           >
             <i className="fa-solid fa-house" />
           </Link>
           <Link
             to={"/games"}
             className={`${selectedTab === "games" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Games']`}
-            onClick={() => setExpandSidebar(false)}
+            onClick={handleNavLinkClick}
           >
             <Gamepad2 size={25} />
           </Link>
           <Link
             to={"/arts"}
             className={`${selectedTab === "assets" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Assets']`}
-            onClick={() => setExpandSidebar(false)}
+            onClick={handleNavLinkClick}
           >
             <Boxes size={25} />
           </Link>
           <Link
             to={"/jams"}
             className={`${selectedTab === "gameJams" ? "text-primary" : ""} tooltips relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#292929] before:font-medium before:content-['Game_Jams']`}
-            onClick={() => setExpandSidebar(false)}
+            onClick={handleNavLinkClick}
           >
             <i className="fa-solid fa-award" />
           </Link>
@@ -157,7 +165,7 @@ const Sidebar = ({
           <Link
             to={"/profile/edit"}
             className={`${selectedTab === "settings" ? "text-primary" : ""} tooltips w-10 cursor-pointer before:font-medium before:content-['Settings']`}
-            onClick={() => setExpandSidebar(false)}
+            onClick={handleNavLinkClick}
           >
             <i className="fa-solid fa-gear" />
           </Link>

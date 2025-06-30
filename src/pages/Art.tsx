@@ -102,7 +102,7 @@ const Art = () => {
     <div className="w-full overflow-y-auto">
       <div className="space-y-8 px-15 pt-8 pb-20">
         {/* Header */}
-        <header className="mx-auto flex max-w-[68rem] items-center justify-between">
+        <header className="mx-auto flex max-w-[85rem] items-center justify-between">
           <div className="flex flex-col space-y-3">
             <h1 className="text-3xl font-bold">{title}</h1>
             <div className="flex items-center">
@@ -177,7 +177,7 @@ const Art = () => {
         </header>
 
         {/* 3D Model Viewer */}
-        {model_file && <ModelCanvas model_file={model_file} />}
+        <ModelCanvas model_file={model_file || null} />
 
         {/* Tabs */}
         <div className="border-b border-white/10">

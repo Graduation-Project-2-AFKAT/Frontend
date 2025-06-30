@@ -7,11 +7,13 @@ const ProtectedRoute = lazy(() => import("./components/auth/ProtectedRoute"));
 const Login = lazy(() => import("./pages/auth/Login"));
 const Register = lazy(() => import("./pages/auth/Register"));
 const Home = lazy(() => import("./pages/Home"));
+const SinglePost = lazy(() => import("./pages/SinglePost"));
 const Profile = lazy(() => import("./pages/Profile"));
 const EditProfile = lazy(() => import("./pages/profile/EditProfile"));
 const BecomeAMember = lazy(() => import("./pages/BecomeAMember"));
 const Achievements = lazy(() => import("./pages/Achievements"));
 const Leaderboards = lazy(() => import("./pages/Leaderboards"));
+const LeaderboardDetails = lazy(() => import("./pages/LeaderboardDetails"));
 const Games = lazy(() => import("./pages/Games"));
 const Game = lazy(() => import("./pages/Game"));
 const PublishGame = lazy(() => import("./pages/PublishGame"));
@@ -93,6 +95,14 @@ function App() {
               }
             />
             <Route
+              path="/post/:id"
+              element={
+                <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
+                  <SinglePost />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/login"
               element={
                 <ProtectedRoute
@@ -161,6 +171,14 @@ function App() {
               element={
                 <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
                   <Leaderboards />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/leaderboards/:id"
+              element={
+                <ProtectedRoute isAuthenticated={isAuth} redirectPath="/login">
+                  <LeaderboardDetails />
                 </ProtectedRoute>
               }
             />

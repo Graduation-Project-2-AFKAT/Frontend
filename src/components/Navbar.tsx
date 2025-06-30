@@ -101,37 +101,71 @@ const Navbar = ({
       />
 
       <div className="relative h-full">
-        <NavLink
-          to="/"
-          className="underlineNav flex h-full items-center gap-2 md:gap-0"
-        >
-          <i
-            className="fa-solid fa-bars pl-6 hover:cursor-pointer md:before:hidden lg:pl-3"
-            onClick={handleMenuClick}
-          />
+        {!window.location.pathname.endsWith("/login") &&
+          !window.location.pathname.endsWith("/register") && (
+            <div className="underlineNav flex h-full items-center gap-2 md:gap-0">
+              {/* Hamburger menu - separate clickable area on small screens */}
+              <div className="flex h-full items-center md:hidden">
+                <i
+                  className="fa-solid fa-bars pl-6 hover:cursor-pointer"
+                  onClick={handleMenuClick}
+                />
+              </div>
 
-          <div className="flex h-10 w-auto cursor-pointer gap-4 after:-left-full after:scale-x-325">
-            <img
-              src="/images/AFK_Buttons.webp"
-              alt="AFK Buttons Logo"
-              className="ml-6 md:ml-0"
-              style={{
-                width: 60,
-                height: 40,
-              }}
-            />
+              {/* Logo - separate NavLink for navigation */}
+              <NavLink to="/" className="flex h-full items-center md:pl-5">
+                <div className="flex h-10 w-auto cursor-pointer gap-4 after:-left-full after:scale-x-325">
+                  <img
+                    src="/images/AFK_Buttons.webp"
+                    alt="AFK Buttons Logo"
+                    className="ml-6 md:ml-0"
+                    style={{
+                      width: 60,
+                      height: 40,
+                    }}
+                  />
 
-            <img
-              src="/images/Logo_outlined.svg"
-              alt="AFKAT Logo"
-              className="hidden md:inline"
-              style={{
-                width: 102,
-                height: 40,
-              }}
-            />
-          </div>
-        </NavLink>
+                  <img
+                    src="/images/Logo_outlined.svg"
+                    alt="AFKAT Logo"
+                    className="hidden md:inline"
+                    style={{
+                      width: 102,
+                      height: 40,
+                    }}
+                  />
+                </div>
+              </NavLink>
+            </div>
+          )}
+
+        {/* When on login/register pages, show logo only */}
+        {(window.location.pathname.endsWith("/login") ||
+          window.location.pathname.endsWith("/register")) && (
+          <NavLink to="/" className="underlineNav flex h-full items-center">
+            <div className="flex h-10 w-auto cursor-pointer gap-4 after:-left-full after:scale-x-325">
+              <img
+                src="/images/AFK_Buttons.webp"
+                alt="AFK Buttons Logo"
+                className="ml-6 md:ml-0"
+                style={{
+                  width: 60,
+                  height: 40,
+                }}
+              />
+
+              <img
+                src="/images/Logo_outlined.svg"
+                alt="AFKAT Logo"
+                className="hidden md:inline"
+                style={{
+                  width: 102,
+                  height: 40,
+                }}
+              />
+            </div>
+          </NavLink>
+        )}
       </div>
 
       {isAuth && (

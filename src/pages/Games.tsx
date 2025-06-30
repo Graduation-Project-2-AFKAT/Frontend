@@ -40,7 +40,11 @@ const Games = () => {
 
   useEffect(() => {
     if (Games) {
-      setGamesToShow(Games);
+      const filteredGames = [...Games].sort(
+        (a, b) => (b.rating || 0) - (a.rating || 0),
+      );
+
+      setGamesToShow(filteredGames);
     }
   }, [Games]);
 
@@ -53,10 +57,10 @@ const Games = () => {
   };
 
   const tabs = useMemo(() => {
-    return ["Featured", "Newest", "Top Rated"] as (
-      | "Featured"
-      | "Newest"
+    return ["Top Rated", "Newest", "Featured"] as (
       | "Top Rated"
+      | "Newest"
+      | "Featured"
     )[];
   }, []);
 
@@ -73,14 +77,14 @@ const Games = () => {
       </header>
 
       <div className="flex flex-col space-y-10 py-10 text-center font-bold lg:px-10">
-        <span className="text-3xl">Browse Games</span>
+        <span className="mb-0 text-3xl sm:mb-10">Browse Games</span>
         <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-5 px-15 lg:px-0">
           {/* //TODO make selected "text-primary" */}
           {tags.length > 0 &&
             tags.map((tag) => (
               <li
                 key={tag}
-                className={`rounded-full px-4 py-1 text-sm transition-colors hover:cursor-pointer ${
+                className={`hidden rounded-full px-4 py-1 text-sm transition-colors hover:cursor-pointer sm:block ${
                   selectedTags.includes(tag)
                     ? "bg-primary border-primary text-base-200 border"
                     : "hover:border-primary bg-base-content/5 border-primary/30 border"
@@ -105,7 +109,12 @@ const Games = () => {
 
       <section className="col-span-2 space-y-6 scroll-smooth md:mx-auto md:w-[85%] lg:w-full lg:px-10">
         <div className="border-b border-white/10" />
-        <GamesTabs defaultTab="Featured" tabs={tabs} />
+        <GamesTabs
+          defaultTab="Top Rated"
+          tabs={tabs}
+          gamesToShow={gamesToShow}
+          filterGamesToShow={setGamesToShow}
+        />
 
         {isLoading ? (
           <div className="flex h-64 items-center justify-center">

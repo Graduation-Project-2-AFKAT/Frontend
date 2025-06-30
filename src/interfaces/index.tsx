@@ -54,7 +54,7 @@ export interface IPost {
 
 export interface IPostComment {
   id: number;
-  creator: { username: string; profile_url: string };
+  creator: string;
   content: string;
   modified_at: string;
   created_at: string;

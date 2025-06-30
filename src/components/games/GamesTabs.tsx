@@ -1,8 +1,12 @@
 import { useState, memo } from "react";
+import { IGame } from "../../interfaces";
+import { useAppSelector } from "../../redux/hooks";
 
 interface IProps {
   defaultTab: "Featured" | "Newest" | "Top Rated";
   tabs: ("Featured" | "Newest" | "Top Rated")[];
+  gamesToShow: IGame[];
+  filterGamesToShow: (filteredGames: IGame[]) => void;
 }
 
 interface ITab {
@@ -12,11 +16,43 @@ interface ITab {
   handleTabClick: (tab: "Featured" | "Newest" | "Top Rated") => void;
 }
 
-const GamesTabs = ({ defaultTab, tabs }: IProps) => {
+const GamesTabs = ({ defaultTab, tabs, filterGamesToShow }: IProps) => {
+  const { Games } = useAppSelector((state) => state.games);
   const [profileSelectedTab, setProfileSelectedTab] = useState(defaultTab);
 
   function handleTabClick(tab: "Featured" | "Newest" | "Top Rated") {
     setProfileSelectedTab(tab);
+
+    switch (tab) {
+      case "Top Rated": {
+        const filteredGames = [...Games].sort(
+          (a, b) => (b.rating || 0) - (a.rating || 0),
+        );
+        filterGamesToShow(filteredGames);
+
+        break;
+      }
+      case "Newest": {
+        const filteredGames = [...Games].sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        );
+        filterGamesToShow(filteredGames);
+
+        break;
+      }
+      case "Featured": {
+        const filteredGames = Games.filter(
+          (game: IGame) => game.user_rating !== null,
+        );
+        filterGamesToShow(filteredGames);
+
+        break;
+      }
+      default: {
+        filterGamesToShow(Games);
+      }
+    }
   }
 
   return (

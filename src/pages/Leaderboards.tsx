@@ -1,189 +1,95 @@
-import {
-  Calendar,
-  ChevronDown,
-  Filter,
-  Medal,
-  Search,
-  Star,
-  Trophy,
-} from "lucide-react";
+import { Search, Trophy } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { loadLeaderboardsEntries } from "../redux/modules/leaderboards";
+import { loadLeaderboards } from "../redux/modules/leaderboards";
 
 const Leaderboards = () => {
   const dispatch = useAppDispatch();
 
   const { isLoading } = useAppSelector((state) => state.loading);
-  const { user } = useAppSelector((state) => state.users);
-  const { Entries } = useAppSelector((state) => state.leaderboards);
+  const { Leaderboards } = useAppSelector((state) => state.leaderboards);
 
-  const [activeFilter, setActiveFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [timeRange, setTimeRange] = useState<string>("all-time");
-  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState<boolean>(false);
-  const [isTimeMenuOpen, setIsTimeMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    dispatch(loadLeaderboardsEntries());
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (Leaderboards.length === 0) dispatch(loadLeaderboards());
   }, []);
 
-  const getRankDecoration = (rank: number) => {
-    switch (rank) {
-      case 1:
-        return <Trophy className="text-yellow-400" size={24} />;
-      case 2:
-        return <Medal className="text-gray-400" size={24} />;
-      case 3:
-        return <Medal className="text-amber-700" size={24} />;
-      default:
-        return <span className="text-lg font-bold">{rank}</span>;
-    }
-  };
+  // Mock data for leaderboards - replace with actual data when available
+  const mockLeaderboards = [
+    {
+      id: 1,
+      gameId: 1,
+      leaderboardName: "CS:GO Global Rankings",
+      totalPlayers: 15420,
+      topPlayer: "ProGamer2024",
+      topScore: 98500,
+      lastUpdated: "2024-12-30",
+    },
+    {
+      id: 2,
+      gameId: 2,
+      leaderboardName: "Valorant Competitive",
+      totalPlayers: 8735,
+      topPlayer: "ValorantKing",
+      topScore: 75300,
+      lastUpdated: "2024-12-30",
+    },
+    {
+      id: 3,
+      gameId: 3,
+      leaderboardName: "Minecraft Speed Run",
+      totalPlayers: 12450,
+      topPlayer: "CraftMaster",
+      topScore: 89200,
+      lastUpdated: "2024-12-29",
+    },
+    {
+      id: 4,
+      gameId: 4,
+      leaderboardName: "Fortnite Solo Victory",
+      totalPlayers: 25670,
+      topPlayer: "BuilderPro",
+      topScore: 156400,
+      lastUpdated: "2024-12-30",
+    },
+    {
+      id: 5,
+      gameId: 5,
+      leaderboardName: "League of Legends Ranked",
+      totalPlayers: 18920,
+      topPlayer: "RiftChampion",
+      topScore: 112800,
+      lastUpdated: "2024-12-30",
+    },
+    {
+      id: 6,
+      gameId: 6,
+      leaderboardName: "Rocket League Championship",
+      totalPlayers: 9840,
+      topPlayer: "CarSoccer",
+      topScore: 68900,
+      lastUpdated: "2024-12-29",
+    },
+  ];
 
-  if (isLoading) {
-    return (
-      <main className="h-full w-full overflow-y-auto">
-        <div className="container mx-auto max-w-6xl px-4 py-8">
-          <div className="animate-pulse space-y-8">
-            <div className="bg-base-300 h-8 w-64 rounded" />
-            <div className="bg-base-300 h-12 w-full rounded" />
-            <div className="space-y-4">
-              {[...Array(10)].map((_, idx) => (
-                <div key={idx} className="bg-base-300 h-20 w-full rounded" />
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-    );
-  }
+  const filteredLeaderboards = Leaderboards.filter((leaderboard) =>
+    leaderboard.leaderboardName
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase()),
+  );
 
   return (
     <main className="h-full w-full overflow-y-auto">
-      <div className="mx-auto max-w-6xl px-[8%] pt-8 pb-16 md:px-[5%]">
+      <div className="max-w-8xl mx-auto px-[8%] pt-8 pb-16 md:px-[5%]">
         <h1 className="mb-6 text-3xl font-bold">Leaderboards</h1>
 
-        {/* Filters and search */}
+        {/* Search */}
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <div className="relative">
-              <button
-                className="border-base-content/20 bg-base-200 flex items-center justify-between gap-2 rounded-lg border px-4 py-2.5 font-medium"
-                onClick={() => setIsFilterMenuOpen(!isFilterMenuOpen)}
-              >
-                <Filter size={16} />
-                <span>
-                  {activeFilter === "all" ? "All Games" : activeFilter}
-                </span>
-                <ChevronDown size={16} />
-              </button>
-
-              {isFilterMenuOpen && (
-                <div className="border-base-content/10 bg-base-200 absolute top-full left-0 z-50 mt-1 w-48 rounded-lg border py-2 shadow-lg">
-                  <button
-                    className={`hover:bg-base-300 w-full px-4 py-2 text-left ${activeFilter === "all" ? "text-primary" : ""}`}
-                    onClick={() => {
-                      setActiveFilter("all");
-                      setIsFilterMenuOpen(false);
-                    }}
-                  >
-                    All Games
-                  </button>
-                  <button
-                    className={`hover:bg-base-300 w-full px-4 py-2 text-left ${activeFilter === "CS:GO" ? "text-primary" : ""}`}
-                    onClick={() => {
-                      setActiveFilter("CS:GO");
-                      setIsFilterMenuOpen(false);
-                    }}
-                  >
-                    CS:GO
-                  </button>
-                  <button
-                    className={`hover:bg-base-300 w-full px-4 py-2 text-left ${activeFilter === "Valorant" ? "text-primary" : ""}`}
-                    onClick={() => {
-                      setActiveFilter("Valorant");
-                      setIsFilterMenuOpen(false);
-                    }}
-                  >
-                    Valorant
-                  </button>
-                  <button
-                    className={`hover:bg-base-300 w-full px-4 py-2 text-left ${activeFilter === "Minecraft" ? "text-primary" : ""}`}
-                    onClick={() => {
-                      setActiveFilter("Minecraft");
-                      setIsFilterMenuOpen(false);
-                    }}
-                  >
-                    Minecraft
-                  </button>
-                  <button
-                    className={`hover:bg-base-300 w-full px-4 py-2 text-left ${activeFilter === "Fortnite" ? "text-primary" : ""}`}
-                    onClick={() => {
-                      setActiveFilter("Fortnite");
-                      setIsFilterMenuOpen(false);
-                    }}
-                  >
-                    Fortnite
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div className="relative">
-              <button
-                className="border-base-content/20 bg-base-200 flex items-center justify-between gap-2 rounded-lg border px-4 py-2.5 font-medium"
-                onClick={() => setIsTimeMenuOpen(!isTimeMenuOpen)}
-              >
-                <Calendar size={16} />
-                <span>
-                  {timeRange === "all-time"
-                    ? "All Time"
-                    : timeRange === "this-month"
-                      ? "This Month"
-                      : timeRange === "this-week"
-                        ? "This Week"
-                        : "All Time"}
-                </span>
-                <ChevronDown size={16} />
-              </button>
-
-              {isTimeMenuOpen && (
-                <div className="border-base-content/10 bg-base-200 absolute top-full left-0 z-50 mt-1 w-48 rounded-lg border py-2 shadow-lg">
-                  <button
-                    className={`hover:bg-base-300 w-full px-4 py-2 text-left ${timeRange === "all-time" ? "text-primary" : ""}`}
-                    onClick={() => {
-                      setTimeRange("all-time");
-                      setIsTimeMenuOpen(false);
-                    }}
-                  >
-                    All Time
-                  </button>
-                  <button
-                    className={`hover:bg-base-300 w-full px-4 py-2 text-left ${timeRange === "this-month" ? "text-primary" : ""}`}
-                    onClick={() => {
-                      setTimeRange("this-month");
-                      setIsTimeMenuOpen(false);
-                    }}
-                  >
-                    This Month
-                  </button>
-                  <button
-                    className={`hover:bg-base-300 w-full px-4 py-2 text-left ${timeRange === "this-week" ? "text-primary" : ""}`}
-                    onClick={() => {
-                      setTimeRange("this-week");
-                      setIsTimeMenuOpen(false);
-                    }}
-                  >
-                    This Week
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+          <p className="text-base-content/70">
+            Choose a leaderboard to view rankings and compete with other players
+          </p>
 
           <div className="relative">
             <Search
@@ -192,7 +98,7 @@ const Leaderboards = () => {
             />
             <input
               type="text"
-              placeholder="Search users..."
+              placeholder="Search leaderboards..."
               className="border-base-content/20 bg-base-200 focus:border-primary w-full rounded-lg border py-2.5 pr-4 pl-10 outline-none"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -200,142 +106,113 @@ const Leaderboards = () => {
           </div>
         </div>
 
-        {/* Top 3 podium (for larger screens) */}
-        <div className="mb-10 hidden md:block">
-          {Entries.length >= 3 && (
-            <div className="flex items-end justify-center gap-6">
-              {/* 2nd place */}
-              <div className="flex flex-col items-center">
-                <div className="mb-2 h-32 w-32 overflow-hidden rounded-full border-4 border-gray-400">
-                  <img
-                    src={`https://i.pravatar.cc/150?img=${Entries[1].userId}`}
-                    alt={Entries[1].playerName}
-                    className="h-full w-full object-cover"
-                  />
+        {/* Leaderboards Grid */}
+        {isLoading ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, idx) => (
+              <div
+                key={idx}
+                className="bg-base-200 flex h-52 animate-pulse flex-col justify-between rounded-lg p-6"
+              >
+                <div className="flex justify-between gap-x-2">
+                  <div className="bg-base-300 h-4 w-4/12 rounded" />
+                  <div className="bg-base-300 h-8 w-1/13 rounded" />
                 </div>
-                <div className="bg-base-200 flex h-40 w-40 flex-col items-center justify-center rounded-lg border border-gray-400/20 p-4 shadow-lg">
-                  <Medal className="mb-2 text-gray-400" size={32} />
-                  <span className="font-bold">{Entries[1].playerName}</span>
-                  <span className="text-primary font-bold">
-                    {Entries[1].score.toLocaleString()} pts
-                  </span>
-                </div>
-              </div>
-
-              {/* 1st place */}
-              <div className="flex flex-col items-center">
-                <div className="mb-2 h-40 w-40 overflow-hidden rounded-full border-4 border-yellow-400">
-                  <img
-                    src={`https://i.pravatar.cc/150?img=${Entries[0].userId}`}
-                    alt={Entries[0].playerName}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="from-base-200 to-base-300 flex h-52 w-52 flex-col items-center justify-center rounded-lg border border-yellow-400/20 bg-gradient-to-b p-4 shadow-lg">
-                  <Trophy className="mb-2 text-yellow-400" size={40} />
-                  <span className="text-xl font-bold">
-                    {Entries[0].playerName}
-                  </span>
-                  <span className="text-primary text-xl font-bold">
-                    {Entries[0].score.toLocaleString()} pts
-                  </span>
-                  <div className="mt-2 flex items-center gap-2">
-                    <Star className="text-yellow-400" size={16} />
-                    <span>Level {Entries[0].rank}</span>
+                <div>
+                  <div className="bg-base-300 mb-4 h-15 w-full rounded" />
+                  <div className="flex justify-between gap-x-2">
+                    <div className="bg-base-300 h-4 w-2/4 rounded" />
+                    <div className="bg-base-300 h-4 w-1/6 rounded" />
                   </div>
                 </div>
               </div>
-
-              {/* 3rd place */}
-              <div className="flex flex-col items-center">
-                <div className="mb-2 h-28 w-28 overflow-hidden rounded-full border-4 border-amber-700">
-                  <img
-                    src={`https://i.pravatar.cc/150?img=${Entries[2].userId}`}
-                    alt={Entries[2].playerName}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="bg-base-200 flex h-36 w-36 flex-col items-center justify-center rounded-lg border border-amber-700/20 p-4 shadow-lg">
-                  <Medal className="mb-2 text-amber-700" size={30} />
-                  <span className="font-bold">{Entries[2].playerName}</span>
-                  <span className="text-primary font-bold">
-                    {Entries[2].score.toLocaleString()} pts
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Leaderboard table */}
-        <div className="bg-base-200 border-base-content/10 overflow-hidden rounded-lg border shadow-md">
-          {/* Table header */}
-          <div className="border-base-content/10 bg-base-300 grid grid-cols-9! border-b px-5 py-4">
-            <div className="col-span-1 font-bold">Rank</div>
-            <div className="col-span-5 font-bold">Player</div>
-            <div className="col-span-2 text-center font-bold">Points</div>
+            ))}
           </div>
-
-          {/* Table body */}
-          {Entries.length > 0 ? (
-            <div className="divide-base-content/10 divide-y">
-              {Entries.slice(3).map((entry) => (
-                <div
-                  key={entry.userId}
-                  className={`hover:bg-base-300 grid grid-cols-9! px-5 py-4 md:px-6 ${
-                    entry.userId === user?.id
-                      ? "bg-primary/10 border-primary border-x-4 border-y"
-                      : ""
-                  }`}
-                >
-                  {/* Rank */}
-                  <div className="col-span-1 mr-auto flex items-center justify-center pl-2 md:justify-start">
-                    {getRankDecoration(entry.rank)}
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredLeaderboards.map((leaderboard) => (
+              <Link
+                key={leaderboard.id}
+                to={`/leaderboards/${leaderboard.id}`}
+                className="bg-base-200 hover:bg-base-300 group border-base-content/10 hover:border-primary/30 cursor-pointer rounded-lg border p-6 transition-all duration-200 hover:shadow-lg"
+              >
+                <div className="mb-4 flex items-start justify-between">
+                  <div>
+                    <h3 className="group-hover:text-primary text-xl font-bold transition-colors">
+                      {leaderboard.leaderboardName}
+                    </h3>
+                    <p className="text-base-content/70 text-sm">
+                      {mockLeaderboards[
+                        leaderboard.id % mockLeaderboards.length
+                      ].totalPlayers.toLocaleString()}{" "}
+                      players
+                    </p>
                   </div>
+                  <Trophy
+                    className="text-primary opacity-60 transition-opacity group-hover:opacity-100"
+                    size={24}
+                  />
+                </div>
 
-                  {/* Player */}
-                  <div className="col-span-2 flex items-center md:col-span-5">
-                    <Link
-                      to={`/profile/${entry.userId}`}
-                      className="flex items-center"
-                    >
-                      <div className="mr-3 h-10 w-10 overflow-hidden rounded-full">
-                        <img
-                          src={`https://i.pravatar.cc/150?img=${entry.userId}`}
-                          alt={entry.playerName}
-                          className="h-full w-full object-cover"
-                        />
+                <div className="space-y-3">
+                  <div className="bg-base-300 flex items-center justify-between rounded-lg p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/20 flex h-8 w-8 items-center justify-center rounded-full">
+                        <Trophy className="text-primary" size={16} />
                       </div>
                       <div>
-                        <div className="font-bold">{entry.playerName}</div>
-                        <div className="text-base-content/70 text-xs">
-                          CS:GO
-                        </div>
+                        <p>
+                          {
+                            mockLeaderboards[
+                              leaderboard.id % mockLeaderboards.length
+                            ].topPlayer
+                          }
+                        </p>
+                        <p className="text-base-content/70 text-xs">
+                          Current Leader
+                        </p>
                       </div>
-                    </Link>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-primary font-bold">
+                        {mockLeaderboards[
+                          leaderboard.id % mockLeaderboards.length
+                        ].topScore.toLocaleString()}
+                      </p>
+                      <p className="text-base-content/70 text-xs">points</p>
+                    </div>
                   </div>
 
-                  {/* Points */}
-                  <div className="col-span-2 col-start-7 mt-0 flex items-center justify-center md:justify-center">
-                    <span className="text-primary font-bold">
-                      {entry.score.toLocaleString()}
+                  <div className="text-base-content/70 flex items-center justify-between text-sm">
+                    <span>
+                      Last updated:{" "}
+                      {new Date(
+                        mockLeaderboards[
+                          leaderboard.id % mockLeaderboards.length
+                        ].lastUpdated,
+                      ).toLocaleDateString()}
+                    </span>
+                    <span className="text-primary font-medium">
+                      View Details →
                     </span>
                   </div>
                 </div>
-              ))}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {filteredLeaderboards.length === 0 && !isLoading && (
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="bg-base-300 mb-4 rounded-full p-4">
+              <Search className="opacity-30" size={40} />
             </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12">
-              <div className="bg-base-300 mb-4 rounded-full p-4">
-                <Trophy className="opacity-30" size={40} />
-              </div>
-              <h3 className="text-xl font-medium">No results found</h3>
-              <p className="text-base-content/70">
-                Try adjusting your filters or search query
-              </p>
-            </div>
-          )}
-        </div>
+            <h3 className="text-xl font-medium">No leaderboards found</h3>
+            <p className="text-base-content/70">
+              Try adjusting your search query
+            </p>
+          </div>
+        )}
       </div>
     </main>
   );

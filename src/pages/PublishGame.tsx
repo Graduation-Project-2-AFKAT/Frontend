@@ -555,7 +555,7 @@ const PublishGame = () => {
                   Tags (select at least one)
                   <span className="ml-1 text-red-400">*</span>
                 </label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap justify-around gap-2 sm:justify-start">
                   {tags.map((tag) => (
                     <button
                       key={tag}

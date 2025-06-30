@@ -165,12 +165,8 @@ export const commentPost = createAsyncThunk(
     try {
       dispatch(startLoading("posts/comment"));
 
-      const res = await api.patch(`/home/posts/${data.postId}/`, {
-        comments: [
-          {
-            content: data.comment,
-          },
-        ],
+      const res = await api.post(`/home/posts/${data.postId}/add_comment/`, {
+        content: data.comment,
       });
 
       // console.log("comment:", res.data);
@@ -213,9 +209,29 @@ export const likePost = createAsyncThunk(
   },
 );
 
+export const loadPostById = createAsyncThunk(
+  "posts/loadById",
+  async (postId: number, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(startLoading("posts/loadById"));
+
+      const res = await api.get(`/home/posts/${postId}`);
+
+      return res.data;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      dispatch(showAlert({ msg: error.response?.data, type: "error" }));
+      return rejectWithValue(error.response?.data || "Failed to load post");
+    } finally {
+      dispatch(stopLoading());
+    }
+  },
+);
+
 const initialState = {
   Posts: [] as IPost[],
   Post: null as IPost | null,
+  currentPost: null as IPost | null,
 };
 
 export const postsSlice = createSlice({
@@ -224,7 +240,7 @@ export const postsSlice = createSlice({
   reducers: {
     clearPostComments: (state) => {
       if (state.Post) {
-        state.Post.comments = [];
+        state.Post = null;
       }
     },
   },
@@ -241,7 +257,7 @@ export const postsSlice = createSlice({
 
     builder.addCase(commentPost.fulfilled, (state, action) => {
       if (state.Post) {
-        state.Post.comments = action.payload.comments;
+        state.Post.comments = [action.payload, ...(state.Post.comments || [])];
       }
     });
 
@@ -260,6 +276,14 @@ export const postsSlice = createSlice({
 
         state.Posts[postIndex] = updatedPost;
       }
+    });
+
+    builder.addCase(loadPostById.fulfilled, (state, action) => {
+      state.currentPost = action.payload;
+    });
+
+    builder.addCase(loadPostById.rejected, (state) => {
+      state.currentPost = null;
     });
 
     builder.addMatcher(
