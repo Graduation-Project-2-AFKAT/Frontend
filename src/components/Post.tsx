@@ -96,7 +96,7 @@ const Post = ({ post }: IProps) => {
   return (
     <>
       <li
-        className={`${!post.theme ? "border-white/10" : "border-0"} outline-primary bg-base-content/5 grid border bg-cover shadow-md drop-shadow-md duration-50 md:rounded-xl lg:hover:outline-2`}
+        className={`${!post.theme ? "border-white/10" : "border-0"} outline-primary bg-base-content/5 relative grid border bg-cover shadow-md drop-shadow-md duration-50 md:rounded-xl lg:hover:outline-2`}
         style={{
           gridTemplate: `75px auto ${post.image ? "auto" : "auto"} auto auto / 1fr 1fr 1fr`,
           backgroundImage: post.theme ? `url('${post.theme}')` : "none",
@@ -105,7 +105,7 @@ const Post = ({ post }: IProps) => {
         }}
       >
         <div
-          className={`${post.theme ? "bg-black/50" : ""} pointer-events-none fixed inset-0 -z-1 rounded-xl`}
+          className={`${post.theme ? "bg-black/50" : ""} pointer-events-none absolute inset-0 -z-1 rounded-xl`}
         />
         <div className="col-span-3 flex h-fit justify-between px-5 pt-5">
           <div className="group flex items-center duration-150">
