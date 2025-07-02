@@ -105,7 +105,7 @@ const Post = ({ post }: IProps) => {
         }}
       >
         <div
-          className={`${post.theme ? "bg-black/50" : ""} pointer-events-none absolute inset-0 -z-1 rounded-xl`}
+          className={`${post.theme ? "bg-black/50" : ""} pointer-events-none absolute inset-0 -z-1 rounded-none md:rounded-xl`}
         />
         <div className="col-span-3 flex h-fit justify-between px-5 pt-5">
           <div className="group flex items-center duration-150">

@@ -96,7 +96,7 @@ const Sidebar = ({
       />
 
       <div
-        className={`absolute ${expandSidebar ? "md:left-20" : "md:-left-60"} ${showSidebar ? "left-18" : "-left-80"} border-r-primary top-0 z-10 h-full w-80 border-r-2 bg-[#2A2731] py-15 pt-30 pl-5 backdrop-blur-[2px] duration-300`}
+        className={`absolute ${expandSidebar ? "md:left-20" : "md:-left-60"} ${showSidebar ? "left-15" : "-left-80"} border-r-primary top-0 z-10 h-full w-80 border-r-2 bg-[#2A2731] py-15 pt-30 pl-7 backdrop-blur-[2px] duration-300 md:pl-5`}
       >
         <div className="flex h-full items-center">
           <div className="text-center text-gray-400">
